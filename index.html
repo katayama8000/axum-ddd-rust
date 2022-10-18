@@ -13,6 +13,11 @@
         <li>{{ item.name }}は{{ item.color }}です。</li>
       </ul>
     </div>
+    <div id="app2">
+      <ul v-for="item in items" v-bind:key="item.name">
+        <li>{{ item.name }}は{{ item.age }}歳歳です。</li>
+      </ul>
+    </div>
   </body>
   <script src="./main.js"></script>
 </html>

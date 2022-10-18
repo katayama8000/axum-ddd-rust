@@ -8,3 +8,15 @@ new Vue({
         ]
     }
 });
+
+new Vue({
+    el: '#app2',
+    data: {
+        items: [
+            // 名前、年齢
+            { name: 'mike', age: 10 },
+            { name: 'nancy', age: 20 },
+            { name: 'tom', age: 30 }
+        ]
+    }
+});

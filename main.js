@@ -1,4 +1,4 @@
-new Vue({
+let vm1 = new Vue({
     el: '#app',
     data: {
         items: [
@@ -9,6 +9,8 @@ new Vue({
     }
 });
 
+console.log(vm1)
+
 new Vue({
     el: '#app2',
     data: {
@@ -18,5 +20,10 @@ new Vue({
             { name: 'nancy', age: 20 },
             { name: 'tom', age: 30 }
         ]
+    },
+    methods: {
+        changeMessage1: function () {
+            vm1.items[0].name = 'changed'
+        }
     }
 });

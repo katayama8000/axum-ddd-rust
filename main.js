@@ -25,5 +25,16 @@ new Vue({
         changeMessage1: function () {
             vm1.items[0].name = 'changed'
         }
+    },
+    template: `<h1>テンプレート,{{items[0].name}}</h1>`
+});
+
+new Vue({
+    el: '#app3',
+    data: {
+        name: 'mike',
+    },
+    render(h) {
+        return h('h1', 'render関数')
     }
 });

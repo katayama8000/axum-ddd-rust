@@ -17,12 +17,22 @@
       </form>
 
       <ul>
-        <li v-for="(todo,index) in todos" key="todo">
+        <li v-for="(todo,index) in todos" v-bind:key="todo">
           <input type="checkbox" v-model="todo.isDone" />
           <span v-bind:class="{done: todo.isDone}">{{todo.todo}}</span>
           <button v-on:click="deleteTodo(index)">Delete</button>
         </li>
       </ul>
+
+      <h3>keyを指定しないとバグる例</h3>
+      <ul>
+        <li v-for="(todo,index) in todos">
+          <p>{{todo.todo}}</p>
+          <input type="text" />
+        </li>
+      </ul>
+
+      <button v-on:click="todos.shift()">先頭を削除</button>
 
       <pre>{{ $data }}</pre>
     </div>

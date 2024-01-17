@@ -1,8 +1,8 @@
-use axum::{
-    http::StatusCode,
-    routing::{get, post},
-    Router,
-};
+mod domain;
+pub mod infrastructure;
+pub mod usecase;
+
+use axum::{http::StatusCode, routing::get, Router};
 
 use tokio;
 

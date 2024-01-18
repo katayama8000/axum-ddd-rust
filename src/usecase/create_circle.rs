@@ -14,10 +14,10 @@ pub struct CreateCircleInput {
     pub capacity: usize,
 }
 
-pub fn execute(
-    port: impl CirclrRepositoryTrait,
-    circle_circle_input: CreateCircleInput,
-) -> Result<(), ()> {
+pub fn execute<T>(port: T, circle_circle_input: CreateCircleInput) -> Result<(), ()>
+where
+    T: CirclrRepositoryTrait,
+{
     let member_id = MemberId::new(1);
     let circle_id = CircleId::new(1);
     let owner = Member::new(

@@ -7,10 +7,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "bungcip.better-toml",
         "GitHub.copilot",
         "ms-azuretools.vscode-docker",
-        "rust-lang.rust-analyzer"
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml"
       ],
       "settings": {
         "files.watcherExclude": {

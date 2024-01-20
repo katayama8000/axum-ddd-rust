@@ -1,7 +1,7 @@
 use crate::domain::aggregate::circle::Circle;
 use crate::domain::aggregate::value_object::circle_id::CircleId;
 
-pub trait CirclrRepositoryTrait {
+pub trait CircleRepositoryTrait {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, ()>;
     fn create(&self, circle: &Circle) -> Result<(), ()>;
     fn save(&self, circle: &Circle) -> Result<(), ()>;
@@ -9,7 +9,7 @@ pub trait CirclrRepositoryTrait {
 }
 
 pub trait HasCircleRepositoryTrait {
-    type CircleRepository: CirclrRepositoryTrait;
+    type CircleRepository: CircleRepositoryTrait;
 
-    fn circle_repository(&self) -> &Self::CircleRepository;
+    fn circle_repository(&self) -> Box<dyn CircleRepositoryTrait>;
 }

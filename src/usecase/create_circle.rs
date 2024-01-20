@@ -4,7 +4,7 @@ use crate::domain::{
         member::Member,
         value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
     },
-    repository::circle_repository_trait::CirclrRepositoryTrait,
+    repository::circle_repository_trait::CircleRepositoryTrait,
 };
 
 pub struct CreateCircleInput {
@@ -16,7 +16,7 @@ pub struct CreateCircleInput {
 
 pub fn execute<T>(port: T, circle_circle_input: CreateCircleInput) -> Result<(), ()>
 where
-    T: CirclrRepositoryTrait,
+    T: CircleRepositoryTrait,
 {
     let member_id = MemberId::new(1);
     let circle_id = CircleId::new(1);

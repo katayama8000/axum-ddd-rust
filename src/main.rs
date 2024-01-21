@@ -1,7 +1,3 @@
-#![allow(unused)]
-
-use std::net::SocketAddr;
-
 use crate::handler::{handle_create_circle, handle_fetch_circle, handle_get};
 
 mod domain;
@@ -10,15 +6,9 @@ mod infrastructure;
 mod usecase;
 
 use axum::{
-    extract::State,
-    routing::{get, get_service, post, Route},
+    routing::{get, post},
     Router,
 };
-
-use infrastructure::circle_repository::CircleRepository;
-use serde::Deserialize;
-use tokio;
-use usecase::create_circle::{CreateCircleInput, CreateCircleService};
 
 #[derive(Clone)]
 struct AppState {

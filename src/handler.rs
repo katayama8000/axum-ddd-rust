@@ -1,15 +1,14 @@
 use axum::{
     extract::{Path, Query, State},
-    response::{Html, IntoResponse},
+    response::IntoResponse,
 };
 use serde::Deserialize;
 
 use crate::{
-    domain::aggregate::value_object::circle_id::CircleId,
     infrastructure::circle_repository::CircleRepository,
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleService},
-        fetch_circle::{self, FetchCircleInput, FetchCircleService},
+        fetch_circle::{FetchCircleInput, FetchCircleService},
     },
     AppState,
 };

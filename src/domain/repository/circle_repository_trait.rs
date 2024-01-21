@@ -7,9 +7,3 @@ pub trait CircleRepositoryTrait {
     fn save(&self, circle: &Circle) -> Result<(), ()>;
     fn delete(&self, circle: &Circle) -> Result<(), ()>;
 }
-
-pub trait HasCircleRepositoryTrait {
-    type CircleRepository: CircleRepositoryTrait;
-
-    fn circle_repository(&self) -> Box<dyn CircleRepositoryTrait>;
-}

@@ -14,25 +14,37 @@ pub struct CreateCircleInput {
     pub capacity: usize,
 }
 
-pub fn execute<T>(port: T, circle_circle_input: CreateCircleInput) -> Result<(), ()>
+pub struct CreateCircleService<T>
 where
     T: CircleRepositoryTrait,
 {
-    let member_id = MemberId::new(1);
-    let circle_id = CircleId::new(1);
-    let owner = Member::new(
-        member_id,
-        circle_circle_input.owner_name,
-        21,
-        Grade::Fourth,
-        Major::Art,
-    );
-    let circle = Circle::new(
-        circle_id,
-        circle_circle_input.circle_name,
-        owner,
-        circle_circle_input.capacity,
-    );
-    port.create(&circle)?;
-    Ok(())
+    circle_repository: T,
+}
+
+impl<T: CircleRepositoryTrait> CreateCircleService<T> {
+    pub fn new(circle_repository: T) -> Self {
+        CreateCircleService { circle_repository }
+    }
+
+    pub fn execute(&self, circle_circle_input: CreateCircleInput) {
+        let member_id = MemberId::new(1);
+        let circle_id = CircleId::new(1);
+        let owner = Member::new(
+            member_id,
+            circle_circle_input.owner_name,
+            21,
+            Grade::Fourth,
+            Major::Art,
+        );
+        let circle = Circle::new(
+            circle_id,
+            circle_circle_input.circle_name,
+            owner,
+            circle_circle_input.capacity,
+        );
+        match self.circle_repository.create(&circle) {
+            Ok(_) => println!("success"),
+            Err(_) => println!("error"),
+        }
+    }
 }

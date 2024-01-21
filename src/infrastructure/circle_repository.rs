@@ -5,11 +5,11 @@ use crate::domain::{
 
 pub struct CircleRepository {}
 
-// impl CircleRepository {
-//     pub fn new() -> Self {
-//         Self {}
-//     }
-// }
+impl CircleRepository {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
 
 impl CircleRepositoryTrait for CircleRepository {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, ()> {

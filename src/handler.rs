@@ -7,8 +7,9 @@ use serde::Deserialize;
 use crate::{
     infrastructure::circle_repository::CircleRepository,
     usecase::{
-        create_circle::{CreateCircleInput, CreateCircleService},
-        fetch_circle::{FetchCircleInput, FetchCircleService},
+        create_circle::{CreateCircleInput, CreateCircleUsecase},
+        fetch_circle::FetchCircleUsecase,
+        input::{create_circle::CreateCircleInputParam, fetch_circle::FetchCircleInput},
     },
     AppState,
 };
@@ -17,14 +18,6 @@ pub async fn handle_get(State(state): State<AppState>) -> String {
     println!("counter: {}", state.counter);
     println!("GET / html");
     "Hello, World!".to_string()
-}
-
-#[derive(Debug, Deserialize)]
-pub struct CreateCircleInputParam {
-    id: usize,
-    circle_name: String,
-    owner_name: String,
-    capacity: usize,
 }
 
 pub async fn handle_create_circle(
@@ -36,8 +29,8 @@ pub async fn handle_create_circle(
         owner_name: param.owner_name,
         capacity: param.capacity,
     };
-    let application_service = CreateCircleService::new(CircleRepository::new());
-    application_service.execute(circle_circle_input);
+    let usecase = CreateCircleUsecase::new(CircleRepository::new());
+    usecase.execute(circle_circle_input);
 }
 
 #[derive(Debug, Deserialize)]
@@ -47,6 +40,6 @@ pub struct FetchCircleInputParam {
 
 pub async fn handle_fetch_circle(Path(param): Path<FetchCircleInputParam>) -> impl IntoResponse {
     let fetch_circle_input = FetchCircleInput { id: param.id };
-    let application_service = FetchCircleService::new(CircleRepository::new());
-    application_service.execute(fetch_circle_input);
+    let usecase = FetchCircleUsecase::new(CircleRepository::new());
+    usecase.execute(fetch_circle_input);
 }

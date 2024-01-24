@@ -14,16 +14,16 @@ pub struct CreateCircleInput {
     pub capacity: usize,
 }
 
-pub struct CreateCircleService<T>
+pub struct CreateCircleUsecase<T>
 where
     T: CircleRepositoryTrait,
 {
     circle_repository: T,
 }
 
-impl<T: CircleRepositoryTrait> CreateCircleService<T> {
+impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
     pub fn new(circle_repository: T) -> Self {
-        CreateCircleService { circle_repository }
+        CreateCircleUsecase { circle_repository }
     }
 
     pub fn execute(&self, circle_circle_input: CreateCircleInput) {

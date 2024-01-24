@@ -1,26 +1,20 @@
 use crate::domain::{
-    aggregate::{
-        circle::Circle,
-        member::Member,
-        value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
-    },
+    aggregate::value_object::circle_id::CircleId,
     repository::circle_repository_trait::CircleRepositoryTrait,
 };
 
-pub struct FetchCircleInput {
-    pub id: usize,
-}
+use super::input::fetch_circle::FetchCircleInput;
 
-pub struct FetchCircleService<T>
+pub struct FetchCircleUsecase<T>
 where
     T: CircleRepositoryTrait,
 {
     circle_repository: T,
 }
 
-impl<T: CircleRepositoryTrait> FetchCircleService<T> {
+impl<T: CircleRepositoryTrait> FetchCircleUsecase<T> {
     pub fn new(circle_repository: T) -> Self {
-        FetchCircleService { circle_repository }
+        FetchCircleUsecase { circle_repository }
     }
 
     pub fn execute(&self, fetch_circle_input: FetchCircleInput) {

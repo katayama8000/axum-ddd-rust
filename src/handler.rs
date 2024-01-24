@@ -30,7 +30,9 @@ pub async fn handle_create_circle(
         capacity: param.capacity,
     };
     let usecase = CreateCircleUsecase::new(CircleRepository::new());
-    usecase.execute(circle_circle_input);
+    usecase
+        .execute(circle_circle_input)
+        .map_err(|e| e.to_string())
 }
 
 #[derive(Debug, Deserialize)]
@@ -41,5 +43,6 @@ pub struct FetchCircleInputParam {
 pub async fn handle_fetch_circle(Path(param): Path<FetchCircleInputParam>) -> impl IntoResponse {
     let fetch_circle_input = FetchCircleInput { id: param.id };
     let usecase = FetchCircleUsecase::new(CircleRepository::new());
-    usecase.execute(fetch_circle_input);
+    // return json
+    let _ = usecase.execute(fetch_circle_input);
 }

@@ -1,3 +1,5 @@
+use anyhow::Error;
+
 use crate::domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
     repository::circle_repository_trait::CircleRepositoryTrait,
@@ -12,11 +14,11 @@ impl CircleRepository {
 }
 
 impl CircleRepositoryTrait for CircleRepository {
-    fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, ()> {
+    fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         unimplemented!()
     }
 
-    fn create(&self, circle: &Circle) -> Result<(), ()> {
+    fn create(&self, circle: &Circle) -> Result<(), Error> {
         unimplemented!()
     }
 

@@ -1,3 +1,5 @@
+use anyhow::Result;
+
 use crate::domain::{
     aggregate::{
         circle::Circle,
@@ -26,7 +28,7 @@ impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
         CreateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&self, circle_circle_input: CreateCircleInput) {
+    pub fn execute(&self, circle_circle_input: CreateCircleInput) -> Result<()> {
         let member_id = MemberId::new(1);
         let circle_id = CircleId::new(1);
         let owner = Member::new(
@@ -42,9 +44,6 @@ impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
             owner,
             circle_circle_input.capacity,
         );
-        match self.circle_repository.create(&circle) {
-            Ok(_) => println!("success"),
-            Err(_) => println!("error"),
-        }
+        self.circle_repository.create(&circle)
     }
 }

@@ -1,5 +1,7 @@
+use anyhow::{Error, Result};
+
 use crate::domain::{
-    aggregate::value_object::circle_id::CircleId,
+    aggregate::{circle::Circle, value_object::circle_id::CircleId},
     repository::circle_repository_trait::CircleRepositoryTrait,
 };
 
@@ -17,11 +19,8 @@ impl<T: CircleRepositoryTrait> FetchCircleUsecase<T> {
         FetchCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&self, fetch_circle_input: FetchCircleInput) {
+    pub fn execute(&self, fetch_circle_input: FetchCircleInput) -> Result<Circle, Error> {
         let circle_id = CircleId::new(fetch_circle_input.id);
-        match self.circle_repository.find_circle_by_id(&circle_id) {
-            Ok(_) => println!("success"),
-            Err(_) => println!("error"),
-        }
+        self.circle_repository.find_circle_by_id(&circle_id)
     }
 }

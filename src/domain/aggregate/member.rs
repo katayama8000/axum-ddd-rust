@@ -2,6 +2,7 @@ use crate::domain::aggregate::value_object::member_id::MemberId;
 
 use super::value_object::{grade::Grade, major::Major};
 
+#[derive(Clone)]
 pub struct Member {
     pub id: MemberId, // メンバーのID (Value Object)
     pub name: String,
@@ -22,6 +23,7 @@ impl Member {
         }
     }
 
+    // 20歳以上かどうかを判定するメソッド
     pub fn is_adult(&self) -> bool {
         self.age >= 20
     }

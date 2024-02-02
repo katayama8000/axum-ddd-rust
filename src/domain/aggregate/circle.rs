@@ -3,8 +3,9 @@ use crate::domain::aggregate::value_object::circle_id::CircleId;
 
 use super::value_object::grade::Grade;
 
+#[derive(Clone)]
 pub struct Circle {
-    pub id: CircleId,
+    pub id: CircleId, // サークルのID (Value Object)
     pub name: String,
     pub capacity: usize,
     pub owner: Member,
@@ -13,14 +14,19 @@ pub struct Circle {
 
 impl Circle {
     // サークルの新規作成メソッド
-    pub fn new(id: CircleId, name: String, owner: Member, capacity: usize) -> Self {
-        Circle {
+    pub fn new(id: CircleId, name: String, owner: Member, capacity: usize) -> Result<Self, String> {
+        // オーナーは3年生のみなれる
+        if owner.grade != Grade::Third {
+            return Err("Owner must be 3rd grade".to_string());
+        }
+
+        Ok(Circle {
             id,
             name,
             owner,
             capacity,
-            members: Vec::new(),
-        }
+            members: vec![],
+        })
     }
 
     // サークルの再構成メソッド
@@ -40,19 +46,31 @@ impl Circle {
         }
     }
 
+    // サークルが満員かどうかを判定するメソッド
     pub fn is_full(&self) -> bool {
         self.members.len() + 1 >= self.capacity
     }
 
-    // circleは3人以下になると解散する
-    pub fn can_run(&self) -> bool {
+    // サークルが運営可能かどうかを判定するメソッド
+    pub fn is_runnable(&self) -> bool {
         self.members.len() + 1 >= 3
+    }
+
+    // 飲み会に参加できるかどうかを判定するメソッド
+    pub fn is_drinkable_alcohol(member: &Member) -> bool {
+        member.is_adult()
     }
 
     // メンバーをサークルに追加するメソッド
     pub fn add_member(&mut self, member: Member) -> Result<(), String> {
+        // 満員の場合はサークルに入れない
         if self.is_full() {
             return Err("Circle member is full".to_string());
+        }
+
+        // 4年生はサークルに入れない
+        if member.grade == Grade::Fourth {
+            return Err("4th grade can't join circle".to_string());
         }
 
         self.members.push(member);
@@ -60,8 +78,13 @@ impl Circle {
     }
 
     // メンバーをサークルから削除するメソッド
-    pub fn remove_member(&mut self, member: &Member) {
+    pub fn remove_member(&mut self, member: &Member) -> Result<(), String> {
+        // オーナーは削除できない
+        if self.owner.id == member.id {
+            return Err("Owner can't be removed".to_string());
+        }
         self.members.retain(|m| m.id != member.id);
+        Ok(())
     }
 
     // 4年生を卒業させるメソッド

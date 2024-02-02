@@ -29,7 +29,7 @@ pub async fn handle_create_circle(
         owner_name: param.owner_name,
         capacity: param.capacity,
     };
-    let usecase = CreateCircleUsecase::new(CircleRepository::new());
+    let mut usecase = CreateCircleUsecase::new(CircleRepository::new());
     usecase
         .execute(circle_circle_input)
         .map_err(|e| e.to_string())

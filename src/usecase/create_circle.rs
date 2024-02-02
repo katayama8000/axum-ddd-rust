@@ -28,7 +28,7 @@ impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
         CreateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&self, circle_circle_input: CreateCircleInput) -> Result<()> {
+    pub fn execute(&mut self, circle_circle_input: CreateCircleInput) -> Result<()> {
         let member_id = MemberId::new(1);
         let circle_id = CircleId::new(1);
         let owner = Member::new(
@@ -43,7 +43,8 @@ impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
             circle_circle_input.circle_name,
             owner,
             circle_circle_input.capacity,
-        );
+        )
+        .unwrap();
         self.circle_repository.create(&circle)
     }
 }

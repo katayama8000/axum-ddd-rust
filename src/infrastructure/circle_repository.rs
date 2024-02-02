@@ -5,28 +5,44 @@ use crate::domain::{
     repository::circle_repository_trait::CircleRepositoryTrait,
 };
 
-pub struct CircleRepository {}
+use super::db::Db;
+
+pub struct CircleRepository {
+    db: Db,
+}
 
 impl CircleRepository {
     pub fn new() -> Self {
-        Self {}
+        Self { db: Db::new() }
     }
 }
 
 impl CircleRepositoryTrait for CircleRepository {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
-        unimplemented!()
+        match self.db.find(&circle_id.to_string()) {
+            Some(circle) => Ok(circle.clone()), // Clone the Circle to return it
+            None => Err(Error::msg("Circle not found")),
+        }
     }
 
-    fn create(&self, circle: &Circle) -> Result<(), Error> {
-        unimplemented!()
+    fn create(&mut self, circle: &Circle) -> Result<(), Error> {
+        match self.db.insert(circle.clone()) {
+            Some(_) => Ok(()),
+            None => Err(Error::msg("Circle already exists")),
+        }
     }
 
-    fn save(&self, circle: &Circle) -> Result<(), ()> {
-        unimplemented!()
+    fn save(&mut self, circle: &Circle) -> Result<(), Error> {
+        match self.db.insert(circle.clone()) {
+            Some(_) => Ok(()),
+            None => Err(Error::msg("Circle not found")),
+        }
     }
 
-    fn delete(&self, circle: &Circle) -> Result<(), ()> {
-        unimplemented!()
+    fn delete(&mut self, circle: &Circle) -> Result<(), Error> {
+        match self.db.delete(&circle.id.to_string()) {
+            Some(_) => Ok(()),
+            None => Err(Error::msg("Circle not found")),
+        }
     }
 }

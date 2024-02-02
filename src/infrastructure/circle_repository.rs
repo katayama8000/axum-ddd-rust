@@ -26,14 +26,14 @@ impl CircleRepositoryTrait for CircleRepository {
     }
 
     fn create(&mut self, circle: &Circle) -> Result<(), Error> {
-        match self.db.insert(circle.clone()) {
+        match self.db.create(circle.clone()) {
             Some(_) => Ok(()),
             None => Err(Error::msg("Circle already exists")),
         }
     }
 
     fn save(&mut self, circle: &Circle) -> Result<(), Error> {
-        match self.db.insert(circle.clone()) {
+        match self.db.update(circle.clone()) {
             Some(_) => Ok(()),
             None => Err(Error::msg("Circle not found")),
         }

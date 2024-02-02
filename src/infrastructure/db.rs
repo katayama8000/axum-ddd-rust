@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Db {
-    pub db: HashMap<String, Circle>,
+    db: HashMap<String, Circle>,
 }
 
 impl Db {

@@ -1,4 +1,4 @@
-use crate::handler::{handle_create_circle, handle_fetch_circle, handle_get};
+use crate::handler::{handle_create_circle, handle_fetch_circle, handle_get, handle_update_circle};
 
 mod domain;
 mod handler;
@@ -6,7 +6,7 @@ mod infrastructure;
 mod usecase;
 
 use axum::{
-    routing::{get, post},
+    routing::{get, post, put},
     Router,
 };
 
@@ -22,6 +22,7 @@ async fn main() -> Result<(), ()> {
         .route("/", get(handle_get))
         .route("/circle/:id", get(handle_fetch_circle))
         .route("/circle", post(handle_create_circle))
+        .route("/circle/:id", put(handle_update_circle))
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")

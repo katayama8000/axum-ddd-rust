@@ -20,7 +20,13 @@ impl CircleRepository {
 impl CircleRepositoryTrait for CircleRepository {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.find(&circle_id.to_string()) {
-            Some(circle) => Ok(circle.clone()), // Clone the Circle to return it
+            Some(circle) => Ok(Circle::reconstruct(
+                circle.id.clone(),
+                circle.name.clone(),
+                circle.owner.clone(),
+                circle.capacity,
+                circle.members.clone(),
+            )),
             None => Err(Error::msg("Circle not found")),
         }
     }

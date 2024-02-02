@@ -5,7 +5,7 @@ use crate::domain::{
     repository::circle_repository_trait::CircleRepositoryTrait,
 };
 
-use super::input::fetch_circle::FetchCircleInput;
+use super::param::fetch_circle::FetchCircleParam;
 
 pub struct FetchCircleUsecase<T>
 where
@@ -19,7 +19,7 @@ impl<T: CircleRepositoryTrait> FetchCircleUsecase<T> {
         FetchCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&self, fetch_circle_input: FetchCircleInput) -> Result<Circle, Error> {
+    pub fn execute(&self, fetch_circle_input: FetchCircleParam) -> Result<Circle, Error> {
         let circle_id = CircleId::new(fetch_circle_input.id);
         self.circle_repository.find_circle_by_id(&circle_id)
     }

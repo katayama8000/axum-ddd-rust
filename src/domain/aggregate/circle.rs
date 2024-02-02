@@ -46,6 +46,15 @@ impl Circle {
         }
     }
 
+    pub fn update(&mut self, name: Option<String>, capacity: Option<usize>) {
+        if let Some(name) = name {
+            self.name = name;
+        }
+        if let Some(capacity) = capacity {
+            self.capacity = capacity;
+        };
+    }
+
     // サークルが満員かどうかを判定するメソッド
     pub fn is_full(&self) -> bool {
         self.members.len() + 1 >= self.capacity

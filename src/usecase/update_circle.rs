@@ -21,7 +21,12 @@ impl<T: CircleRepositoryTrait> UpdateCircleUsecase<T> {
 
     pub fn execute(&mut self, update_circle_input: UpdateCircleParam) -> Result<(), Error> {
         let circle_id = CircleId::new(update_circle_input.id);
-        let circle = self.circle_repository.find_circle_by_id(&circle_id)?;
+        let mut circle = self.circle_repository.find_circle_by_id(&circle_id)?;
+
+        circle.update(
+            update_circle_input.circle_name,
+            update_circle_input.capacity,
+        );
         self.circle_repository.save(&circle)
     }
 }

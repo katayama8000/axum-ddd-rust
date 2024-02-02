@@ -60,7 +60,6 @@ pub async fn handle_update_circle(
     let update_circle_input = UpdateCircleParam {
         id: path.id,
         circle_name: param.circle_name,
-        owner_name: param.owner_name,
         capacity: param.capacity,
     };
     let mut usecase = UpdateCircleUsecase::new(CircleRepository::new());

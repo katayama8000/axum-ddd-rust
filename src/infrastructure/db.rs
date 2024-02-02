@@ -1,5 +1,3 @@
-use anyhow::Error;
-
 use crate::domain::aggregate::circle::Circle;
 use std::collections::HashMap;
 

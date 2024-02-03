@@ -23,7 +23,10 @@ where
     circle_repository: T,
 }
 
-impl<T: CircleRepositoryTrait> CreateCircleUsecase<T> {
+impl<T> CreateCircleUsecase<T>
+where
+    T: CircleRepositoryTrait,
+{
     pub fn new(circle_repository: T) -> Self {
         CreateCircleUsecase { circle_repository }
     }

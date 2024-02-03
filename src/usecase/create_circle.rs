@@ -1,4 +1,5 @@
 use anyhow::Result;
+use rand::Rng;
 
 use crate::domain::{
     aggregate::{
@@ -32,13 +33,16 @@ where
     }
 
     pub fn execute(&mut self, circle_circle_input: CreateCircleInput) -> Result<()> {
-        let member_id = MemberId::new(1);
-        let circle_id = CircleId::new(1);
+        let mut rng = rand::thread_rng();
+        let member_id = rng.gen::<usize>();
+        let circle_id = rng.gen::<usize>();
+        let owner_id = MemberId::new(member_id);
+        let circle_id = CircleId::new(circle_id);
         let owner = Member::new(
-            member_id,
+            owner_id,
             circle_circle_input.owner_name,
             21,
-            Grade::Fourth,
+            Grade::Third,
             Major::Art,
         );
         let circle = Circle::new(

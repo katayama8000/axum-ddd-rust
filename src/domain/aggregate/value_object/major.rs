@@ -1,21 +1,9 @@
 #[derive(Clone)]
 pub enum Major {
     ComputerScience,
-    Mathematics,
-    Physics,
-    Chemistry,
-    Biology,
-    English,
-    History,
-    Geography,
     Economics,
-    Business,
     Law,
-    Psychology,
-    Sociology,
-    Philosophy,
     Art,
     Music,
-    Sports,
     Other,
 }

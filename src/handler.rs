@@ -5,6 +5,10 @@ use axum::{
 use serde::Deserialize;
 
 use crate::{
+    domain::aggregate::{
+        member::Member,
+        value_object::{grade::Grade, major::Major},
+    },
     infrastructure::circle_repository::CircleRepository,
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleUsecase},
@@ -25,10 +29,28 @@ pub async fn handle_get(State(state): State<AppState>) -> String {
 }
 
 pub async fn handle_create_circle(Query(param): Query<CreateCircleParam>) -> impl IntoResponse {
+    let grade = match param.owner_grade.as_str() {
+        "first" => Grade::First,
+        "second" => Grade::Second,
+        "third" => Grade::Third,
+        "fourth" => Grade::Fourth,
+        _ => unimplemented!("error"),
+    };
+
+    let major = match param.owner_major.as_str() {
+        "ComputerScience" => Major::ComputerScience,
+        "Economics" => Major::Economics,
+        "Law" => Major::Law,
+        "Art" => Major::Art,
+        "Music" => Major::Music,
+        _ => Major::Other,
+    };
+
+    let owner = Member::new(param.owner_name, param.owner_age, grade, major);
     let circle_circle_input = CreateCircleInput {
         id: param.id,
         circle_name: param.circle_name,
-        owner_name: param.owner_name,
+        owner,
         capacity: param.capacity,
     };
     let mut usecase = CreateCircleUsecase::new(CircleRepository::new());

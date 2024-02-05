@@ -38,8 +38,7 @@ where
             circle_circle_input.circle_name,
             owner,
             circle_circle_input.capacity,
-        )
-        .unwrap();
+        )?;
         self.circle_repository.create(&circle)
     }
 }

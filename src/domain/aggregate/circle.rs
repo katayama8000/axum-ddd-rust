@@ -2,6 +2,7 @@ use crate::domain::aggregate::member::Member;
 use crate::domain::aggregate::value_object::circle_id::CircleId;
 
 use super::value_object::grade::Grade;
+use anyhow::Error;
 use rand::Rng;
 
 #[derive(Clone)]
@@ -15,10 +16,10 @@ pub struct Circle {
 
 impl Circle {
     // サークルの新規作成メソッド
-    pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, String> {
+    pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {
-            return Err("Owner must be 3rd grade".to_string());
+            return Err(Error::msg("Owner must be 3rd grade"));
         }
 
         let mut gen = rand::thread_rng();

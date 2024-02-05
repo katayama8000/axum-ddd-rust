@@ -15,7 +15,6 @@ pub struct Member {
 impl Member {
     // メンバーの新規作成メソッド
     pub fn new(name: String, age: usize, grade: Grade, major: Major) -> Self {
-        // idは自動生成されるので、引数に含めない
         let mut rng = rand::thread_rng();
         let id = MemberId::new(rng.gen::<usize>());
         Member {

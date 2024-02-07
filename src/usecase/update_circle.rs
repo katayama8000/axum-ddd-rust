@@ -13,6 +13,16 @@ pub struct UpdateCircleInput {
     pub capacity: Option<usize>,
 }
 
+impl UpdateCircleInput {
+    pub fn new(id: usize, circle_name: Option<String>, capacity: Option<usize>) -> Self {
+        UpdateCircleInput {
+            id,
+            circle_name,
+            capacity,
+        }
+    }
+}
+
 pub struct UpdateCircleUsecase<T>
 where
     T: CircleRepositoryTrait,

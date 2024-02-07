@@ -11,6 +11,12 @@ pub struct FetchCircleInput {
     pub id: usize,
 }
 
+impl FetchCircleInput {
+    pub fn new(id: usize) -> Self {
+        FetchCircleInput { id }
+    }
+}
+
 pub struct FetchCircleUsecase<T>
 where
     T: CircleRepositoryTrait,

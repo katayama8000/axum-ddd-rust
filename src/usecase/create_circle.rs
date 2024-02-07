@@ -12,13 +12,32 @@ use crate::domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleInput {
-    pub id: usize,
     pub circle_name: String,
     pub capacity: usize,
     pub owner_name: String,
     pub owner_age: usize,
     pub owner_grade: usize,
     pub owner_major: String,
+}
+
+impl CreateCircleInput {
+    pub fn new(
+        circle_name: String,
+        capacity: usize,
+        owner_name: String,
+        owner_age: usize,
+        owner_grade: usize,
+        owner_major: String,
+    ) -> Self {
+        CreateCircleInput {
+            circle_name,
+            capacity,
+            owner_name,
+            owner_age,
+            owner_grade,
+            owner_major,
+        }
+    }
 }
 
 pub struct CreateCircleUsecase<T>

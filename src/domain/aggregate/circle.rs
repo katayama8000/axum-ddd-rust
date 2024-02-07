@@ -51,6 +51,7 @@ impl Circle {
         }
     }
 
+    // サークルの更新メソッド
     pub fn update(&mut self, name: Option<String>, capacity: Option<usize>) {
         if let Some(name) = name {
             self.name = name;

@@ -7,7 +7,7 @@ use crate::domain::{
         member::Member,
         value_object::{grade::Grade, major::Major},
     },
-    repository::circle_repository_trait::CircleRepositoryTrait,
+    port::circle_repository_port::CircleRepositoryPort,
 };
 
 #[derive(Debug, Deserialize)]
@@ -42,14 +42,14 @@ impl CreateCircleInput {
 
 pub struct CreateCircleUsecase<T>
 where
-    T: CircleRepositoryTrait,
+    T: CircleRepositoryPort,
 {
     circle_repository: T,
 }
 
 impl<T> CreateCircleUsecase<T>
 where
-    T: CircleRepositoryTrait,
+    T: CircleRepositoryPort,
 {
     pub fn new(circle_repository: T) -> Self {
         CreateCircleUsecase { circle_repository }

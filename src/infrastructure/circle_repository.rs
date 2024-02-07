@@ -2,7 +2,7 @@ use anyhow::Error;
 
 use crate::domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
-    repository::circle_repository_trait::CircleRepositoryTrait,
+    port::circle_repository_port::CircleRepositoryPort,
 };
 
 use super::db::Db;
@@ -17,7 +17,7 @@ impl CircleRepository {
     }
 }
 
-impl CircleRepositoryTrait for CircleRepository {
+impl CircleRepositoryPort for CircleRepository {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.find(&circle_id.to_string()) {
             Some(circle) => Ok(Circle::reconstruct(

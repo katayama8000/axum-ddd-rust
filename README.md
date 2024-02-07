@@ -1,9 +1,12 @@
 # This is a Management Circle App for University.
+
 ## Stack
-- rust
+
+- Rust
 - axum
 - tokio
 - Docker
 
-## Architecture
+## Design Pattern
+
 - Domain Driven Design

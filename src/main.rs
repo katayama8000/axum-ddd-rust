@@ -1,4 +1,7 @@
-use crate::handler::{handle_create_circle, handle_fetch_circle, handle_update_circle};
+use crate::{
+    handler::{handle_create_circle, handle_fetch_circle, handle_get, handle_update_circle},
+    infrastructure::db::Db,
+};
 
 mod domain;
 mod handler;

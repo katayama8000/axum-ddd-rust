@@ -1,4 +1,3 @@
-use crate::domain::aggregate::circle::Circle;
 use std::{
     collections::HashMap,
     sync::{Arc, RwLock},
@@ -6,7 +5,7 @@ use std::{
 
 #[derive(Clone, Debug)]
 pub struct Db {
-    db: Arc<RwLock<HashMap<String, Circle>>>,
+    db: Arc<RwLock<HashMap<String, String>>>,
 }
 
 impl Db {
@@ -16,52 +15,55 @@ impl Db {
         }
     }
 
-    pub fn update(&self, circle: Circle) -> Option<Circle> {
-        if self.is_registered(&circle.id.to_string()) {
-            self.db
-                .write()
-                // FIXME
-                .unwrap()
-                .insert(circle.id.to_string(), circle)
-        } else {
-            None
-        }
-    }
-
-    pub fn create(&self, circle: Circle) -> Option<Circle> {
-        if self.is_registered(&circle.id.to_string()) {
-            Some(circle)
-        } else {
-            self.db
-                .write()
-                // FIXME
-                .unwrap()
-                .insert(circle.id.to_string(), circle)
-        }
-    }
-
-    pub fn find(&self, circle_id: &str) -> Option<Circle> {
+    pub fn get<D, K>(&self, key: K) -> anyhow::Result<Option<D>>
+    where
+        K: AsRef<str>,
+        D: serde::de::DeserializeOwned,
+    {
         self.db
             .read()
             // FIXME
             .unwrap()
-            .get(circle_id)
-            .cloned()
+            .get(key.as_ref())
+            .map(String::as_str)
+            .map(serde_json::from_str::<'_, D>)
+            .map(|result| result.map_err(anyhow::Error::from))
+            .transpose()
     }
 
-    pub fn delete(&self, circle_id: &str) -> Option<Circle> {
+    pub fn keys(&self) -> Vec<String> {
+        self.db
+            .read()
+            // FIXME
+            .unwrap()
+            .keys()
+            .cloned()
+            .collect()
+    }
+
+    pub fn remove<K>(&self, key: K) -> anyhow::Result<()>
+    where
+        K: AsRef<str>,
+    {
         self.db
             .write()
             // FIXME
             .unwrap()
-            .remove(circle_id)
+            .remove(key.as_ref());
+        Ok(())
     }
 
-    fn is_registered(&self, circle_id: &str) -> bool {
+    pub fn set<S, K>(&self, key: K, value: &S) -> anyhow::Result<()>
+    where
+        K: Into<String>,
+        S: serde::ser::Serialize,
+    {
+        let value = serde_json::to_string(value)?;
         self.db
-            .read()
+            .write()
             // FIXME
             .unwrap()
-            .contains_key(circle_id)
+            .insert(key.into(), value);
+        Ok(())
     }
 }

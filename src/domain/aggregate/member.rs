@@ -26,6 +26,16 @@ impl Member {
         }
     }
 
+    pub fn reconstruct(id: MemberId, name: String, age: usize, grade: Grade, major: Major) -> Self {
+        Member {
+            id,
+            name,
+            age,
+            grade,
+            major,
+        }
+    }
+
     // 20歳以上かどうかを判定するメソッド
     pub fn is_adult(&self) -> bool {
         self.age >= 20

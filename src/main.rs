@@ -63,8 +63,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        // FIXME: I think CircleRepository::create is incorrect.
-        assert_eq!(response_body, "Circle already exists");
+        assert_eq!(response_body, "");
         // FIXME: check state
         Ok(())
     }

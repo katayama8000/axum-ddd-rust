@@ -33,8 +33,8 @@ impl CircleRepositoryPort for CircleRepository {
 
     fn create(&mut self, circle: &Circle) -> Result<(), Error> {
         match self.db.create(circle.clone()) {
-            Some(_) => Ok(()),
-            None => Err(Error::msg("Circle already exists")),
+            Some(_) => Err(Error::msg("Circle already exists")),
+            None => Ok(()),
         }
     }
 

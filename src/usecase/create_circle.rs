@@ -58,14 +58,8 @@ where
     pub fn execute(&mut self, circle_circle_input: CreateCircleInput) -> Result<()> {
         let grade = Grade::try_from(circle_circle_input.owner_grade)?;
 
-        let major = match circle_circle_input.owner_major.as_str() {
-            "ComputerScience" => Major::ComputerScience,
-            "Economics" => Major::Economics,
-            "Law" => Major::Law,
-            "Art" => Major::Art,
-            "Music" => Major::Music,
-            _ => Major::Other,
-        };
+        let major = Major::from(circle_circle_input.owner_major.as_str());
+
         let owner = Member::new(
             circle_circle_input.owner_name,
             circle_circle_input.owner_age,

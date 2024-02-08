@@ -9,9 +9,11 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
+use infrastructure::circle_repository::CircleRepository;
 
 #[derive(Clone)]
 struct AppState {
+    circle_repository: CircleRepository,
     counter: usize,
 }
 
@@ -25,7 +27,10 @@ fn router() -> Router<AppState> {
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    let state = AppState { counter: 0 };
+    let state = AppState {
+        circle_repository: CircleRepository::new(),
+        counter: 0,
+    };
 
     let app = router().with_state(state);
 
@@ -46,7 +51,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_circle() -> anyhow::Result<()> {
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+            counter: 0,
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -71,7 +79,10 @@ mod tests {
     #[tokio::test]
     async fn test_fetch_circle() -> anyhow::Result<()> {
         // FIXME: prepare state
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+            counter: 0,
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -93,7 +104,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_root() -> anyhow::Result<()> {
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+            counter: 0,
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -116,7 +130,10 @@ mod tests {
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {
         // FIXME: prepare state
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+            counter: 0,
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(

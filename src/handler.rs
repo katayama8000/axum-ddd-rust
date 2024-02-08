@@ -1,3 +1,5 @@
+use std::env;
+
 use axum::{
     extract::{Path, Query, State},
     response::IntoResponse,
@@ -13,10 +15,8 @@ use crate::{
     AppState,
 };
 
-pub async fn handle_get(State(state): State<AppState>) -> String {
-    println!("counter: {}", state.counter);
-    println!("GET / html");
-    "Hello, World!".to_string()
+pub async fn handle_get_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
 }
 
 pub async fn handle_create_circle(

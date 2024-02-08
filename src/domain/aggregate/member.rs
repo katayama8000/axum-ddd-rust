@@ -3,7 +3,7 @@ use crate::domain::aggregate::value_object::member_id::MemberId;
 use super::value_object::{grade::Grade, major::Major};
 use rand::Rng;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Member {
     pub id: MemberId, // メンバーのID (Value Object)
     pub name: String,

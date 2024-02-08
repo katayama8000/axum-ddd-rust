@@ -39,7 +39,7 @@ impl CircleRepositoryPort for CircleRepository {
         }
     }
 
-    fn save(&self, circle: &Circle) -> Result<(), Error> {
+    fn update(&self, circle: &Circle) -> Result<(), Error> {
         match self.db.update(circle.clone()) {
             Some(_) => Ok(()),
             None => Err(Error::msg("Circle not found")),
@@ -75,7 +75,7 @@ mod tests {
         repository.create(&circle1)?;
         assert_eq!(repository.find_circle_by_id(&circle1.id)?, circle1);
         circle1.name = "circle_name2".to_string();
-        repository.save(&circle1)?;
+        repository.update(&circle1)?;
         assert_eq!(repository.find_circle_by_id(&circle1.id)?, circle1);
         repository.delete(&circle1)?;
         assert!(repository.find_circle_by_id(&circle1.id).is_err());

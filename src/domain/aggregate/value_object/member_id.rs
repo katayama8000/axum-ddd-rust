@@ -1,7 +1,7 @@
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Copy, Debug, Clone, PartialEq, Eq)]
 pub struct MemberId(usize);
 
 impl MemberId {

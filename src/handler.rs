@@ -34,6 +34,7 @@ pub async fn handle_create_circle(
     let mut usecase = CreateCircleUsecase::new(state.circle_repository);
     usecase
         .execute(circle_circle_input)
+        .map(|_| ())
         .map_err(|e| e.to_string())
 }
 

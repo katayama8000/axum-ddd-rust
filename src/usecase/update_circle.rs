@@ -46,6 +46,6 @@ where
             update_circle_input.circle_name,
             update_circle_input.capacity,
         );
-        self.circle_repository.save(&circle)
+        self.circle_repository.update(&circle)
     }
 }

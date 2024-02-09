@@ -5,7 +5,7 @@ use super::value_object::grade::Grade;
 use anyhow::Error;
 use rand::Rng;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Circle {
     pub id: CircleId, // サークルのID (Value Object)
     pub name: String,

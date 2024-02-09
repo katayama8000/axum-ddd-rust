@@ -1,4 +1,4 @@
-use crate::handler::{handle_create_circle, handle_fetch_circle, handle_get, handle_update_circle};
+use crate::handler::{handle_create_circle, handle_fetch_circle, handle_update_circle};
 
 mod domain;
 mod handler;
@@ -9,15 +9,17 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
+use handler::handle_get_version;
+use infrastructure::circle_repository::CircleRepository;
 
 #[derive(Clone)]
 struct AppState {
-    counter: usize,
+    circle_repository: CircleRepository,
 }
 
 fn router() -> Router<AppState> {
     Router::new()
-        .route("/", get(handle_get))
+        .route("/", get(handle_get_version))
         .route("/circle/:id", get(handle_fetch_circle))
         .route("/circle", post(handle_create_circle))
         .route("/circle/:id", put(handle_update_circle))
@@ -25,7 +27,9 @@ fn router() -> Router<AppState> {
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    let state = AppState { counter: 0 };
+    let state = AppState {
+        circle_repository: CircleRepository::new(),
+    };
 
     let app = router().with_state(state);
 
@@ -46,7 +50,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_circle() -> anyhow::Result<()> {
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -63,8 +69,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        // FIXME: I think CircleRepository::create is incorrect.
-        assert_eq!(response_body, "Circle already exists");
+        assert_eq!(response_body, "");
         // FIXME: check state
         Ok(())
     }
@@ -72,7 +77,9 @@ mod tests {
     #[tokio::test]
     async fn test_fetch_circle() -> anyhow::Result<()> {
         // FIXME: prepare state
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -93,8 +100,10 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_root() -> anyhow::Result<()> {
-        let state = AppState { counter: 0 };
+    async fn test_version() -> anyhow::Result<()> {
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(
@@ -110,14 +119,16 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "Hello, World!");
+        assert_eq!(response_body, "0.1.0");
         Ok(())
     }
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {
         // FIXME: prepare state
-        let state = AppState { counter: 0 };
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+        };
         let app = router().with_state(state);
         let response = app
             .oneshot(

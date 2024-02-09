@@ -43,7 +43,7 @@ async fn main() -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
-    use axum::http::StatusCode;
+    use axum::http::{header::CONTENT_TYPE, StatusCode};
     use tower::ServiceExt;
 
     use crate::{
@@ -57,7 +57,7 @@ mod tests {
             },
             port::circle_repository_port::CircleRepositoryPort as _,
         },
-        handler::CreateCircleResponseBody,
+        handler::{CreateCircleRequestBody, CreateCircleResponseBody},
     };
 
     use super::*;
@@ -72,19 +72,24 @@ mod tests {
             .oneshot(
                 axum::http::Request::builder()
                     .method("POST")
-                    // FIXME: why don't you use request body
-                    .uri("/circle?circle_name=circle_name1&capacity=1&owner_name=owner1&owner_age=21&owner_grade=3&owner_major=Music")
-                    .body(axum::body::Body::empty())?,
+                    .uri("/circle")
+                    .header(CONTENT_TYPE, "application/json")
+                    .body(axum::body::Body::new(serde_json::to_string(
+                        &CreateCircleRequestBody {
+                            circle_name: "circle_name1".to_string(),
+                            capacity: 1,
+                            owner_name: "owner1".to_string(),
+                            owner_age: 21,
+                            owner_grade: 3,
+                            owner_major: "Music".to_string(),
+                        },
+                    )?))?,
             )
             .await?;
         assert_eq!(response.status(), StatusCode::OK);
-        let response_body = String::from_utf8(
-            axum::body::to_bytes(response.into_body(), usize::MAX)
-                .await?
-                .to_vec(),
+        let response_body = serde_json::from_slice::<'_, CreateCircleResponseBody>(
+            &axum::body::to_bytes(response.into_body(), usize::MAX).await?,
         )?;
-        let response_body =
-            serde_json::from_str::<'_, CreateCircleResponseBody>(response_body.as_str())?;
 
         // check state
         let created = state

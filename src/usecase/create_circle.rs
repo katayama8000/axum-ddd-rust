@@ -56,22 +56,10 @@ where
     }
 
     pub fn execute(&mut self, circle_circle_input: CreateCircleInput) -> Result<()> {
-        let grade = match circle_circle_input.owner_grade {
-            1 => Grade::First,
-            2 => Grade::Second,
-            3 => Grade::Third,
-            4 => Grade::Fourth,
-            _ => unimplemented!("error"),
-        };
+        let grade = Grade::try_from(circle_circle_input.owner_grade)?;
 
-        let major = match circle_circle_input.owner_major.as_str() {
-            "ComputerScience" => Major::ComputerScience,
-            "Economics" => Major::Economics,
-            "Law" => Major::Law,
-            "Art" => Major::Art,
-            "Music" => Major::Music,
-            _ => Major::Other,
-        };
+        let major = Major::from(circle_circle_input.owner_major.as_str());
+
         let owner = Member::new(
             circle_circle_input.owner_name,
             circle_circle_input.owner_age,

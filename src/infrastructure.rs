@@ -1,2 +1,2 @@
 pub mod circle_repository;
-mod db;
+pub mod db;

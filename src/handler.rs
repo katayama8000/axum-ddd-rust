@@ -3,12 +3,13 @@ use std::env;
 use axum::{
     extract::{Path, Query, State},
     response::IntoResponse,
+    Json,
 };
 use serde::Deserialize;
 
 use crate::{
     usecase::{
-        create_circle::{CreateCircleInput, CreateCircleUsecase},
+        create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
         fetch_circle::{FetchCircleInput, FetchCircleUsecase},
         update_circle::{UpdateCircleInput, UpdateCircleUsecase},
     },
@@ -19,10 +20,30 @@ pub async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct CreateCircleResponseBody {
+    pub circle_id: usize,
+    pub owner_id: usize,
+}
+
+impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {
+    fn from(
+        CreateCircleOutput {
+            circle_id,
+            owner_id,
+        }: CreateCircleOutput,
+    ) -> Self {
+        CreateCircleResponseBody {
+            circle_id,
+            owner_id,
+        }
+    }
+}
+
 pub async fn handle_create_circle(
     State(state): State<AppState>,
     Query(param): Query<CreateCircleInput>,
-) -> impl IntoResponse {
+) -> Result<Json<CreateCircleResponseBody>, String> {
     let circle_circle_input = CreateCircleInput::new(
         param.circle_name,
         param.capacity,
@@ -34,7 +55,8 @@ pub async fn handle_create_circle(
     let mut usecase = CreateCircleUsecase::new(state.circle_repository);
     usecase
         .execute(circle_circle_input)
-        .map(|_| ())
+        .map(CreateCircleResponseBody::from)
+        .map(Json)
         .map_err(|e| e.to_string())
 }
 

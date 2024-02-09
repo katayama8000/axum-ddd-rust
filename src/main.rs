@@ -46,6 +46,20 @@ mod tests {
     use axum::http::StatusCode;
     use tower::ServiceExt;
 
+    use crate::{
+        domain::{
+            aggregate::{
+                circle::Circle,
+                member::Member,
+                value_object::{
+                    circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId,
+                },
+            },
+            port::circle_repository_port::CircleRepositoryPort as _,
+        },
+        handler::CreateCircleResponseBody,
+    };
+
     use super::*;
 
     #[tokio::test]
@@ -53,7 +67,7 @@ mod tests {
         let state = AppState {
             circle_repository: CircleRepository::new(),
         };
-        let app = router().with_state(state);
+        let app = router().with_state(state.clone());
         let response = app
             .oneshot(
                 axum::http::Request::builder()
@@ -69,8 +83,29 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "");
-        // FIXME: check state
+        let response_body =
+            serde_json::from_str::<'_, CreateCircleResponseBody>(response_body.as_str())?;
+
+        // check state
+        let created = state
+            .circle_repository
+            .find_circle_by_id(&CircleId::new(response_body.circle_id))?;
+        assert_eq!(
+            created,
+            Circle::reconstruct(
+                CircleId::new(response_body.circle_id),
+                "circle_name1".to_string(),
+                Member::reconstruct(
+                    MemberId::new(response_body.owner_id),
+                    "owner1".to_string(),
+                    21,
+                    Grade::try_from(3)?,
+                    Major::Music
+                ),
+                1,
+                vec![]
+            )
+        );
         Ok(())
     }
 

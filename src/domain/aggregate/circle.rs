@@ -62,17 +62,17 @@ impl Circle {
     }
 
     // サークルが満員かどうかを判定するメソッド
-    pub fn is_full(&self) -> bool {
+    fn is_full(&self) -> bool {
         self.members.len() + 1 >= self.capacity
     }
 
     // サークルが運営可能かどうかを判定するメソッド
-    pub fn is_runnable(&self) -> bool {
+    fn is_runnable(&self) -> bool {
         self.members.len() + 1 >= 3
     }
 
     // 飲み会に参加できるかどうかを判定するメソッド
-    pub fn is_drinkable_alcohol(member: &Member) -> bool {
+    fn is_drinkable_alcohol(member: &Member) -> bool {
         member.is_adult()
     }
 

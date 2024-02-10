@@ -40,6 +40,12 @@ impl CreateCircleInput {
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CreateCircleOutput {
+    pub circle_id: usize,
+    pub owner_id: usize,
+}
+
 pub struct CreateCircleUsecase<T>
 where
     T: CircleRepositoryPort,
@@ -55,7 +61,10 @@ where
         CreateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&mut self, circle_circle_input: CreateCircleInput) -> Result<()> {
+    pub fn execute(
+        &mut self,
+        circle_circle_input: CreateCircleInput,
+    ) -> Result<CreateCircleOutput> {
         let grade = Grade::try_from(circle_circle_input.owner_grade)?;
 
         let major = Major::from(circle_circle_input.owner_major.as_str());
@@ -66,11 +75,17 @@ where
             grade,
             major,
         );
+        let owner_id = owner.id;
         let circle = Circle::new(
             circle_circle_input.circle_name,
             owner,
             circle_circle_input.capacity,
         )?;
-        self.circle_repository.create(&circle)
+        self.circle_repository
+            .create(&circle)
+            .map(|_| CreateCircleOutput {
+                circle_id: usize::from(circle.id),
+                owner_id: usize::from(owner_id),
+            })
     }
 }

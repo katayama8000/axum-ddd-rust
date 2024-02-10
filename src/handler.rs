@@ -3,12 +3,13 @@ use std::env;
 use axum::{
     extract::{Path, Query, State},
     response::IntoResponse,
+    Json,
 };
 use serde::Deserialize;
 
 use crate::{
     usecase::{
-        create_circle::{CreateCircleInput, CreateCircleUsecase},
+        create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
         fetch_circle::{FetchCircleInput, FetchCircleUsecase},
         update_circle::{UpdateCircleInput, UpdateCircleUsecase},
     },
@@ -19,21 +20,68 @@ pub async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct CreateCircleRequestBody {
+    pub circle_name: String,
+    pub capacity: usize,
+    pub owner_name: String,
+    pub owner_age: usize,
+    pub owner_grade: usize,
+    pub owner_major: String,
+}
+
+impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
+    fn from(
+        CreateCircleRequestBody {
+            circle_name,
+            capacity,
+            owner_name,
+            owner_age,
+            owner_grade,
+            owner_major,
+        }: CreateCircleRequestBody,
+    ) -> Self {
+        CreateCircleInput::new(
+            circle_name,
+            capacity,
+            owner_name,
+            owner_age,
+            owner_grade,
+            owner_major,
+        )
+    }
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct CreateCircleResponseBody {
+    pub circle_id: usize,
+    pub owner_id: usize,
+}
+
+impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {
+    fn from(
+        CreateCircleOutput {
+            circle_id,
+            owner_id,
+        }: CreateCircleOutput,
+    ) -> Self {
+        CreateCircleResponseBody {
+            circle_id,
+            owner_id,
+        }
+    }
+}
+
 pub async fn handle_create_circle(
     State(state): State<AppState>,
-    Query(param): Query<CreateCircleInput>,
-) -> impl IntoResponse {
-    let circle_circle_input = CreateCircleInput::new(
-        param.circle_name,
-        param.capacity,
-        param.owner_name,
-        param.owner_age,
-        param.owner_grade,
-        param.owner_major,
-    );
+    Json(body): Json<CreateCircleRequestBody>,
+) -> Result<Json<CreateCircleResponseBody>, String> {
+    let circle_circle_input = CreateCircleInput::from(body);
     let mut usecase = CreateCircleUsecase::new(state.circle_repository);
     usecase
         .execute(circle_circle_input)
+        .map(CreateCircleResponseBody::from)
+        .map(Json)
         .map_err(|e| e.to_string())
 }
 

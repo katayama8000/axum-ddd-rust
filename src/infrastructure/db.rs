@@ -67,3 +67,38 @@ impl Db {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use anyhow::Ok;
+
+    #[test]
+    fn test_set_and_get() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string())?;
+        let retrieved_value = db.get::<String, _>("key1")?.unwrap();
+        assert_eq!(retrieved_value, "value1");
+        Ok(())
+    }
+
+    #[test]
+    fn test_remove() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string()).unwrap();
+        db.remove("key1")?;
+        let retrieved_value: Option<String> = db.get::<String, _>("key1")?;
+        assert!(retrieved_value.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_keys() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string())?;
+        db.set("key2", &"value2".to_string())?;
+        let keys = db.keys();
+        assert!(keys.contains(&String::from("key1")));
+        assert!(keys.contains(&String::from("key2")));
+        Ok(())
+    }
+}

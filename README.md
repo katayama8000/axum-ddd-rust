@@ -1,4 +1,4 @@
-# University Management Circle App
+# This is a Management  Circle App for University
 
 ## Stack
 
@@ -30,7 +30,7 @@ curl -X POST \
   http://127.0.0.1:3000/circle
 ```
 
-### Find
+### find
 ```bash
 curl -X GET http://127.0.0.1:3000/circle/{circle_id}
 ``` 

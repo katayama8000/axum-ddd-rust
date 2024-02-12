@@ -22,12 +22,12 @@ pub struct FetchCircleOutput {
     pub circle_id: usize,
     pub circle_name: String,
     pub capacity: usize,
-    pub owner: MemberOutPut,
-    pub members: Vec<MemberOutPut>,
+    pub owner: MemberOutput,
+    pub members: Vec<MemberOutput>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct MemberOutPut {
+pub struct MemberOutput {
     pub id: usize,
     pub name: String,
     pub age: usize,
@@ -60,7 +60,7 @@ where
                 circle_id: usize::from(circle.id),
                 circle_name: circle.name,
                 capacity: circle.capacity,
-                owner: MemberOutPut {
+                owner: MemberOutput {
                     id: usize::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
@@ -70,7 +70,7 @@ where
                 members: circle
                     .members
                     .iter()
-                    .map(|member| MemberOutPut {
+                    .map(|member| MemberOutput {
                         id: usize::from(member.id),
                         name: member.name.clone(),
                         age: member.age,

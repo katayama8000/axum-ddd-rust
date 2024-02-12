@@ -10,7 +10,7 @@ use serde::Deserialize;
 use crate::{
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
-        fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutPut},
+        fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutput},
         update_circle::{UpdateCircleInput, UpdateCircleUsecase},
     },
     AppState,
@@ -95,8 +95,8 @@ pub struct FetcheCircleResponseBody {
     pub circle_id: usize,
     pub circle_name: String,
     pub capacity: usize,
-    pub owner: MemberOutPut,
-    pub members: Vec<MemberOutPut>,
+    pub owner: MemberOutput,
+    pub members: Vec<MemberOutput>,
 }
 
 impl std::convert::From<FetchCircleOutput> for FetcheCircleResponseBody {

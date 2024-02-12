@@ -25,7 +25,7 @@ impl Circle {
             return Err(Error::msg("Owner must be 3rd grade"));
         }
 
-        // サークルの店員は3人以上
+        // サークルの定員は3人以上
         if capacity < 3 {
             return Err(Error::msg("Circle capacity must be 3 or more"));
         }

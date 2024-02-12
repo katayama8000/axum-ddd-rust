@@ -101,7 +101,7 @@ mod tests {
                     .body(axum::body::Body::new(serde_json::to_string(
                         &CreateCircleRequestBody {
                             circle_name: "circle_name1".to_string(),
-                            capacity: 1,
+                            capacity: 10,
                             owner_name: "owner1".to_string(),
                             owner_age: 21,
                             owner_grade: 3,
@@ -115,26 +115,23 @@ mod tests {
             &axum::body::to_bytes(response.into_body(), usize::MAX).await?,
         )?;
 
-        // check state
         let created = state
             .circle_repository
             .find_circle_by_id(&CircleId::new(response_body.circle_id))?;
-        assert_eq!(
-            created,
-            Circle::reconstruct(
-                CircleId::new(response_body.circle_id),
-                "circle_name1".to_string(),
-                Member::reconstruct(
-                    MemberId::new(response_body.owner_id),
-                    "owner1".to_string(),
-                    21,
-                    Grade::try_from(3)?,
-                    Major::Music
-                ),
-                1,
-                vec![]
-            )
+        let circle = Circle::reconstruct(
+            CircleId::new(response_body.circle_id),
+            "circle_name1".to_string(),
+            Member::reconstruct(
+                MemberId::new(response_body.owner_id),
+                "owner1".to_string(),
+                21,
+                Grade::try_from(3)?,
+                Major::Music,
+            ),
+            10,
+            vec![],
         );
+        assert_eq!(created, circle);
         Ok(())
     }
 
@@ -172,7 +169,7 @@ mod tests {
                     .body(axum::body::Body::new(serde_json::to_string(
                         &CreateCircleRequestBody {
                             circle_name: "circle_name1".to_string(),
-                            capacity: 1,
+                            capacity: 10,
                             owner_name: "owner1".to_string(),
                             owner_age: 21,
                             owner_grade: 3,
@@ -204,7 +201,7 @@ mod tests {
         assert_eq!(
             fetched_response_body,
             format!(
-                "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":1,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":\"Third\",\"major\":\"Music\"}},\"members\":[]}}",
+                "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":10,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":\"Third\",\"major\":\"Music\"}},\"members\":[]}}",
                 response_body.circle_id, response_body.owner_id
             ) 
         );

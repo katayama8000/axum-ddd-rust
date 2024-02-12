@@ -17,13 +17,18 @@ pub struct Circle {
 impl Circle {
     // サークルの新規作成メソッド
     pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
+        let mut gen = rand::thread_rng();
+        let id = CircleId::new(gen.gen::<usize>());
+
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {
             return Err(Error::msg("Owner must be 3rd grade"));
         }
 
-        let mut gen = rand::thread_rng();
-        let id = CircleId::new(gen.gen::<usize>());
+        // サークルの店員は3人以上
+        if capacity < 3 {
+            return Err(Error::msg("Circle capacity must be 3 or more"));
+        }
 
         Ok(Circle {
             id,

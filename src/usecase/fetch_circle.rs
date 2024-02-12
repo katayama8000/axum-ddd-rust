@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
-    port::circle_repository_port::CircleRepositoryPort,
+    interface::circle_repository_interface::CircleRepositoryInterface,
 };
 
 #[derive(Debug, Deserialize)]
@@ -36,14 +36,14 @@ pub struct MemberOutput {
 }
 pub struct FetchCircleUsecase<T>
 where
-    T: CircleRepositoryPort,
+    T: CircleRepositoryInterface,
 {
     circle_repository: T,
 }
 
 impl<T> FetchCircleUsecase<T>
 where
-    T: CircleRepositoryPort,
+    T: CircleRepositoryInterface,
 {
     pub fn new(circle_repository: T) -> Self {
         FetchCircleUsecase { circle_repository }

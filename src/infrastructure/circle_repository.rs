@@ -6,7 +6,7 @@ use crate::domain::{
         member::Member,
         value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
     },
-    port::circle_repository_port::CircleRepositoryPort,
+    interface::circle_repository_interface::CircleRepositoryInterface,
 };
 
 use super::db::Db;
@@ -22,7 +22,7 @@ impl CircleRepository {
     }
 }
 
-impl CircleRepositoryPort for CircleRepository {
+impl CircleRepositoryInterface for CircleRepository {
     fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle_id.to_string())? {
             Some(data) => Ok(Circle::try_from(data)?),
@@ -150,7 +150,7 @@ mod tests {
             member::Member,
             value_object::{grade::Grade, major::Major},
         },
-        port::circle_repository_port::CircleRepositoryPort,
+        interface::circle_repository_interface::CircleRepositoryInterface,
     };
 
     use super::CircleRepository;

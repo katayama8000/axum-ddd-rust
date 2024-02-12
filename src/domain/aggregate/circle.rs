@@ -17,8 +17,7 @@ pub struct Circle {
 impl Circle {
     // サークルの新規作成メソッド
     pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
-        let mut gen = rand::thread_rng();
-        let id = CircleId::new(gen.gen::<usize>());
+        let id = CircleId::gen();
 
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {

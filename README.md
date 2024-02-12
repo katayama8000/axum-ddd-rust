@@ -34,3 +34,14 @@ curl -X POST \
 curl -X GET http://127.0.0.1:3000/circle/{circle_id}
 ``` 
 
+### update
+```bash
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{
+        "circle_name": "updated club name",
+        "capacity": 15
+      }' \
+  http://127.0.0.1:3000/circle/{circle_id}
+```
+

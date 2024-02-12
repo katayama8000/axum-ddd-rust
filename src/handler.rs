@@ -10,7 +10,7 @@ use serde::Deserialize;
 use crate::{
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
-        fetch_circle::{FetchCircleInput, FetchCircleUsecase},
+        fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutput},
         update_circle::{UpdateCircleInput, UpdateCircleUsecase},
     },
     AppState,
@@ -90,14 +90,46 @@ pub struct FetchCircleInputParam {
     id: usize,
 }
 
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct FetcheCircleResponseBody {
+    pub circle_id: usize,
+    pub circle_name: String,
+    pub capacity: usize,
+    pub owner: MemberOutput,
+    pub members: Vec<MemberOutput>,
+}
+
+impl std::convert::From<FetchCircleOutput> for FetcheCircleResponseBody {
+    fn from(
+        FetchCircleOutput {
+            circle_id,
+            circle_name,
+            capacity,
+            owner,
+            members,
+        }: FetchCircleOutput,
+    ) -> Self {
+        FetcheCircleResponseBody {
+            circle_id,
+            circle_name,
+            capacity,
+            owner,
+            members,
+        }
+    }
+}
+
 pub async fn handle_fetch_circle(
     State(state): State<AppState>,
     Path(param): Path<FetchCircleInputParam>,
-) -> impl IntoResponse {
+) -> Result<Json<FetcheCircleResponseBody>, String> {
     let fetch_circle_input = FetchCircleInput::new(param.id);
     let usecase = FetchCircleUsecase::new(state.circle_repository);
-    // return json
-    let _ = usecase.execute(fetch_circle_input);
+    usecase
+        .execute(fetch_circle_input)
+        .map(FetcheCircleResponseBody::from)
+        .map(Json)
+        .map_err(|e| e.to_string())
 }
 
 #[derive(Debug, Deserialize)]

@@ -20,36 +20,36 @@ impl Db {
         K: AsRef<str>,
         D: serde::de::DeserializeOwned,
     {
-        self.db
+        let db = self
+            .db
             .read()
-            // FIXME
-            .unwrap()
-            .get(key.as_ref())
-            .map(String::as_str)
-            .map(serde_json::from_str::<'_, D>)
-            .map(|result| result.map_err(anyhow::Error::from))
-            .transpose()
+            .map_err(|e| anyhow::anyhow!("Error reading from database: {:?}", e))?;
+
+        match db.get(key.as_ref()) {
+            Some(value) => {
+                let deserialized_value = serde_json::from_str(value)
+                    .map_err(|e| anyhow::anyhow!("Error deserializing value: {:?}", e))?;
+                Ok(Some(deserialized_value))
+            }
+            None => Ok(None),
+        }
     }
 
     pub fn keys(&self) -> Vec<String> {
-        self.db
-            .read()
-            // FIXME
-            .unwrap()
-            .keys()
-            .cloned()
-            .collect()
+        let db = self.db.read().expect("read data from db");
+        db.keys().cloned().collect()
     }
 
     pub fn remove<K>(&self, key: K) -> anyhow::Result<()>
     where
         K: AsRef<str>,
     {
-        self.db
+        let mut db = self
+            .db
             .write()
-            // FIXME
-            .unwrap()
-            .remove(key.as_ref());
+            .map_err(|e| anyhow::anyhow!("Error writing to database: {:?}", e))?;
+        db.remove(key.as_ref())
+            .ok_or_else(|| anyhow::anyhow!("Key not found in database"))?;
         Ok(())
     }
 
@@ -59,11 +59,46 @@ impl Db {
         S: serde::ser::Serialize,
     {
         let value = serde_json::to_string(value)?;
-        self.db
+        let mut db = self
+            .db
             .write()
-            // FIXME
-            .unwrap()
-            .insert(key.into(), value);
+            .map_err(|e| anyhow::anyhow!("Error writing to database: {:?}", e))?;
+        db.insert(key.into(), value);
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anyhow::Ok;
+
+    #[test]
+    fn test_set_and_get() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string())?;
+        let retrieved_value = db.get::<String, _>("key1")?.unwrap();
+        assert_eq!(retrieved_value, "value1");
+        Ok(())
+    }
+
+    #[test]
+    fn test_remove() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string()).unwrap();
+        db.remove("key1")?;
+        let retrieved_value: Option<String> = db.get::<String, _>("key1")?;
+        assert!(retrieved_value.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_keys() -> anyhow::Result<()> {
+        let db = super::Db::new();
+        db.set("key1", &"value1".to_string())?;
+        db.set("key2", &"value2".to_string())?;
+        let keys = db.keys();
+        assert!(keys.contains(&String::from("key1")));
+        assert!(keys.contains(&String::from("key2")));
         Ok(())
     }
 }

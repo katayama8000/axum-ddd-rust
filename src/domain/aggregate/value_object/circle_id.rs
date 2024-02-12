@@ -6,8 +6,7 @@ pub struct CircleId(usize);
 
 impl CircleId {
     pub fn gen() -> Self {
-        let id = rand::random::<usize>();
-        Self(id)
+        Self(rand::random::<usize>())
     }
 }
 

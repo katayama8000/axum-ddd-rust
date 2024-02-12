@@ -6,8 +6,7 @@ pub struct MemberId(usize);
 
 impl MemberId {
     pub fn gen() -> Self {
-        let id = rand::random::<usize>();
-        Self(id)
+        Self(rand::random::<usize>())
     }
 }
 

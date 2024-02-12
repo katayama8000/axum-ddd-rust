@@ -121,10 +121,11 @@ mod tests {
         };
         let app = router().with_state(state);
         let response = app
+            .clone()
             .oneshot(
                 axum::http::Request::builder()
                     .method("GET")
-                    .uri("/circle/1")
+                    .uri("/circle/unexist_id")
                     .body(axum::body::Body::empty())?,
             )
             .await?;
@@ -134,7 +135,54 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "Circle not found"); // FIXME
+        assert_eq!(response_body, "Circle not found");
+
+        let response = app
+            .clone()
+            .oneshot(
+                axum::http::Request::builder()
+                    .method("POST")
+                    .uri("/circle")
+                    .header(CONTENT_TYPE, "application/json")
+                    .body(axum::body::Body::new(serde_json::to_string(
+                        &CreateCircleRequestBody {
+                            circle_name: "circle_name1".to_string(),
+                            capacity: 1,
+                            owner_name: "owner1".to_string(),
+                            owner_age: 21,
+                            owner_grade: 3,
+                            owner_major: "Music".to_string(),
+                        },
+                    )?))?,
+            )
+            .await?;
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let response_body = serde_json::from_slice::<CreateCircleResponseBody>(
+            &axum::body::to_bytes(response.into_body(), usize::MAX).await?,
+        )?;
+
+        let response = app
+            .oneshot(
+                axum::http::Request::builder()
+                    .method("GET")
+                    .uri(format!("/circle/{}", response_body.circle_id))
+                    .body(axum::body::Body::empty())?,
+            )
+            .await?;
+        assert_eq!(response.status(), StatusCode::OK);
+        let fetched_response_body = String::from_utf8(
+            axum::body::to_bytes(response.into_body(), usize::MAX)
+                .await?
+                .to_vec(),
+        )?;
+        assert_eq!(
+            fetched_response_body,
+            format!(
+                "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":1,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":\"Third\",\"major\":\"Music\"}},\"members\":[]}}",
+                response_body.circle_id, response_body.owner_id
+            ) 
+        ); 
         Ok(())
     }
 

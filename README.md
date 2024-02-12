@@ -1,4 +1,4 @@
-# This is a Management Circle App for University.
+# University Management Circle App
 
 ## Stack
 
@@ -13,7 +13,8 @@
 
 ## How to run
 
-At first, you need to run the devcontainer
+You need to run the devcontainer first.
+
 ### create 
 ```bash
 curl -X POST \
@@ -29,7 +30,7 @@ curl -X POST \
   http://127.0.0.1:3000/circle
 ```
 
-### fetch
+### Find
 ```bash
 curl -X GET http://127.0.0.1:3000/circle/{circle_id}
 ``` 
@@ -39,7 +40,7 @@ curl -X GET http://127.0.0.1:3000/circle/{circle_id}
 curl -X PUT \
   -H "Content-Type: application/json" \
   -d '{
-        "circle_name": "updated club name",
+        "circle_name": "football club",
         "capacity": 15
       }' \
   http://127.0.0.1:3000/circle/{circle_id}

@@ -1,7 +1,9 @@
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-#[derive(Copy, Debug, Clone, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Copy, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemberId(usize);
 
 impl MemberId {

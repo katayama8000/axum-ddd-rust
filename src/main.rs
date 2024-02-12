@@ -57,7 +57,7 @@ mod tests {
             },
             port::circle_repository_port::CircleRepositoryPort as _,
         },
-        handler::{CreateCircleRequestBody, CreateCircleResponseBody},
+        handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
     };
 
     use super::*;
@@ -141,7 +141,7 @@ mod tests {
             circle_repository: CircleRepository::new(),
         };
         let app = router().with_state(state);
-        let unexist_circle_id = 1;
+        let unexist_circle_id = 0;
         let response = app
             .clone()
             .oneshot(
@@ -210,27 +210,58 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {
-        let state = AppState {
-            circle_repository: CircleRepository::new(),
-        };
-        let app = router().with_state(state);
-        let response = app
-            .oneshot(
-                axum::http::Request::builder()
-                    .method("PUT")
-                    // FIXME: why don't you use request body
-                    .uri("/circle/1?id=2&circle_name=circle_name2&capacity=2")
-                    .body(axum::body::Body::empty())?,
-            )
-            .await?;
-        assert_eq!(response.status(), StatusCode::OK);
-        let response_body = String::from_utf8(
-            axum::body::to_bytes(response.into_body(), usize::MAX)
-                .await?
-                .to_vec(),
-        )?;
-        assert_eq!(response_body, "Circle not found");
-        // FIXME: check state
-        Ok(())
+          let state = AppState {
+        circle_repository: CircleRepository::new(),
+    };
+    let app = router().with_state(state.clone());
+
+    let create_response = app.clone()
+        .oneshot(
+            axum::http::Request::builder()
+                .method("POST")
+                .uri("/circle")
+                .header(CONTENT_TYPE, "application/json")
+                .body(axum::body::Body::new(serde_json::to_string(
+                    &CreateCircleRequestBody {
+                        circle_name: "Music club".to_string(),
+                        capacity: 10,
+                        owner_name: "john Lennon".to_string(),
+                        owner_age: 21,
+                        owner_grade: 3,
+                        owner_major: "Music".to_string(),
+                    },
+                )?))?,
+        )
+        .await?;
+    assert_eq!(create_response.status(), StatusCode::OK);
+    let create_response_body = serde_json::from_slice::<CreateCircleResponseBody>(
+        &axum::body::to_bytes(create_response.into_body(), usize::MAX).await?,
+    )?;
+
+    let circle_id = create_response_body.circle_id;
+
+    let update_response = app
+        .oneshot(
+            axum::http::Request::builder()
+                .method("PUT")
+                .uri(format!("/circle/{}", circle_id))
+                .header(CONTENT_TYPE, "application/json")
+                .body(axum::body::Body::new(serde_json::to_string(
+                    &UpdateCircleRequestBody {
+                        circle_name:Some( "Football club".to_string()),
+                        capacity: Some(20), // 例えば容量を20に更新
+                    },
+                )?))?,
+        )
+        .await?;
+    assert_eq!(update_response.status(), StatusCode::OK);
+
+    let updated_circle = state
+        .circle_repository
+        .find_circle_by_id(&CircleId::new(circle_id))?;
+    assert_eq!(updated_circle.name, "Football club");
+    assert_eq!(updated_circle.capacity, 20);
+
+    Ok(())
     }
 }

@@ -1,8 +1,7 @@
 use std::env;
 
 use axum::{
-    extract::{Path, Query, State},
-    response::IntoResponse,
+    extract::{Path, State},
     Json,
 };
 use serde::Deserialize;
@@ -11,7 +10,7 @@ use crate::{
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
         fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutput},
-        update_circle::{UpdateCircleInput, UpdateCircleUsecase},
+        update_circle::{UpdateCircleInput, UpdateCircleOutPut, UpdateCircleUsecase},
     },
     AppState,
 };
@@ -136,15 +135,42 @@ pub async fn handle_fetch_circle(
 pub struct UpdateCircleInputParam {
     id: usize,
 }
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct UpdateCircleRequestBody {
+    pub circle_name: Option<String>,
+    pub capacity: Option<usize>,
+}
+
+impl UpdateCircleRequestBody {
+    pub fn convert_to_input(self, id: usize) -> UpdateCircleInput {
+        UpdateCircleInput::new(id, self.circle_name, self.capacity)
+    }
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct UpdateCircleResponseBody {
+    pub id: usize,
+}
+
+// UpdateCircleOutPut
+impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {
+    fn from(UpdateCircleOutPut { id }: UpdateCircleOutPut) -> Self {
+        UpdateCircleResponseBody { id }
+    }
+}
+
 pub async fn handle_update_circle(
     State(state): State<AppState>,
     Path(path): Path<UpdateCircleInputParam>,
-    Query(param): Query<UpdateCircleInput>,
-) -> impl IntoResponse {
-    let update_circle_input = UpdateCircleInput::new(path.id, param.circle_name, param.capacity);
+    Json(body): Json<UpdateCircleRequestBody>,
+) -> Result<Json<UpdateCircleResponseBody>, String> {
+    let update_circle_input = body.convert_to_input(path.id);
     let mut usecase = UpdateCircleUsecase::new(state.circle_repository);
 
     usecase
         .execute(update_circle_input)
+        .map(UpdateCircleResponseBody::from)
+        .map(Json)
         .map_err(|e| e.to_string())
 }

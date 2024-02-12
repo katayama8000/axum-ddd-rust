@@ -23,6 +23,17 @@ impl UpdateCircleInput {
     }
 }
 
+pub struct UpdateCircleOutPut {
+    pub id: usize,
+}
+
+// new
+impl UpdateCircleOutPut {
+    pub fn new(id: usize) -> Self {
+        UpdateCircleOutPut { id }
+    }
+}
+
 pub struct UpdateCircleUsecase<T>
 where
     T: CircleRepositoryPort,
@@ -38,7 +49,10 @@ where
         UpdateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(&mut self, update_circle_input: UpdateCircleInput) -> Result<(), Error> {
+    pub fn execute(
+        &mut self,
+        update_circle_input: UpdateCircleInput,
+    ) -> Result<UpdateCircleOutPut, Error> {
         let circle_id = CircleId::new(update_circle_input.id);
         let mut circle = self.circle_repository.find_circle_by_id(&circle_id)?;
 
@@ -46,6 +60,10 @@ where
             update_circle_input.circle_name,
             update_circle_input.capacity,
         );
-        self.circle_repository.update(&circle)
+        self.circle_repository
+            .update(&circle)
+            .map(|cirlce| UpdateCircleOutPut {
+                id: usize::from(circle.id),
+            })
     }
 }

@@ -17,7 +17,7 @@ impl FetchCircleInput {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug)]
 pub struct FetchCircleOutput {
     pub circle_id: usize,
     pub circle_name: String,

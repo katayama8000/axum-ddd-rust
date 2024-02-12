@@ -63,6 +63,30 @@ mod tests {
     use super::*;
 
     #[tokio::test]
+    async fn test_version() -> anyhow::Result<()> {
+        let state = AppState {
+            circle_repository: CircleRepository::new(),
+        };
+        let app = router().with_state(state);
+        let response = app
+            .oneshot(
+                axum::http::Request::builder()
+                    .method("GET")
+                    .uri("/")
+                    .body(axum::body::Body::empty())?,
+            )
+            .await?;
+        assert_eq!(response.status(), StatusCode::OK);
+        let response_body = String::from_utf8(
+            axum::body::to_bytes(response.into_body(), usize::MAX)
+                .await?
+                .to_vec(),
+        )?;
+        assert_eq!(response_body, "0.1.0");
+        Ok(())
+    }
+
+    #[tokio::test]
     async fn test_create_circle() -> anyhow::Result<()> {
         let state = AppState {
             circle_repository: CircleRepository::new(),
@@ -186,29 +210,7 @@ mod tests {
         Ok(())
     }
 
-    #[tokio::test]
-    async fn test_version() -> anyhow::Result<()> {
-        let state = AppState {
-            circle_repository: CircleRepository::new(),
-        };
-        let app = router().with_state(state);
-        let response = app
-            .oneshot(
-                axum::http::Request::builder()
-                    .method("GET")
-                    .uri("/")
-                    .body(axum::body::Body::empty())?,
-            )
-            .await?;
-        assert_eq!(response.status(), StatusCode::OK);
-        let response_body = String::from_utf8(
-            axum::body::to_bytes(response.into_body(), usize::MAX)
-                .await?
-                .to_vec(),
-        )?;
-        assert_eq!(response_body, "0.1.0");
-        Ok(())
-    }
+
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {

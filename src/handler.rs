@@ -126,7 +126,6 @@ pub async fn handle_fetch_circle(
 ) -> Result<Json<FetcheCircleResponseBody>, String> {
     let fetch_circle_input = FetchCircleInput::new(param.id);
     let usecase = FetchCircleUsecase::new(state.circle_repository);
-    // return json
     usecase
         .execute(fetch_circle_input)
         .map(FetcheCircleResponseBody::from)

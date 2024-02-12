@@ -8,10 +8,9 @@ use axum::{
 use serde::Deserialize;
 
 use crate::{
-    domain::aggregate::member::Member,
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
-        fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase},
+        fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, OutPutMember},
         update_circle::{UpdateCircleInput, UpdateCircleUsecase},
     },
     AppState,
@@ -96,8 +95,8 @@ pub struct FetcheCircleResponseBody {
     pub circle_id: usize,
     pub circle_name: String,
     pub capacity: usize,
-    pub owner: Member,
-    pub members: Vec<Member>,
+    pub owner: OutPutMember,
+    pub members: Vec<OutPutMember>,
 }
 
 impl std::convert::From<FetchCircleOutput> for FetcheCircleResponseBody {

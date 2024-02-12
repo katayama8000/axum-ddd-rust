@@ -201,7 +201,7 @@ mod tests {
         assert_eq!(
             fetched_response_body,
             format!(
-                "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":10,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":\"Third\",\"major\":\"Music\"}},\"members\":[]}}",
+                "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":10,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":3,\"major\":\"Music\"}},\"members\":[]}}",
                 response_body.circle_id, response_body.owner_id
             ) 
         );

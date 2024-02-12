@@ -1,8 +1,8 @@
 use anyhow::{Error, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    aggregate::{circle::Circle, member::Member, value_object::circle_id::CircleId},
+    aggregate::{circle::Circle, value_object::circle_id::CircleId},
     port::circle_repository_port::CircleRepositoryPort,
 };
 
@@ -22,8 +22,17 @@ pub struct FetchCircleOutput {
     pub circle_id: usize,
     pub circle_name: String,
     pub capacity: usize,
-    pub owner: Member,
-    pub members: Vec<Member>,
+    pub owner: OutPutMember,
+    pub members: Vec<OutPutMember>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct OutPutMember {
+    pub id: usize,
+    pub name: String,
+    pub age: usize,
+    pub grade: usize,
+    pub major: String,
 }
 pub struct FetchCircleUsecase<T>
 where
@@ -51,8 +60,24 @@ where
                 circle_id: usize::from(circle.id),
                 circle_name: circle.name,
                 capacity: circle.capacity,
-                owner: circle.owner,
-                members: circle.members,
+                owner: OutPutMember {
+                    id: usize::from(circle.owner.id),
+                    name: circle.owner.name,
+                    age: circle.owner.age,
+                    grade: usize::from(circle.owner.grade),
+                    major: String::from(circle.owner.major),
+                },
+                members: circle
+                    .members
+                    .iter()
+                    .map(|member| OutPutMember {
+                        id: usize::from(member.id),
+                        name: member.name.clone(),
+                        age: member.age,
+                        grade: usize::from(member.grade),
+                        major: String::from(member.major),
+                    })
+                    .collect(),
             })
     }
 }

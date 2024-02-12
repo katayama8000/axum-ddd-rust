@@ -55,7 +55,7 @@ mod tests {
                     circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId,
                 },
             },
-            port::circle_repository_port::CircleRepositoryPort as _,
+            interface::circle_repository_interface::CircleRepositoryInterface,
         },
         handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
     };

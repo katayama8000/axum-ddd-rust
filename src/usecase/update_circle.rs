@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 use crate::domain::{
     aggregate::value_object::circle_id::CircleId,
-    port::circle_repository_port::CircleRepositoryPort,
+    interface::circle_repository_interface::CircleRepositoryInterface,
 };
 
 #[derive(Debug, Deserialize)]
@@ -35,14 +35,14 @@ impl UpdateCircleOutPut {
 
 pub struct UpdateCircleUsecase<T>
 where
-    T: CircleRepositoryPort,
+    T: CircleRepositoryInterface,
 {
     circle_repository: T,
 }
 
 impl<T> UpdateCircleUsecase<T>
 where
-    T: CircleRepositoryPort,
+    T: CircleRepositoryInterface,
 {
     pub fn new(circle_repository: T) -> Self {
         UpdateCircleUsecase { circle_repository }

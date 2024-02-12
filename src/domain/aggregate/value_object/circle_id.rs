@@ -5,7 +5,13 @@ use std::hash::{Hash, Hasher};
 pub struct CircleId(usize);
 
 impl CircleId {
-    pub fn new(id: usize) -> Self {
+    pub fn gen() -> Self {
+        Self(rand::random::<usize>())
+    }
+}
+
+impl std::convert::From<usize> for CircleId {
+    fn from(id: usize) -> Self {
         Self(id)
     }
 }
@@ -34,7 +40,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let circle_id = CircleId::new(1);
+        let circle_id = CircleId::from(1);
         assert_eq!(circle_id.to_string(), "1");
         assert_eq!(usize::from(circle_id), 1);
     }

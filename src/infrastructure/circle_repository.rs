@@ -89,10 +89,10 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
         Ok(Circle::reconstruct(
-            CircleId::new(data.id),
+            CircleId::from(data.id),
             data.name,
             Member::reconstruct(
-                MemberId::new(data.owner.id),
+                MemberId::from(data.owner.id),
                 data.owner.name,
                 data.owner.age,
                 Grade::try_from(data.owner.grade)?,
@@ -133,7 +133,7 @@ impl std::convert::TryFrom<MemberData> for Member {
 
     fn try_from(value: MemberData) -> Result<Self, Self::Error> {
         Ok(Member::reconstruct(
-            MemberId::new(value.id),
+            MemberId::from(value.id),
             value.name,
             value.age,
             Grade::try_from(value.grade)?,

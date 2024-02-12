@@ -1,7 +1,6 @@
 use crate::domain::aggregate::value_object::member_id::MemberId;
 
 use super::value_object::{grade::Grade, major::Major};
-use rand::Rng;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Member {
@@ -15,10 +14,8 @@ pub struct Member {
 impl Member {
     // メンバーの新規作成メソッド
     pub fn new(name: String, age: usize, grade: Grade, major: Major) -> Self {
-        let mut rng = rand::thread_rng();
-        let id = MemberId::new(rng.gen::<usize>());
         Member {
-            id,
+            id: MemberId::gen(),
             name,
             age,
             grade,

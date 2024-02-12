@@ -5,7 +5,13 @@ use std::hash::{Hash, Hasher};
 pub struct MemberId(usize);
 
 impl MemberId {
-    pub fn new(id: usize) -> Self {
+    pub fn gen() -> Self {
+        Self(rand::random::<usize>())
+    }
+}
+
+impl std::convert::From<usize> for MemberId {
+    fn from(id: usize) -> Self {
         Self(id)
     }
 }
@@ -34,7 +40,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let member_id = MemberId::new(1);
+        let member_id = MemberId::from(1);
         assert_eq!(member_id.to_string(), "1");
         assert_eq!(usize::from(member_id), 1);
     }

@@ -47,7 +47,10 @@ impl CircleRepositoryPort for CircleRepository {
                 .db
                 .set(circle.id.to_string(), &CircleData::from(circle.clone()))
                 .and_then(|_| self.db.get::<CircleData, _>(&circle.id.to_string()))
-                .map(|data| Circle::try_from(data.unwrap()))?,
+                .map(|data| match data {
+                    Some(data) => Circle::try_from(data),
+                    None => Err(Error::msg("Failed to convert circle data")),
+                })?,
             None => Err(Error::msg("Circle not found")),
         }
     }

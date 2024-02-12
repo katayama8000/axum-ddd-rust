@@ -8,7 +8,6 @@ use axum::{
 use serde::Deserialize;
 
 use crate::{
-    domain::aggregate::member::Member,
     usecase::{
         create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
         fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutput},

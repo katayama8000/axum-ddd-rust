@@ -2,7 +2,7 @@ use anyhow::{Error, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    aggregate::{circle::Circle, member::Member, value_object::circle_id::CircleId},
+    aggregate::{circle::Circle, value_object::circle_id::CircleId},
     port::circle_repository_port::CircleRepositoryPort,
 };
 

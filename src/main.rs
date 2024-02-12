@@ -117,9 +117,9 @@ mod tests {
 
         let created = state
             .circle_repository
-            .find_circle_by_id(&CircleId::new(response_body.circle_id))?;
+            .find_circle_by_id(&CircleId::from(response_body.circle_id))?;
         let circle = Circle::reconstruct(
-            CircleId::new(response_body.circle_id),
+            CircleId::from(response_body.circle_id),
             "circle_name1".to_string(),
             Member::reconstruct(
                 MemberId::new(response_body.owner_id),
@@ -210,7 +210,7 @@ mod tests {
 
         let updated_circle = state
             .circle_repository
-            .find_circle_by_id(&CircleId::new(circle_id))?;
+            .find_circle_by_id(&CircleId::from(circle_id))?;
         assert_eq!(updated_circle.name, "Football club");
         assert_eq!(updated_circle.capacity, 20);
 

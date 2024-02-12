@@ -89,7 +89,7 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
         Ok(Circle::reconstruct(
-            CircleId::new(data.id),
+            CircleId::from(data.id),
             data.name,
             Member::reconstruct(
                 MemberId::from(data.owner.id),

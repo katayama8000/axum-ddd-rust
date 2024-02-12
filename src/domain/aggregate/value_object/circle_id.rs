@@ -10,6 +10,12 @@ impl CircleId {
     }
 }
 
+impl std::convert::From<usize> for CircleId {
+    fn from(id: usize) -> Self {
+        Self(id)
+    }
+}
+
 impl Hash for CircleId {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.0.hash(state);

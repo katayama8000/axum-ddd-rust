@@ -53,7 +53,7 @@ where
         &self,
         fetch_circle_input: FetchCircleInput,
     ) -> Result<FetchCircleOutput, Error> {
-        let circle_id = CircleId::new(fetch_circle_input.id);
+        let circle_id = CircleId::from(fetch_circle_input.id);
         self.circle_repository
             .find_circle_by_id(&circle_id)
             .map(|circle: Circle| FetchCircleOutput {

@@ -3,7 +3,6 @@ use crate::domain::aggregate::value_object::circle_id::CircleId;
 
 use super::value_object::grade::Grade;
 use anyhow::Error;
-use rand::Rng;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Circle {

@@ -144,12 +144,13 @@ mod tests {
             circle_repository: CircleRepository::new(),
         };
         let app = router().with_state(state);
+        let unexsit_circle_id = 0;
         let response = app
             .clone()
             .oneshot(
                 axum::http::Request::builder()
                     .method("GET")
-                    .uri("/circle/unexist_id")
+                    .uri(format!("/circle/{}", unexsit_circle_id))
                     .body(axum::body::Body::empty())?,
             )
             .await?;
@@ -206,11 +207,9 @@ mod tests {
                 "{{\"circle_id\":{},\"circle_name\":\"circle_name1\",\"capacity\":1,\"owner\":{{\"id\":{},\"name\":\"owner1\",\"age\":21,\"grade\":\"Third\",\"major\":\"Music\"}},\"members\":[]}}",
                 response_body.circle_id, response_body.owner_id
             ) 
-        ); 
+        );
         Ok(())
     }
-
-
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {

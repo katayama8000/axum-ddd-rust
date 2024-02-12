@@ -141,13 +141,13 @@ mod tests {
             circle_repository: CircleRepository::new(),
         };
         let app = router().with_state(state);
-        let unexsit_circle_id = 0;
+        let unexist_circle_id = 1;
         let response = app
             .clone()
             .oneshot(
                 axum::http::Request::builder()
                     .method("GET")
-                    .uri(format!("/circle/{}", unexsit_circle_id))
+                    .uri(format!("/circle/{}", unexist_circle_id))
                     .body(axum::body::Body::empty())?,
             )
             .await?;

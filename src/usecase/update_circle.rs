@@ -27,7 +27,6 @@ pub struct UpdateCircleOutPut {
     pub id: usize,
 }
 
-// new
 impl UpdateCircleOutPut {
     pub fn new(id: usize) -> Self {
         UpdateCircleOutPut { id }

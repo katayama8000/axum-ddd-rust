@@ -153,7 +153,6 @@ pub struct UpdateCircleResponseBody {
     pub id: usize,
 }
 
-// UpdateCircleOutPut
 impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {
     fn from(UpdateCircleOutPut { id }: UpdateCircleOutPut) -> Self {
         UpdateCircleResponseBody { id }

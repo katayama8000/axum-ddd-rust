@@ -1,6 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-#[derive(Copy, Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
+#[derive(Copy, Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Grade {
     First,
     Second,

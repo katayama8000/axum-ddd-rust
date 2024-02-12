@@ -1,6 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Major {
     ComputerScience,
     Economics,

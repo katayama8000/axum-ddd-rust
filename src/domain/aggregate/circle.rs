@@ -17,8 +17,6 @@ pub struct Circle {
 impl Circle {
     // サークルの新規作成メソッド
     pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
-        let id = CircleId::gen();
-
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {
             return Err(Error::msg("Owner must be 3rd grade"));
@@ -30,7 +28,7 @@ impl Circle {
         }
 
         Ok(Circle {
-            id,
+            id: CircleId::gen(),
             name,
             owner,
             capacity,

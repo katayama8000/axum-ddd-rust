@@ -10,6 +10,12 @@ impl MemberId {
     }
 }
 
+impl std::convert::From<usize> for MemberId {
+    fn from(id: usize) -> Self {
+        Self(id)
+    }
+}
+
 impl Hash for MemberId {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.0.hash(state);

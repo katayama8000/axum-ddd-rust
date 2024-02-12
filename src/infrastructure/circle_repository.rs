@@ -41,11 +41,16 @@ impl CircleRepositoryPort for CircleRepository {
         }
     }
 
-    fn update(&self, circle: &Circle) -> Result<(), Error> {
+    fn update(&self, circle: &Circle) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle.id.to_string())? {
             Some(_) => self
                 .db
-                .set(circle.id.to_string(), &CircleData::from(circle.clone())),
+                .set(circle.id.to_string(), &CircleData::from(circle.clone()))
+                .and_then(|_| self.db.get::<CircleData, _>(&circle.id.to_string()))
+                .map(|data| match data {
+                    Some(data) => Circle::try_from(data),
+                    None => Err(Error::msg("Failed to convert circle data")),
+                })?,
             None => Err(Error::msg("Circle not found")),
         }
     }

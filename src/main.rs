@@ -116,7 +116,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_fetch_circle() -> anyhow::Result<()> {
-        // FIXME: prepare state
         let state = AppState {
             circle_repository: CircleRepository::new(),
         };
@@ -135,7 +134,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, ""); // FIXME
+        assert_eq!(response_body, "Circle not found"); // FIXME
         Ok(())
     }
 
@@ -165,7 +164,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {
-        // FIXME: prepare state
         let state = AppState {
             circle_repository: CircleRepository::new(),
         };

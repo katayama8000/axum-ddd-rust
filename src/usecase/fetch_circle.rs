@@ -2,7 +2,7 @@ use anyhow::{Error, Result};
 use serde::Deserialize;
 
 use crate::domain::{
-    aggregate::{circle::Circle, value_object::circle_id::CircleId},
+    aggregate::{circle::Circle, member::Member, value_object::circle_id::CircleId},
     port::circle_repository_port::CircleRepositoryPort,
 };
 
@@ -21,8 +21,9 @@ impl FetchCircleInput {
 pub struct FetchCircleOutput {
     pub circle_id: usize,
     pub circle_name: String,
-    pub owner_name: String,
-    // FIXME: add some fields
+    pub capacity: usize,
+    pub owner: Member,
+    pub members: Vec<Member>,
 }
 pub struct FetchCircleUsecase<T>
 where
@@ -49,8 +50,9 @@ where
             .map(|circle: Circle| FetchCircleOutput {
                 circle_id: usize::from(circle.id),
                 circle_name: circle.name,
-                owner_name: circle.owner.name,
-                // FIXME: add some fields
+                capacity: circle.capacity,
+                owner: circle.owner,
+                members: circle.members,
             })
     }
 }

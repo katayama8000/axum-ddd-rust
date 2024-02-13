@@ -23,6 +23,7 @@ impl Member {
         }
     }
 
+    // メンバーの再構成メソッド
     pub fn reconstruct(id: MemberId, name: String, age: usize, grade: Grade, major: Major) -> Self {
         Member {
             id,

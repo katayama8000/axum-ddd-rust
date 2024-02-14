@@ -78,15 +78,15 @@ impl Circle {
     }
 
     // メンバーをサークルに追加するメソッド
-    pub fn add_member(&mut self, member: Member) -> Result<(), String> {
+    pub fn add_member(&mut self, member: Member) -> Result<(), Error> {
         // 満員の場合はサークルに入れない
         if self.is_full() {
-            return Err("Circle member is full".to_string());
+            return Err(Error::msg("Circle member is full"));
         }
 
         // 4年生はサークルに入れない
         if member.grade == Grade::Fourth {
-            return Err("4th grade can't join circle".to_string());
+            return Err(Error::msg("4th grade can't join circle"));
         }
 
         self.members.push(member);
@@ -94,10 +94,10 @@ impl Circle {
     }
 
     // メンバーをサークルから削除するメソッド
-    pub fn remove_member(&mut self, member: &Member) -> Result<(), String> {
+    pub fn remove_member(&mut self, member: &Member) -> Result<(), Error> {
         // オーナーは削除できない
         if self.owner.id == member.id {
-            return Err("Owner can't be removed".to_string());
+            return Err(Error::msg("Owner can't be removed"));
         }
         self.members.retain(|m| m.id != member.id);
         Ok(())

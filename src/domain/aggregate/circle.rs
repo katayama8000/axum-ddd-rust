@@ -1,6 +1,7 @@
 use crate::domain::aggregate::member::Member;
 use crate::domain::aggregate::value_object::circle_id::CircleId;
 
+use super::member;
 use super::value_object::grade::Grade;
 use anyhow::Error;
 
@@ -32,6 +33,20 @@ impl Circle {
             owner,
             capacity,
             members: vec![],
+        })
+    }
+
+    // for testing
+    pub fn sample(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
+        if capacity < 3 {
+            return Err(Error::msg("Circle capacity must be 3 or more"));
+        }
+        Ok(Circle {
+            id: CircleId::sample(),
+            name,
+            owner,
+            capacity,
+            members: Member::sample_list(3),
         })
     }
 

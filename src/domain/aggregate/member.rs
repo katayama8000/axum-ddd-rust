@@ -23,6 +23,32 @@ impl Member {
         }
     }
 
+    // for testing
+    pub fn sample(name: String, age: usize, grade: Grade, major: Major) -> Self {
+        Member {
+            id: MemberId::sample(),
+            name,
+            age,
+            grade,
+            major,
+        }
+    }
+
+    // for testing
+    pub fn sample_list(num: usize) -> Vec<Self> {
+        let mut members = Vec::new();
+        for i in 0..num {
+            members.push(Member {
+                id: MemberId::from(i as usize),
+                name: format!("member{}", i),
+                age: 20,
+                grade: Grade::First,
+                major: Major::ComputerScience,
+            });
+        }
+        members
+    }
+
     // メンバーの再構成メソッド
     pub fn reconstruct(id: MemberId, name: String, age: usize, grade: Grade, major: Major) -> Self {
         Member {

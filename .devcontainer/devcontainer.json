@@ -10,7 +10,8 @@
         "GitHub.copilot",
         "ms-azuretools.vscode-docker",
         "rust-lang.rust-analyzer",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates"
       ],
       "settings": {
         "files.watcherExclude": {

@@ -8,6 +8,11 @@ impl MemberId {
     pub fn gen() -> Self {
         Self(rand::random::<usize>())
     }
+
+    // For testing
+    pub fn sample() -> Self {
+        Self(1)
+    }
 }
 
 impl std::convert::From<usize> for MemberId {

@@ -1,10 +1,12 @@
 use std::env;
 
 use axum::{
-    extract::{Path, State},
-    Json,
+    extract::{Json, Path, State},
+    http::StatusCode,
+    response::IntoResponse,
 };
 use serde::Deserialize;
+use sqlx::Row;
 
 use crate::{
     usecase::{
@@ -17,6 +19,26 @@ use crate::{
 
 pub async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
+}
+
+pub async fn handle_get_circle_test(State(state): State<AppState>) -> impl IntoResponse {
+    println!("Fetching Circles");
+    let rows = match sqlx::query("SELECT * FROM Circles")
+        .fetch_all(&state.pool)
+        .await
+    {
+        Ok(rows) => rows,
+        Err(e) => {
+            eprintln!("Failed to fetch circles: {:?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+    // print all todos
+    for row in rows {
+        let name: String = row.get("name");
+        println!("name: {}", name);
+    }
+    (StatusCode::OK).into_response()
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]

@@ -1,37 +1,44 @@
--- Create the database
-CREATE DATABASE IF NOT EXISTS mydatabase;
-
-USE mydatabase;
-
--- Create the user table
-CREATE TABLE IF NOT EXISTS usertable (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+-- サークルテーブル
+CREATE TABLE Circles (
+    id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    capacity INT NOT NULL,
+    owner_id VARCHAR(36) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES Members(id)
 );
 
--- Create the Todo table
-CREATE TABLE IF NOT EXISTS todotable (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+-- メンバーテーブル
+CREATE TABLE Members (
+    id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    is_done BOOLEAN NOT NULL DEFAULT false,
-    user_id INT,
-    FOREIGN KEY (user_id) REFERENCES usertable(id) ON DELETE CASCADE
+    age INT NOT NULL,
+    grade VARCHAR(10) NOT NULL,
+    major VARCHAR(255) NOT NULL
 );
 
--- Insert initial user data
-INSERT INTO
-    usertable (name, password)
-VALUES
-    ('user1', 'password1'),
-    ('user2', 'password2'),
-    ('user3', 'password3');
+-- サークルメンバー関連テーブル
+CREATE TABLE CircleMembers (
+    circle_id VARCHAR(36),
+    member_id VARCHAR(36),
+    PRIMARY KEY (circle_id, member_id),
+    FOREIGN KEY (circle_id) REFERENCES Circles(id),
+    FOREIGN KEY (member_id) REFERENCES Members(id)
+);
 
--- Insert initial Todo data
-INSERT INTO
-    todotable (name, user_id)
-VALUES
-    ('Task 1 for user1', 1),
-    ('Task 2 for user1', 1),
-    ('Task 1 for user2', 2),
-    ('Task 1 for user3', 3);
+-- Membersテーブルに初期データを挿入
+INSERT INTO Members (id, name, age, grade, major) VALUES
+('1', 'Alice', 22, 'Third', 'Computer Science'),
+('2', 'Bob', 21, 'Second', 'Engineering'),
+('3', 'Charlie', 23, 'Fourth', 'Mathematics');
+
+-- Circlesテーブルに初期データを挿入
+INSERT INTO Circles (id, name, capacity, owner_id) VALUES
+('101', 'Programming Club', 10, '1'),
+('102', 'Robotics Club', 15, '2'),
+('103', 'Math Club', 8, '3');
+
+-- CircleMembersテーブルに初期データを挿入 (例: AliceがProgramming ClubとRobotics Clubに参加)
+INSERT INTO CircleMembers (circle_id, member_id) VALUES
+('101', '1'), -- Alice (Programming Club)
+('102', '1'); -- Alice (Robotics Club)
+

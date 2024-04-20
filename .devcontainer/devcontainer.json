@@ -1,8 +1,8 @@
 {
   "dockerComposeFile": [
-    "compose.yml"
+    "../compose.yml"
   ],
-  "service": "ddd",
+  "service": "server",
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {

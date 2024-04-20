@@ -54,6 +54,7 @@ mod tests {
     use tower::ServiceExt;
 
     use crate::{
+        config::connect::connect_test,
         domain::{
             aggregate::{
                 circle::Circle,
@@ -71,7 +72,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_version() -> anyhow::Result<()> {
-        let pool = connect().await.expect("database should connect");
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
             pool,
@@ -97,7 +98,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_circle() -> anyhow::Result<()> {
-        let pool = connect().await.expect("database should connect");
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
             pool,
@@ -148,7 +149,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_fetch_circle() -> anyhow::Result<()> {
-        let pool = connect().await.expect("database should connect");
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
             pool,
@@ -200,7 +201,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_circle() -> anyhow::Result<()> {
-        let pool = connect().await.expect("database should connect");
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
             pool,

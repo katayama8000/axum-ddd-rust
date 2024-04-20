@@ -7,6 +7,12 @@ docker compose up -d
 docker compose exec -it server /bin/bash
 ```
 
+or 
+
+```bash
+make server-up
+``` 
+
 ### run
 
 ```bash
@@ -33,6 +39,12 @@ cp .env.dist .env
 ```bash
 docker compose up -d
 docker compose exec -it db /bin/bash
+```
+
+or 
+
+```bash
+make db-up
 ```
 
 ### check

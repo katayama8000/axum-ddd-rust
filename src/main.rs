@@ -1,5 +1,9 @@
-use crate::handler::{handle_create_circle, handle_fetch_circle, handle_update_circle};
+use crate::{
+    config::connect::connect,
+    handler::{handle_create_circle, handle_fetch_circle, handle_update_circle},
+};
 
+mod config;
 mod domain;
 mod handler;
 mod infrastructure;
@@ -9,12 +13,13 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use handler::handle_get_version;
+use handler::{handle_get_test, handle_get_version};
 use infrastructure::circle_repository::CircleRepository;
 
 #[derive(Clone)]
 struct AppState {
     circle_repository: CircleRepository,
+    pool: sqlx::MySqlPool,
 }
 
 fn router() -> Router<AppState> {
@@ -23,12 +28,15 @@ fn router() -> Router<AppState> {
         .route("/circle/:id", get(handle_fetch_circle))
         .route("/circle", post(handle_create_circle))
         .route("/circle/:id", put(handle_update_circle))
+        .route("/test", get(handle_get_test))
 }
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
+    let pool = connect().await.expect("database should connect");
     let state = AppState {
         circle_repository: CircleRepository::new(),
+        pool,
     };
 
     let app = router().with_state(state);
@@ -47,6 +55,7 @@ mod tests {
     use tower::ServiceExt;
 
     use crate::{
+        config::connect::connect_test,
         domain::{
             aggregate::{
                 circle::Circle,
@@ -62,10 +71,15 @@ mod tests {
 
     use super::*;
 
+    // FIXME: ignore test because it requires a running database
     #[tokio::test]
+    #[ignore]
+
     async fn test_version() -> anyhow::Result<()> {
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
+            pool,
         };
         let app = router().with_state(state);
         let response = app
@@ -87,9 +101,12 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_create_circle() -> anyhow::Result<()> {
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
+            pool,
         };
         let app = router().with_state(state.clone());
         let response = app
@@ -136,9 +153,12 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_fetch_circle() -> anyhow::Result<()> {
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
+            pool,
         };
         let app = router().with_state(state);
         let unexist_circle_id = 0;
@@ -186,9 +206,12 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_update_circle() -> anyhow::Result<()> {
+        let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepository::new(),
+            pool,
         };
         let app = router().with_state(state.clone());
         let (circle_id, _) = build_circle(&app).await?;

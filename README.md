@@ -15,6 +15,20 @@
 
 You need to run the devcontainer first.
 
+Then you can run the following command to start the server.
+
+
+```bash
+cargo run
+```
+
+or you can run the following command to start the server with watch mode.
+
+```bash
+./watch.sh
+```
+
+
 ### create 
 ```bash
 curl -X POST \

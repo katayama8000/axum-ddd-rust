@@ -1,0 +1,21 @@
+services:
+  server:
+    build:
+      context: ./Docker/server
+      dockerfile: Dockerfile
+    restart: always
+    tty: true
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+  db:
+    build:
+      context: ./Docker/db
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./Docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql

@@ -21,9 +21,9 @@ pub async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
-pub async fn handle_get_circle_test(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse {
     println!("Fetching Circles");
-    let rows = match sqlx::query("SELECT * FROM Circles")
+    let circle_rows = match sqlx::query("SELECT * FROM Circles")
         .fetch_all(&state.pool)
         .await
     {
@@ -33,11 +33,45 @@ pub async fn handle_get_circle_test(State(state): State<AppState>) -> impl IntoR
             return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
         }
     };
-    // print all todos
-    for row in rows {
-        let name: String = row.get("name");
-        println!("name: {}", name);
+
+    for row in circle_rows {
+        let name = row.get::<String, _>("name");
+        println!("circle: {:?}", name);
     }
+
+    let member_rows = match sqlx::query("SELECT * FROM Members")
+        .fetch_all(&state.pool)
+        .await
+    {
+        Ok(rows) => rows,
+        Err(e) => {
+            eprintln!("Failed to fetch members: {:?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+
+    for row in member_rows {
+        let name = row.get::<String, _>("name");
+        println!("member: {:?}", name);
+    }
+
+    let circle_member_rows = match sqlx::query("SELECT * FROM CircleMembers")
+        .fetch_all(&state.pool)
+        .await
+    {
+        Ok(rows) => rows,
+        Err(e) => {
+            eprintln!("Failed to fetch circle members: {:?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+
+    for row in circle_member_rows {
+        let circle_id = row.get::<String, _>("circle_id");
+        let member_id = row.get::<String, _>("member_id");
+        println!("circle_id: {:?}, member_id: {:?}", circle_id, member_id);
+    }
+
     (StatusCode::OK).into_response()
 }
 

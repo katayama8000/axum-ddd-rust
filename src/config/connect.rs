@@ -22,6 +22,10 @@ impl DbConfig {
     }
 
     fn connection(&self) -> String {
+        println!(
+            "mysql://{}:{}@{}/{}",
+            self.db_user, self.db_password, self.db_host, self.db_name
+        );
         format!(
             "mysql://{}:{}@{}/{}",
             self.db_user, self.db_password, self.db_host, self.db_name

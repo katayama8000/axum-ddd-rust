@@ -11,7 +11,8 @@
         "ms-azuretools.vscode-docker",
         "rust-lang.rust-analyzer",
         "tamasfe.even-better-toml",
-        "serayuzgur.crates"
+        "serayuzgur.crates",
+        "adpyke.vscode-sql-formatter"
       ],
       "settings": {
         "files.watcherExclude": {

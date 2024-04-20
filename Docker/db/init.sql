@@ -26,19 +26,27 @@ CREATE TABLE CircleMembers (
 );
 
 -- Membersテーブルに初期データを挿入
-INSERT INTO Members (id, name, age, grade, major) VALUES
-('1', 'Alice', 22, 'Third', 'Computer Science'),
-('2', 'Bob', 21, 'Second', 'Engineering'),
-('3', 'Charlie', 23, 'Fourth', 'Mathematics');
+INSERT INTO
+    Members (id, name, age, grade, major)
+VALUES
+    ('1', 'Alice', 22, 'Third', 'Computer Science'),
+    ('2', 'Bob', 21, 'Second', 'Engineering'),
+    ('3', 'Charlie', 23, 'Fourth', 'Mathematics');
 
 -- Circlesテーブルに初期データを挿入
-INSERT INTO Circles (id, name, capacity, owner_id) VALUES
-('101', 'Programming Club', 10, '1'),
-('102', 'Robotics Club', 15, '2'),
-('103', 'Math Club', 8, '3');
+INSERT INTO
+    Circles (id, name, capacity, owner_id)
+VALUES
+    ('101', 'Programming Club', 10, '1'),
+    ('102', 'Robotics Club', 15, '2'),
+    ('103', 'Math Club', 8, '3');
 
 -- CircleMembersテーブルに初期データを挿入 (例: AliceがProgramming ClubとRobotics Clubに参加)
-INSERT INTO CircleMembers (circle_id, member_id) VALUES
-('101', '1'), -- Alice (Programming Club)
-('102', '1'); -- Alice (Robotics Club)
+INSERT INTO
+    CircleMembers (circle_id, member_id)
+VALUES
+    ('101', '1'),
+    -- Alice (Programming Club)
+    ('102', '1');
 
+-- Alice (Robotics Club)

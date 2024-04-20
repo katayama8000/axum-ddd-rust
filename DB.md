@@ -1,31 +1,3 @@
-## server
-
-### up
-
-```bash
-docker compose up -d
-docker compose exec -it server /bin/bash
-```
-
-or 
-
-```bash
-make server-up
-``` 
-
-### run
-
-```bash
-cargo run
-```
-
-### watch
-
-```bash
-./watch.sh
-```
-
-
 ## db
 
 ### setup
@@ -55,4 +27,10 @@ enter password: password
 show databases;
 use mydatabase;
 show tables;
+```
+
+### down
+
+```bash
+make db-down
 ```

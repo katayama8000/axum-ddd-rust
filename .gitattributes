@@ -2,3 +2,5 @@
 *.sql linguist-language=sql
 *.md linguist-detectable=true
 *.md linguist-language=markdown
+*.yml linguist-detectable=true
+*.yml linguist-language=yaml

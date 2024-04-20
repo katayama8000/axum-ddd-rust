@@ -12,10 +12,10 @@ server-down:
 	docker-compose down server
 
 db-down:
-	docker-compose down db
+	docker-compose down db -v
 
 down:
-	docker-compose down
+	docker-compose down -v
 
 ps:
 	docker-compose ps

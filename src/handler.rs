@@ -135,6 +135,7 @@ pub async fn handle_create_circle(
     let mut usecase = CreateCircleUsecase::new(state.circle_repository);
     usecase
         .execute(circle_circle_input)
+        .await
         .map(CreateCircleResponseBody::from)
         .map(Json)
         .map_err(|e| e.to_string())
@@ -182,6 +183,7 @@ pub async fn handle_fetch_circle(
     let usecase = FetchCircleUsecase::new(state.circle_repository);
     usecase
         .execute(fetch_circle_input)
+        .await
         .map(FetcheCircleResponseBody::from)
         .map(Json)
         .map_err(|e| e.to_string())
@@ -225,6 +227,7 @@ pub async fn handle_update_circle(
 
     usecase
         .execute(update_circle_input)
+        .await
         .map(UpdateCircleResponseBody::from)
         .map(Json)
         .map_err(|e| e.to_string())

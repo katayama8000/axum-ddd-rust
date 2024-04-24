@@ -48,12 +48,12 @@ where
         UpdateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(
+    pub async fn execute(
         &mut self,
         update_circle_input: UpdateCircleInput,
     ) -> Result<UpdateCircleOutPut, Error> {
         let circle_id = CircleId::from(update_circle_input.id);
-        let mut circle = self.circle_repository.find_circle_by_id(&circle_id)?;
+        let mut circle = self.circle_repository.find_circle_by_id(&circle_id).await?;
 
         circle.update(
             update_circle_input.circle_name,
@@ -61,7 +61,8 @@ where
         );
         self.circle_repository
             .update(&circle)
-            .map(|cirlce| UpdateCircleOutPut {
+            .await
+            .map(|_cirlce| UpdateCircleOutPut {
                 id: usize::from(circle.id),
             })
     }

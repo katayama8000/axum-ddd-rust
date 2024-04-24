@@ -61,7 +61,7 @@ where
         CreateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(
+    pub async fn execute(
         &mut self,
         circle_circle_input: CreateCircleInput,
     ) -> Result<CreateCircleOutput> {
@@ -83,6 +83,7 @@ where
         )?;
         self.circle_repository
             .create(&circle)
+            .await
             .map(|_| CreateCircleOutput {
                 circle_id: usize::from(circle.id),
                 owner_id: usize::from(owner_id),

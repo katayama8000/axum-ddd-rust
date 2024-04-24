@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use sqlx::{mysql::MySqlPoolOptions, Pool};
+use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
 #[derive(Debug, Clone)]
@@ -33,7 +33,7 @@ impl DbConfig {
     }
 }
 
-pub async fn connect() -> Result<Pool<sqlx::MySql>, sqlx::Error> {
+pub async fn connect() -> Result<sqlx::MySqlPool, sqlx::Error> {
     let config = DbConfig::from_env();
     let pool = MySqlPoolOptions::new()
         .max_connections(5)
@@ -43,7 +43,7 @@ pub async fn connect() -> Result<Pool<sqlx::MySql>, sqlx::Error> {
 }
 
 #[cfg(test)]
-pub async fn connect_test() -> Result<Pool<sqlx::MySql>, sqlx::Error> {
+pub async fn connect_test() -> Result<sqlx::MySqlPool, sqlx::Error> {
     // TODO: build a db connection for testing
     let config = DbConfig::from_env();
     let pool = MySqlPoolOptions::new()

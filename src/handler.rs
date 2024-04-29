@@ -23,7 +23,7 @@ pub async fn handle_get_version() -> String {
 
 pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse {
     println!("Fetching Circles");
-    let circle_rows = match sqlx::query("SELECT * FROM Circles")
+    let circle_rows = match sqlx::query("SELECT * FROM circles")
         .fetch_all(&state.pool)
         .await
     {
@@ -36,10 +36,14 @@ pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse
 
     for row in circle_rows {
         let name = row.get::<String, _>("name");
+        let capacity = row.get::<i64, _>("capacity");
+        let owner_id = row.get::<Vec<u8>, _>("owner_id");
         println!("circle: {:?}", name);
+        println!("capacity: {:?}", capacity);
+        println!("owner_id: {:?}", owner_id);
     }
 
-    let member_rows = match sqlx::query("SELECT * FROM Members")
+    let member_rows = match sqlx::query("SELECT * FROM members")
         .fetch_all(&state.pool)
         .await
     {
@@ -53,23 +57,6 @@ pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse
     for row in member_rows {
         let name = row.get::<String, _>("name");
         println!("member: {:?}", name);
-    }
-
-    let circle_member_rows = match sqlx::query("SELECT * FROM CircleMembers")
-        .fetch_all(&state.pool)
-        .await
-    {
-        Ok(rows) => rows,
-        Err(e) => {
-            eprintln!("Failed to fetch circle members: {:?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
-        }
-    };
-
-    for row in circle_member_rows {
-        let circle_id = row.get::<String, _>("circle_id");
-        let member_id = row.get::<String, _>("member_id");
-        println!("circle_id: {:?}, member_id: {:?}", circle_id, member_id);
     }
 
     (StatusCode::OK).into_response()

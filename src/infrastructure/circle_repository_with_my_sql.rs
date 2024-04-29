@@ -45,19 +45,19 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {
-    id: usize,
+    id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
     name: String,
-    owner: MemberData,
+    owner_id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
     capacity: usize,
     members: Vec<MemberData>,
 }
 
 impl std::convert::From<Circle> for CircleData {
     fn from(circle: Circle) -> Self {
-        CircleData {
+        Self {
             id: circle.id.into(),
             name: circle.name,
-            owner: MemberData::from(circle.owner),
+            owner_id: circle.owner.id.into(),
             capacity: circle.capacity,
             members: circle.members.into_iter().map(MemberData::from).collect(),
         }
@@ -68,22 +68,7 @@ impl std::convert::TryFrom<CircleData> for Circle {
     type Error = Error;
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
-        Ok(Circle::reconstruct(
-            CircleId::from(data.id),
-            data.name,
-            Member::reconstruct(
-                MemberId::from(data.owner.id),
-                data.owner.name,
-                data.owner.age,
-                Grade::try_from(data.owner.grade)?,
-                Major::from(data.owner.major.as_str()),
-            ),
-            data.capacity,
-            data.members
-                .into_iter()
-                .map(Member::try_from)
-                .collect::<Result<Vec<Member>, Error>>()?,
-        ))
+        todo!()
     }
 }
 

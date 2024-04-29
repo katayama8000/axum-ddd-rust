@@ -34,6 +34,13 @@ impl From<MemberId> for usize {
     }
 }
 
+// インフラ層に書くべき
+impl From<MemberId> for Vec<u8> {
+    fn from(id: MemberId) -> Self {
+        id.0.to_be_bytes().to_vec()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

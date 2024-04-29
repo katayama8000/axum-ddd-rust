@@ -34,6 +34,13 @@ impl std::convert::From<CircleId> for usize {
     }
 }
 
+// インフラ層に書くべき
+impl std::convert::From<CircleId> for Vec<u8> {
+    fn from(id: CircleId) -> Vec<u8> {
+        id.0.to_be_bytes().to_vec()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

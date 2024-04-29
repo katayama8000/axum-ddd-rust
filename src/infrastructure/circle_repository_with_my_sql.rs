@@ -1,13 +1,11 @@
 use anyhow::Error;
 
 use crate::domain::{
-    aggregate::{
-        circle::Circle,
-        member::Member,
-        value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
-    },
+    aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
+
+use super::db_data::{circle_data::CircleData, member_data::MemberData};
 
 #[derive(Clone, Debug)]
 pub struct CircleRepositoryWithMySql {
@@ -43,15 +41,6 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 }
 
-#[derive(serde::Deserialize, serde::Serialize)]
-struct CircleData {
-    id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
-    name: String,
-    owner_id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
-    capacity: usize,
-    members: Vec<MemberData>,
-}
-
 impl std::convert::From<Circle> for CircleData {
     fn from(circle: Circle) -> Self {
         Self {
@@ -61,49 +50,6 @@ impl std::convert::From<Circle> for CircleData {
             capacity: circle.capacity,
             members: circle.members.into_iter().map(MemberData::from).collect(),
         }
-    }
-}
-
-impl std::convert::TryFrom<CircleData> for Circle {
-    type Error = Error;
-
-    fn try_from(data: CircleData) -> Result<Self, Self::Error> {
-        todo!()
-    }
-}
-
-#[derive(serde::Deserialize, serde::Serialize)]
-struct MemberData {
-    id: usize,
-    name: String,
-    age: usize,
-    grade: usize,
-    major: String,
-}
-
-impl std::convert::From<Member> for MemberData {
-    fn from(value: Member) -> Self {
-        Self {
-            id: value.id.into(),
-            name: value.name,
-            age: value.age,
-            grade: value.grade.into(),
-            major: value.major.into(),
-        }
-    }
-}
-
-impl std::convert::TryFrom<MemberData> for Member {
-    type Error = Error;
-
-    fn try_from(value: MemberData) -> Result<Self, Self::Error> {
-        Ok(Member::reconstruct(
-            MemberId::from(value.id),
-            value.name,
-            value.age,
-            Grade::try_from(value.grade)?,
-            Major::from(value.major.as_str()),
-        ))
     }
 }
 

@@ -27,11 +27,6 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             anyhow::Error::msg("Failed to fetch circle by id")
         })?;
 
-        let id = circle_row.get::<i32, _>("id");
-        let name = circle_row.get::<String, _>("name");
-        let capacity = circle_row.get::<i32, _>("capacity");
-        let owner_id = circle_row.get::<i32, _>("owner_id");
-
         let member_query =
             sqlx::query("SELECT * FROM members WHERE circle_id = ?").bind(circle_id.to_string());
 
@@ -52,10 +47,10 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             .collect();
 
         let circle_data = CircleData {
-            id,
-            name,
-            owner_id,
-            capacity,
+            id: circle_row.get::<i32, _>("id"),
+            name: circle_row.get::<String, _>("name"),
+            owner_id: circle_row.get::<i32, _>("owner_id"),
+            capacity: circle_row.get::<i32, _>("capacity"),
             members,
         };
 

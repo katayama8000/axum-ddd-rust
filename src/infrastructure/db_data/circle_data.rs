@@ -21,16 +21,12 @@ impl std::convert::TryFrom<CircleData> for Circle {
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
         let circle_id = CircleId::from(data.id);
         let owner_id = MemberId::from(data.owner_id);
-        println!("-----");
-        println!("data: {:?}", data.members);
-
         let members = data
             .members
             .into_iter()
             .map(|member_data| MemberData::try_into(member_data))
             .collect::<Result<Vec<Member>, _>>()?;
 
-        println!("members: {:?}", members);
         let owner = members
             .iter()
             .find(|member| member.id == owner_id)

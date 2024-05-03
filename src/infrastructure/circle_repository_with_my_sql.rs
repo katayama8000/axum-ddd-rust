@@ -1,9 +1,5 @@
-use std::vec;
-
-use anyhow::Error;
-
 use crate::domain::{
-    aggregate::{circle::Circle, member, value_object::circle_id::CircleId},
+    aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
 use sqlx::Row;
@@ -22,79 +18,59 @@ impl CircleRepositoryWithMySql {
 }
 
 impl CircleRepositoryInterface for CircleRepositoryWithMySql {
-    async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
-        println!("circle_id: {:?}", circle_id.to_string());
-        let circle = sqlx::query("SELECT * FROM circles WHERE id = ?")
-            .bind(circle_id.to_string())
-            .fetch_one(&self.db)
-            .await
-            .expect("Failed to fetch circle by id");
+    async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
+        let circle_query =
+            sqlx::query("SELECT * FROM circles WHERE id = ?").bind(circle_id.to_string());
 
-        let id = circle.get::<i32, _>("id");
-        let name = circle.get::<String, _>("name");
-        let capacity = circle.get::<i32, _>("capacity");
-        let owner_id = circle.get::<i32, _>("owner_id");
+        let circle_row = circle_query.fetch_one(&self.db).await.map_err(|e| {
+            eprintln!("Failed to fetch circle by id: {:?}", e);
+            anyhow::Error::msg("Failed to fetch circle by id")
+        })?;
 
-        println!("id: {:?}", id);
-        println!("name: {:?}", name);
-        println!("capacity: {:?}", capacity);
-        println!("owner_id: {:?}", owner_id);
+        let id = circle_row.get::<i32, _>("id");
+        let name = circle_row.get::<String, _>("name");
+        let capacity = circle_row.get::<i32, _>("capacity");
+        let owner_id = circle_row.get::<i32, _>("owner_id");
 
-        let members = sqlx::query("SELECT * FROM members WHERE circle_id = ?")
-            .bind(circle_id.to_string())
-            .fetch_all(&self.db)
-            .await
-            .expect("Failed to fetch members by circle id");
+        let member_query =
+            sqlx::query("SELECT * FROM members WHERE circle_id = ?").bind(circle_id.to_string());
 
-        // for member in members {
-        //     let id = member.get::<i32, _>("id");
+        let members_row = member_query.fetch_all(&self.db).await.map_err(|e| {
+            eprintln!("Failed to fetch members by circle id: {:?}", e);
+            anyhow::Error::msg("Failed to fetch members by circle id")
+        })?;
 
-        //     let name = member.get::<String, _>("name");
-        //     let grade = member.get::<i32, _>("grade");
-
-        //     println!("id: {:?}", id);
-        //     println!("name: {:?}", name);
-        //     println!("grade: {:?}", grade);
-        // }
-
-        let mut members_data: Vec<MemberData> = vec![];
-        for member in members {
-            let id = member.get::<i32, _>("id");
-
-            let name = member.get::<String, _>("name");
-            let grade = member.get::<i32, _>("grade");
-            let age = member.get::<i32, _>("age");
-            let major = member.get::<String, _>("major");
-
-            members_data.extend(vec![MemberData {
-                id,
-                name,
-                age,
-                grade,
-                major,
-            }])
-        }
+        let members = members_row
+            .into_iter()
+            .map(|member| MemberData {
+                id: member.get::<i32, _>("id"),
+                name: member.get::<String, _>("name"),
+                age: member.get::<i32, _>("age"),
+                grade: member.get::<i32, _>("grade"),
+                major: member.get::<String, _>("major"),
+            })
+            .collect();
 
         let circle_data = CircleData {
             id,
             name,
             owner_id,
             capacity,
-            members: members_data,
+            members,
         };
 
         Ok(Circle::try_from(circle_data)?)
     }
 
-    async fn create(&self, circle: &Circle) -> Result<(), Error> {
+    async fn create(&self, circle: &Circle) -> Result<(), anyhow::Error> {
         todo!()
     }
 
-    async fn update(&self, circle: &Circle) -> Result<Circle, Error> {
+    async fn update(&self, circle: &Circle) -> Result<Circle, anyhow::Error> {
         todo!()
     }
 
-    async fn delete(&self, circle: &Circle) -> Result<(), Error> {
+    async fn delete(&self, circle: &Circle) -> Result<(), anyhow::Error> {
         todo!()
     }
 }

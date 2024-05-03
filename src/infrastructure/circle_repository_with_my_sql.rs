@@ -58,7 +58,42 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 
     async fn create(&self, circle: &Circle) -> Result<(), anyhow::Error> {
-        todo!()
+        // println!("{:?}", circle);
+        // let circle_data = CircleData::try_from(circle.clone())?;
+        // println!("{:?}", circle_data);
+        // let circle_query =
+        //     sqlx::query("INSERT INTO circles (name, owner_id, capacity) VALUES (?, ?, ?)")
+        //         .bind(circle_data.name)
+        //         .bind(circle_data.owner_id)
+        //         .bind(circle_data.capacity);
+
+        // circle_query.execute(&self.db).await.map_err(|e| {
+        //     eprintln!("Failed to insert circle: {:?}", e);
+        //     anyhow::Error::msg("Failed to insert circle")
+        // })?;
+
+        // for member in circle_data.members {
+        //     let member_query = sqlx::query(
+        //         "INSERT INTO members (id, name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?, ?)",
+        //     );
+        //     member_query
+        //         .bind(member.id)
+        //         .bind(member.name)
+        //         .bind(member.age)
+        //         .bind(member.grade)
+        //         .bind(member.major)
+        //         .bind(circle_data.id)
+        //         .execute(&self.db)
+        //         .await
+        //         .map_err(|e| {
+        //             eprintln!("Failed to insert member: {:?}", e);
+        //             anyhow::Error::msg("Failed to insert member")
+        //         })?;
+        // }
+
+        todo!("Implement create method");
+
+        Ok(())
     }
 
     async fn update(&self, circle: &Circle) -> Result<Circle, anyhow::Error> {

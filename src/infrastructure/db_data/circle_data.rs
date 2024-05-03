@@ -6,7 +6,7 @@ use crate::domain::aggregate::{
 
 use super::member_data::MemberData;
 
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct CircleData {
     pub id: i32,
     pub name: String,

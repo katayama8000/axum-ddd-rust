@@ -63,8 +63,8 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
 
             let name = member.get::<String, _>("name");
             let grade = member.get::<i32, _>("grade");
-            let age = 10;
-            let major = "Computer Science".to_string();
+            let age = member.get::<i32, _>("age");
+            let major = member.get::<String, _>("major");
 
             members_data.extend(vec![MemberData {
                 id,

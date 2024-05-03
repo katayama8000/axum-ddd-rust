@@ -1,13 +1,17 @@
-use crate::domain::aggregate::circle::Circle;
+use crate::domain::aggregate::{
+    circle::Circle,
+    member::Member,
+    value_object::{circle_id::CircleId, member_id::MemberId},
+};
 
 use super::member_data::MemberData;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct CircleData {
-    pub id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
+    pub id: i32,
     pub name: String,
-    pub owner_id: Vec<u8>, // BINARY(16)に対応するバイト配列型に修正
-    pub capacity: usize,
+    pub owner_id: i32,
+    pub capacity: i32,
     pub members: Vec<MemberData>,
 }
 
@@ -15,6 +19,30 @@ impl std::convert::TryFrom<CircleData> for Circle {
     type Error = anyhow::Error;
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
-        todo!()
+        let circle_id = CircleId::from(data.id);
+        let owner_id = MemberId::from(data.owner_id);
+        println!("-----");
+        println!("data: {:?}", data.members);
+
+        let members = data
+            .members
+            .into_iter()
+            .map(|member_data| MemberData::try_into(member_data))
+            .collect::<Result<Vec<Member>, _>>()?;
+
+        println!("members: {:?}", members);
+        let owner = members
+            .iter()
+            .find(|member| member.id == owner_id)
+            .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
+            .clone();
+
+        Ok(Circle {
+            id: circle_id,
+            name: data.name,
+            capacity: data.capacity,
+            owner,
+            members,
+        })
     }
 }

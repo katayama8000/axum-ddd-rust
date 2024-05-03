@@ -8,13 +8,13 @@ use crate::domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInput {
-    pub id: usize,
+    pub id: i32,
     pub circle_name: Option<String>,
-    pub capacity: Option<usize>,
+    pub capacity: Option<i32>,
 }
 
 impl UpdateCircleInput {
-    pub fn new(id: usize, circle_name: Option<String>, capacity: Option<usize>) -> Self {
+    pub fn new(id: i32, circle_name: Option<String>, capacity: Option<i32>) -> Self {
         UpdateCircleInput {
             id,
             circle_name,
@@ -24,11 +24,11 @@ impl UpdateCircleInput {
 }
 
 pub struct UpdateCircleOutPut {
-    pub id: usize,
+    pub id: i32,
 }
 
 impl UpdateCircleOutPut {
-    pub fn new(id: usize) -> Self {
+    pub fn new(id: i32) -> Self {
         UpdateCircleOutPut { id }
     }
 }
@@ -63,7 +63,7 @@ where
             .update(&circle)
             .await
             .map(|_cirlce| UpdateCircleOutPut {
-                id: usize::from(circle.id),
+                id: i32::from(circle.id),
             })
     }
 }

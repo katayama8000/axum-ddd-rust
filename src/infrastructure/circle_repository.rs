@@ -65,10 +65,10 @@ impl CircleRepositoryInterface for CircleRepository {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {
-    id: usize,
+    id: i32,
     name: String,
     owner: MemberData,
-    capacity: usize,
+    capacity: i32,
     members: Vec<MemberData>,
 }
 
@@ -109,10 +109,10 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct MemberData {
-    id: usize,
+    id: i32,
     name: String,
-    age: usize,
-    grade: usize,
+    age: i32,
+    grade: i32,
     major: String,
 }
 

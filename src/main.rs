@@ -241,7 +241,7 @@ mod tests {
         Ok(())
     }
 
-    async fn build_circle(app: &Router) -> anyhow::Result<(usize, usize)> {
+    async fn build_circle(app: &Router) -> anyhow::Result<(i32, i32)> {
         let create_response = app
             .clone()
             .oneshot(

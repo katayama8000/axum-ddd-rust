@@ -2,17 +2,11 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CircleId(usize);
+pub struct CircleId(i32);
 
 impl CircleId {
     pub fn gen() -> Self {
-        Self(rand::random::<usize>())
-    }
-}
-
-impl std::convert::From<usize> for CircleId {
-    fn from(id: usize) -> Self {
-        Self(id)
+        Self(rand::random::<i32>())
     }
 }
 
@@ -28,16 +22,15 @@ impl fmt::Display for CircleId {
     }
 }
 
-impl std::convert::From<CircleId> for usize {
-    fn from(circle_id: CircleId) -> usize {
-        circle_id.0
+impl std::convert::From<i32> for CircleId {
+    fn from(id: i32) -> Self {
+        Self(id)
     }
 }
 
-// インフラ層に書くべき
-impl std::convert::From<CircleId> for Vec<u8> {
-    fn from(id: CircleId) -> Vec<u8> {
-        id.0.to_be_bytes().to_vec()
+impl std::convert::From<CircleId> for i32 {
+    fn from(circle_id: CircleId) -> Self {
+        circle_id.0 as i32
     }
 }
 
@@ -49,6 +42,6 @@ mod tests {
     fn test() {
         let circle_id = CircleId::from(1);
         assert_eq!(circle_id.to_string(), "1");
-        assert_eq!(usize::from(circle_id), 1);
+        assert_eq!(i32::from(circle_id), 1);
     }
 }

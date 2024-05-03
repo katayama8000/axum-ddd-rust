@@ -3,13 +3,13 @@ use crate::domain::aggregate::{
     value_object::{grade::Grade, major::Major, member_id::MemberId},
 };
 
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct MemberData {
-    id: usize,
-    name: String,
-    age: usize,
-    grade: usize,
-    major: String,
+    pub id: i32,
+    pub name: String,
+    pub age: i32,
+    pub grade: i32,
+    pub major: String,
 }
 
 impl std::convert::From<Member> for MemberData {

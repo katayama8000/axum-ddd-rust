@@ -8,10 +8,10 @@ use super::member_data::MemberData;
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct CircleData {
-    pub id: i32,
+    pub id: u16,
     pub name: String,
-    pub owner_id: i32,
-    pub capacity: i32,
+    pub owner_id: u16,
+    pub capacity: u16,
     pub members: Vec<MemberData>,
 }
 

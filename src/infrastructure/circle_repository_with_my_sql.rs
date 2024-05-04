@@ -38,19 +38,19 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         let members = members_row
             .into_iter()
             .map(|member| MemberData {
-                id: member.get::<i32, _>("id"),
+                id: member.get::<u16, _>("id"),
                 name: member.get::<String, _>("name"),
-                age: member.get::<i32, _>("age"),
-                grade: member.get::<i32, _>("grade"),
+                age: member.get::<u16, _>("age"),
+                grade: member.get::<u16, _>("grade"),
                 major: member.get::<String, _>("major"),
             })
             .collect();
 
         let circle_data = CircleData {
-            id: circle_row.get::<i32, _>("id"),
+            id: circle_row.get::<u16, _>("id"),
             name: circle_row.get::<String, _>("name"),
-            owner_id: circle_row.get::<i32, _>("owner_id"),
-            capacity: circle_row.get::<i32, _>("capacity"),
+            owner_id: circle_row.get::<u16, _>("owner_id"),
+            capacity: circle_row.get::<u16, _>("capacity"),
             members,
         };
 
@@ -147,7 +147,7 @@ impl std::convert::From<Circle> for CircleData {
             id: circle.id.into(),
             name: circle.name,
             owner_id: circle.owner.id.into(),
-            capacity: circle.capacity as i32,
+            capacity: circle.capacity as u16,
             members: circle.members.into_iter().map(MemberData::from).collect(),
         }
     }

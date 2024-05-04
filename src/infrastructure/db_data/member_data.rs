@@ -5,10 +5,10 @@ use crate::domain::aggregate::{
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct MemberData {
-    pub id: i32,
+    pub id: u16,
     pub name: String,
-    pub age: i32,
-    pub grade: i32,
+    pub age: u16,
+    pub grade: u16,
     pub major: String,
 }
 

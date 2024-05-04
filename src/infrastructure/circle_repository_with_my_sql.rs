@@ -86,7 +86,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             .bind(circle_data.owner.age)
             .bind(circle_data.owner.grade)
             .bind(circle_data.owner.major)
-            .bind(circle_query_result.last_insert_id() as u16)
+            .bind(circle_query_result.last_insert_id())
             .execute(&self.db)
             .await
             .map_err(|e| {
@@ -156,7 +156,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         Ok(circle.clone())
     }
 
-    async fn delete(&self, circle: &Circle) -> Result<(), anyhow::Error> {
+    async fn delete(&self, _circle: &Circle) -> Result<(), anyhow::Error> {
         todo!()
     }
 }

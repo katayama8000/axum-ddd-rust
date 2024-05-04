@@ -1,3 +1,5 @@
-DROP TABLE IF EXISTS Circles,
-Members,
-CircleMembers;
+DELETE FROM
+    members;
+
+DELETE FROM
+    circles;

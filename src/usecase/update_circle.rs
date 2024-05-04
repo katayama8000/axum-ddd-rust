@@ -8,13 +8,13 @@ use crate::domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInput {
-    pub id: usize,
+    pub id: i32,
     pub circle_name: Option<String>,
-    pub capacity: Option<usize>,
+    pub capacity: Option<i32>,
 }
 
 impl UpdateCircleInput {
-    pub fn new(id: usize, circle_name: Option<String>, capacity: Option<usize>) -> Self {
+    pub fn new(id: i32, circle_name: Option<String>, capacity: Option<i32>) -> Self {
         UpdateCircleInput {
             id,
             circle_name,
@@ -24,11 +24,11 @@ impl UpdateCircleInput {
 }
 
 pub struct UpdateCircleOutPut {
-    pub id: usize,
+    pub id: i32,
 }
 
 impl UpdateCircleOutPut {
-    pub fn new(id: usize) -> Self {
+    pub fn new(id: i32) -> Self {
         UpdateCircleOutPut { id }
     }
 }
@@ -48,12 +48,12 @@ where
         UpdateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(
+    pub async fn execute(
         &mut self,
         update_circle_input: UpdateCircleInput,
     ) -> Result<UpdateCircleOutPut, Error> {
         let circle_id = CircleId::from(update_circle_input.id);
-        let mut circle = self.circle_repository.find_circle_by_id(&circle_id)?;
+        let mut circle = self.circle_repository.find_circle_by_id(&circle_id).await?;
 
         circle.update(
             update_circle_input.circle_name,
@@ -61,8 +61,9 @@ where
         );
         self.circle_repository
             .update(&circle)
-            .map(|cirlce| UpdateCircleOutPut {
-                id: usize::from(circle.id),
+            .await
+            .map(|_cirlce| UpdateCircleOutPut {
+                id: i32::from(circle.id),
             })
     }
 }

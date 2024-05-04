@@ -23,14 +23,14 @@ impl CircleRepository {
 }
 
 impl CircleRepositoryInterface for CircleRepository {
-    fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
+    async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle_id.to_string())? {
             Some(data) => Ok(Circle::try_from(data)?),
             None => Err(Error::msg("Circle not found")),
         }
     }
 
-    fn create(&self, circle: &Circle) -> Result<(), Error> {
+    async fn create(&self, circle: &Circle) -> Result<(), Error> {
         match self.db.get::<CircleData, _>(&circle.id.to_string())? {
             Some(_) => Err(Error::msg("Circle already exists")),
             None => {
@@ -41,7 +41,7 @@ impl CircleRepositoryInterface for CircleRepository {
         }
     }
 
-    fn update(&self, circle: &Circle) -> Result<Circle, Error> {
+    async fn update(&self, circle: &Circle) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle.id.to_string())? {
             Some(_) => self
                 .db
@@ -55,7 +55,7 @@ impl CircleRepositoryInterface for CircleRepository {
         }
     }
 
-    fn delete(&self, circle: &Circle) -> Result<(), Error> {
+    async fn delete(&self, circle: &Circle) -> Result<(), Error> {
         match self.db.get::<CircleData, _>(&circle.id.to_string())? {
             Some(_) => self.db.remove(circle.id.to_string()),
             None => Err(Error::msg("Circle not found")),
@@ -65,10 +65,10 @@ impl CircleRepositoryInterface for CircleRepository {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {
-    id: usize,
+    id: i32,
     name: String,
     owner: MemberData,
-    capacity: usize,
+    capacity: i32,
     members: Vec<MemberData>,
 }
 
@@ -109,10 +109,10 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct MemberData {
-    id: usize,
+    id: i32,
     name: String,
-    age: usize,
-    grade: usize,
+    age: i32,
+    grade: i32,
     major: String,
 }
 
@@ -155,18 +155,18 @@ mod tests {
 
     use super::CircleRepository;
 
-    #[test]
-    fn test() -> anyhow::Result<()> {
+    #[tokio::test]
+    async fn test() -> anyhow::Result<()> {
         let mut circle1 = build_circle()?;
         let repository = CircleRepository::new();
-        assert!(repository.find_circle_by_id(&circle1.id).is_err());
-        repository.create(&circle1)?;
-        assert_eq!(repository.find_circle_by_id(&circle1.id)?, circle1);
+        assert!(repository.find_circle_by_id(&circle1.id).await.is_err());
+        repository.create(&circle1).await?;
+        assert_eq!(repository.find_circle_by_id(&circle1.id).await?, circle1);
         circle1.name = "circle_name2".to_string();
-        repository.update(&circle1)?;
-        assert_eq!(repository.find_circle_by_id(&circle1.id)?, circle1);
-        repository.delete(&circle1)?;
-        assert!(repository.find_circle_by_id(&circle1.id).is_err());
+        repository.update(&circle1).await?;
+        assert_eq!(repository.find_circle_by_id(&circle1.id).await?, circle1);
+        repository.delete(&circle1).await?;
+        assert!(repository.find_circle_by_id(&circle1.id).await.is_err());
         Ok(())
     }
 

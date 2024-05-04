@@ -8,30 +8,30 @@ use crate::domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInput {
-    pub id: usize,
+    pub id: i32,
 }
 
 impl FetchCircleInput {
-    pub fn new(id: usize) -> Self {
+    pub fn new(id: i32) -> Self {
         FetchCircleInput { id }
     }
 }
 
 #[derive(Debug)]
 pub struct FetchCircleOutput {
-    pub circle_id: usize,
+    pub circle_id: i32,
     pub circle_name: String,
-    pub capacity: usize,
+    pub capacity: i32,
     pub owner: MemberOutput,
     pub members: Vec<MemberOutput>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MemberOutput {
-    pub id: usize,
+    pub id: i32,
     pub name: String,
-    pub age: usize,
-    pub grade: usize,
+    pub age: i32,
+    pub grade: i32,
     pub major: String,
 }
 pub struct FetchCircleUsecase<T>
@@ -49,32 +49,33 @@ where
         FetchCircleUsecase { circle_repository }
     }
 
-    pub fn execute(
+    pub async fn execute(
         &self,
         fetch_circle_input: FetchCircleInput,
     ) -> Result<FetchCircleOutput, Error> {
         let circle_id = CircleId::from(fetch_circle_input.id);
         self.circle_repository
             .find_circle_by_id(&circle_id)
+            .await
             .map(|circle: Circle| FetchCircleOutput {
-                circle_id: usize::from(circle.id),
+                circle_id: i32::from(circle.id),
                 circle_name: circle.name,
-                capacity: circle.capacity,
+                capacity: circle.capacity as i32,
                 owner: MemberOutput {
-                    id: usize::from(circle.owner.id),
+                    id: i32::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
-                    grade: usize::from(circle.owner.grade),
+                    grade: i32::from(circle.owner.grade),
                     major: String::from(circle.owner.major),
                 },
                 members: circle
                     .members
                     .iter()
                     .map(|member| MemberOutput {
-                        id: usize::from(member.id),
+                        id: i32::from(member.id),
                         name: member.name.clone(),
                         age: member.age,
-                        grade: usize::from(member.grade),
+                        grade: i32::from(member.grade),
                         major: String::from(member.major),
                     })
                     .collect(),

@@ -14,11 +14,11 @@ use axum::{
     Router,
 };
 use handler::{handle_get_test, handle_get_version};
-use infrastructure::circle_repository::CircleRepository;
+use infrastructure::circle_repository_with_my_sql::CircleRepositoryWithMySql;
 
 #[derive(Clone)]
 struct AppState {
-    circle_repository: CircleRepository,
+    circle_repository: CircleRepositoryWithMySql,
     pool: sqlx::MySqlPool,
 }
 
@@ -35,7 +35,7 @@ fn router() -> Router<AppState> {
 async fn main() -> Result<(), ()> {
     let pool = connect().await.expect("database should connect");
     let state = AppState {
-        circle_repository: CircleRepository::new(),
+        circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
         pool,
     };
 
@@ -74,11 +74,10 @@ mod tests {
     // FIXME: ignore test because it requires a running database
     #[tokio::test]
     #[ignore]
-
     async fn test_version() -> anyhow::Result<()> {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepository::new(),
+            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             pool,
         };
         let app = router().with_state(state);
@@ -105,7 +104,7 @@ mod tests {
     async fn test_create_circle() -> anyhow::Result<()> {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepository::new(),
+            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             pool,
         };
         let app = router().with_state(state.clone());
@@ -134,7 +133,8 @@ mod tests {
 
         let created = state
             .circle_repository
-            .find_circle_by_id(&CircleId::from(response_body.circle_id))?;
+            .find_circle_by_id(&CircleId::from(response_body.circle_id))
+            .await?;
         let circle = Circle::reconstruct(
             CircleId::from(response_body.circle_id),
             "circle_name1".to_string(),
@@ -157,7 +157,7 @@ mod tests {
     async fn test_fetch_circle() -> anyhow::Result<()> {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepository::new(),
+            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             pool,
         };
         let app = router().with_state(state);
@@ -210,7 +210,7 @@ mod tests {
     async fn test_update_circle() -> anyhow::Result<()> {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepository::new(),
+            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             pool,
         };
         let app = router().with_state(state.clone());
@@ -233,14 +233,15 @@ mod tests {
 
         let updated_circle = state
             .circle_repository
-            .find_circle_by_id(&CircleId::from(circle_id))?;
+            .find_circle_by_id(&CircleId::from(circle_id))
+            .await?;
         assert_eq!(updated_circle.name, "Football club");
         assert_eq!(updated_circle.capacity, 20);
 
         Ok(())
     }
 
-    async fn build_circle(app: &Router) -> anyhow::Result<(usize, usize)> {
+    async fn build_circle(app: &Router) -> anyhow::Result<(i32, i32)> {
         let create_response = app
             .clone()
             .oneshot(

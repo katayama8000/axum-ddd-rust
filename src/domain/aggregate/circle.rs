@@ -8,14 +8,14 @@ use anyhow::Error;
 pub struct Circle {
     pub id: CircleId, // サークルのID (Value Object)
     pub name: String,
-    pub capacity: usize,
+    pub capacity: i32,
     pub owner: Member,
     pub members: Vec<Member>,
 }
 
 impl Circle {
     // サークルの新規作成メソッド
-    pub fn new(name: String, owner: Member, capacity: usize) -> Result<Self, Error> {
+    pub fn new(name: String, owner: Member, capacity: i32) -> Result<Self, Error> {
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {
             return Err(Error::msg("Owner must be 3rd grade"));
@@ -40,7 +40,7 @@ impl Circle {
         id: CircleId,
         name: String,
         owner: Member,
-        capacity: usize,
+        capacity: i32,
         members: Vec<Member>,
     ) -> Self {
         Circle {
@@ -53,7 +53,7 @@ impl Circle {
     }
 
     // サークルの更新メソッド
-    pub fn update(&mut self, name: Option<String>, capacity: Option<usize>) {
+    pub fn update(&mut self, name: Option<String>, capacity: Option<i32>) {
         if let Some(name) = name {
             self.name = name;
         }
@@ -64,7 +64,7 @@ impl Circle {
 
     // サークルが満員かどうかを判定するメソッド
     fn is_full(&self) -> bool {
-        self.members.len() + 1 >= self.capacity
+        self.members.len() + 1 >= self.capacity as usize
     }
 
     // サークルが運営可能かどうかを判定するメソッド

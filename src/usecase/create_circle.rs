@@ -13,20 +13,20 @@ use crate::domain::{
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleInput {
     pub circle_name: String,
-    pub capacity: usize,
+    pub capacity: i32,
     pub owner_name: String,
-    pub owner_age: usize,
-    pub owner_grade: usize,
+    pub owner_age: i32,
+    pub owner_grade: i32,
     pub owner_major: String,
 }
 
 impl CreateCircleInput {
     pub fn new(
         circle_name: String,
-        capacity: usize,
+        capacity: i32,
         owner_name: String,
-        owner_age: usize,
-        owner_grade: usize,
+        owner_age: i32,
+        owner_grade: i32,
         owner_major: String,
     ) -> Self {
         CreateCircleInput {
@@ -42,8 +42,8 @@ impl CreateCircleInput {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleOutput {
-    pub circle_id: usize,
-    pub owner_id: usize,
+    pub circle_id: i32,
+    pub owner_id: i32,
 }
 
 pub struct CreateCircleUsecase<T>
@@ -61,7 +61,7 @@ where
         CreateCircleUsecase { circle_repository }
     }
 
-    pub fn execute(
+    pub async fn execute(
         &mut self,
         circle_circle_input: CreateCircleInput,
     ) -> Result<CreateCircleOutput> {
@@ -83,9 +83,10 @@ where
         )?;
         self.circle_repository
             .create(&circle)
+            .await
             .map(|_| CreateCircleOutput {
-                circle_id: usize::from(circle.id),
-                owner_id: usize::from(owner_id),
+                circle_id: i32::from(circle.id),
+                owner_id: i32::from(owner_id),
             })
     }
 }

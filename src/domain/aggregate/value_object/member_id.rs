@@ -2,17 +2,11 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 
 #[derive(Copy, Debug, Clone, PartialEq, Eq)]
-pub struct MemberId(usize);
+pub struct MemberId(i32);
 
 impl MemberId {
     pub fn gen() -> Self {
-        Self(rand::random::<usize>())
-    }
-}
-
-impl std::convert::From<usize> for MemberId {
-    fn from(id: usize) -> Self {
-        Self(id)
+        Self(rand::random::<i32>())
     }
 }
 
@@ -28,7 +22,13 @@ impl fmt::Display for MemberId {
     }
 }
 
-impl From<MemberId> for usize {
+impl std::convert::From<i32> for MemberId {
+    fn from(id: i32) -> Self {
+        Self(id)
+    }
+}
+
+impl std::convert::From<MemberId> for i32 {
     fn from(member_id: MemberId) -> Self {
         member_id.0
     }
@@ -42,6 +42,6 @@ mod tests {
     fn test() {
         let member_id = MemberId::from(1);
         assert_eq!(member_id.to_string(), "1");
-        assert_eq!(usize::from(member_id), 1);
+        assert_eq!(i32::from(member_id), 1);
     }
 }

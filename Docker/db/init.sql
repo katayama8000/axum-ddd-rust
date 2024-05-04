@@ -1,55 +1,46 @@
+-- データベースの作成
 CREATE DATABASE IF NOT EXISTS mydatabase;
 
+-- myuserに全ての権限を付与
 GRANT ALL PRIVILEGES ON mydatabase.* TO 'myuser' @'%' IDENTIFIED BY 'mypassword';
 
+-- mydatabaseを使用する
 USE mydatabase;
 
-CREATE TABLE Members (
-    id VARCHAR(36) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    age INT NOT NULL,
-    grade VARCHAR(10) NOT NULL,
-    major VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE Circles (
-    id VARCHAR(36) PRIMARY KEY,
+-- Circlesテーブルの作成
+CREATE TABLE IF NOT EXISTS circles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
-    owner_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (owner_id) REFERENCES Members(id)
+    owner_id INT NOT NULL
 );
 
-CREATE TABLE CircleMembers (
-    circle_id VARCHAR(36),
-    member_id VARCHAR(36),
-    PRIMARY KEY (circle_id, member_id),
-    FOREIGN KEY (circle_id) REFERENCES Circles(id),
-    FOREIGN KEY (member_id) REFERENCES Members(id)
+-- Membersテーブルの作成
+CREATE TABLE IF NOT EXISTS members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    grade INT NOT NULL,
+    circle_id INT,
+    age INT NOT NULL DEFAULT 20,
+    major VARCHAR(255) NOT NULL DEFAULT 'other',
+    FOREIGN KEY (circle_id) REFERENCES circles(id) ON DELETE CASCADE
 );
 
+-- Circlesテーブルへの初期データ挿入
 INSERT INTO
-    Members (id, name, age, grade, major)
+    circles (name, capacity, owner_id)
 VALUES
-    ('1', 'Alice', 22, 'Third', 'Computer Science'),
-    ('2', 'Bob', 21, 'Second', 'Economics'),
-    ('3', 'Charlie', 23, 'Fourth', 'Law'),
-    ('4', 'David', 22, 'Third', 'Art'),
-    ('5', 'Eve', 21, 'Second', 'Music'),
-    ('6', 'Frank', 23, 'Fourth', 'Other');
+    ('Circle A', 5, 1),
+    ('Circle B', 8, 2),
+    ('Circle C', 10, 3);
 
+-- Membersテーブルへの初期データ挿入
 INSERT INTO
-    Circles (id, name, capacity, owner_id)
+    members (name, grade, circle_id, age, major)
 VALUES
-    ('101', 'Programming Club', 10, '1'),
-    ('102', 'Robotics Club', 15, '2');
-
-INSERT INTO
-    CircleMembers (circle_id, member_id)
-VALUES
-    ('101', '1'),
-    ('101', '2'),
-    ('101', '3'),
-    ('102', '2'),
-    ('102', '3'),
-    ('102', '4');
+    ('Alice', 3, 1, 21, 'math'),
+    ('Bob', 2, 2, 22, 'math'),
+    ('Charlie', 3, 3, 23, 'math'),
+    ('David', 4, 1, 21, 'math'),
+    ('Eve', 2, 2, 19, 'math'),
+    ('Frank', 4, 3, 20, 'math');

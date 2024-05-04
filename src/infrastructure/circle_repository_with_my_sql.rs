@@ -35,22 +35,29 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             anyhow::Error::msg("Failed to fetch members by circle id")
         })?;
 
-        let members = members_row
+        let members: Vec<MemberData> = members_row
             .into_iter()
             .map(|member| MemberData {
-                id: member.get::<i32, _>("id"),
+                id: member.get::<u16, _>("id"),
                 name: member.get::<String, _>("name"),
-                age: member.get::<i32, _>("age"),
-                grade: member.get::<i32, _>("grade"),
+                age: member.get::<u16, _>("age"),
+                grade: member.get::<u16, _>("grade"),
                 major: member.get::<String, _>("major"),
             })
             .collect();
 
+        let owner: MemberData = members
+            .iter()
+            .find(|member| member.id == circle_row.get::<u16, _>("owner_id"))
+            .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
+            .clone();
+
         let circle_data = CircleData {
-            id: circle_row.get::<i32, _>("id"),
+            id: circle_row.get::<u16, _>("id"),
             name: circle_row.get::<String, _>("name"),
-            owner_id: circle_row.get::<i32, _>("owner_id"),
-            capacity: circle_row.get::<i32, _>("capacity"),
+            owner_id: circle_row.get::<u16, _>("owner_id"),
+            owner,
+            capacity: circle_row.get::<u16, _>("capacity"),
             members,
         };
 
@@ -58,21 +65,34 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 
     async fn create(&self, circle: &Circle) -> Result<(), anyhow::Error> {
-        println!("{:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
-        println!("{:?}", circle_data);
         let circle_query =
             sqlx::query("INSERT INTO circles (name, owner_id, capacity) VALUES (?, ?, ?)")
                 .bind(circle_data.name)
                 .bind(circle_data.owner_id)
                 .bind(circle_data.capacity);
 
-        circle_query.execute(&self.db).await.map_err(|e| {
+        let circle_query_result = circle_query.execute(&self.db).await.map_err(|e| {
             eprintln!("Failed to insert circle: {:?}", e);
             anyhow::Error::msg("Failed to insert circle")
         })?;
 
-        println!("{:?}", circle_data.members);
+        let owner_query = sqlx::query(
+            "INSERT INTO members (name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?)",
+        );
+
+        owner_query
+            .bind(circle_data.owner.name)
+            .bind(circle_data.owner.age)
+            .bind(circle_data.owner.grade)
+            .bind(circle_data.owner.major)
+            .bind(circle_query_result.last_insert_id())
+            .execute(&self.db)
+            .await
+            .map_err(|e| {
+                eprintln!("Failed to insert owner: {:?}", e);
+                anyhow::Error::msg("Failed to insert owner")
+            })?;
 
         for member in circle_data.members {
             let member_query = sqlx::query(
@@ -136,20 +156,8 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         Ok(circle.clone())
     }
 
-    async fn delete(&self, circle: &Circle) -> Result<(), anyhow::Error> {
+    async fn delete(&self, _circle: &Circle) -> Result<(), anyhow::Error> {
         todo!()
-    }
-}
-
-impl std::convert::From<Circle> for CircleData {
-    fn from(circle: Circle) -> Self {
-        Self {
-            id: circle.id.into(),
-            name: circle.name,
-            owner_id: circle.owner.id.into(),
-            capacity: circle.capacity as i32,
-            members: circle.members.into_iter().map(MemberData::from).collect(),
-        }
     }
 }
 

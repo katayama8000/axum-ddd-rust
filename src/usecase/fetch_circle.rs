@@ -8,30 +8,30 @@ use crate::domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInput {
-    pub id: i32,
+    pub id: u16,
 }
 
 impl FetchCircleInput {
-    pub fn new(id: i32) -> Self {
+    pub fn new(id: u16) -> Self {
         FetchCircleInput { id }
     }
 }
 
 #[derive(Debug)]
 pub struct FetchCircleOutput {
-    pub circle_id: i32,
+    pub circle_id: u16,
     pub circle_name: String,
-    pub capacity: i32,
+    pub capacity: u16,
     pub owner: MemberOutput,
     pub members: Vec<MemberOutput>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MemberOutput {
-    pub id: i32,
+    pub id: u16,
     pub name: String,
-    pub age: i32,
-    pub grade: i32,
+    pub age: u16,
+    pub grade: u16,
     pub major: String,
 }
 pub struct FetchCircleUsecase<T>
@@ -58,24 +58,24 @@ where
             .find_circle_by_id(&circle_id)
             .await
             .map(|circle: Circle| FetchCircleOutput {
-                circle_id: i32::from(circle.id),
+                circle_id: u16::from(circle.id),
                 circle_name: circle.name,
-                capacity: circle.capacity as i32,
+                capacity: circle.capacity as u16,
                 owner: MemberOutput {
-                    id: i32::from(circle.owner.id),
+                    id: u16::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
-                    grade: i32::from(circle.owner.grade),
+                    grade: u16::from(circle.owner.grade),
                     major: String::from(circle.owner.major),
                 },
                 members: circle
                     .members
                     .iter()
                     .map(|member| MemberOutput {
-                        id: i32::from(member.id),
+                        id: u16::from(member.id),
                         name: member.name.clone(),
                         age: member.age,
-                        grade: i32::from(member.grade),
+                        grade: u16::from(member.grade),
                         major: String::from(member.major),
                     })
                     .collect(),

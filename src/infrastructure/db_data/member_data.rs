@@ -3,7 +3,7 @@ use crate::domain::aggregate::{
     value_object::{grade::Grade, major::Major, member_id::MemberId},
 };
 
-#[derive(serde::Deserialize, serde::Serialize, Debug)]
+#[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct MemberData {
     pub id: u16,
     pub name: String,

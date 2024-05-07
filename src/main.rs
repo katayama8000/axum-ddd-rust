@@ -13,7 +13,7 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use handler::{handle_get_test, handle_get_version};
+use handler::{handle_debug, handle_get_test, handle_get_version};
 use infrastructure::circle_repository_with_my_sql::CircleRepositoryWithMySql;
 
 #[derive(Clone)]
@@ -29,10 +29,13 @@ fn router() -> Router<AppState> {
         .route("/circle", post(handle_create_circle))
         .route("/circle/:id", put(handle_update_circle))
         .route("/test", get(handle_get_test))
+        .route("/debug", get(handle_debug))
 }
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
+    tracing_subscriber::fmt().init();
+
     let pool = connect().await.expect("database should connect");
     let state = AppState {
         circle_repository: CircleRepositoryWithMySql::new(pool.clone()),

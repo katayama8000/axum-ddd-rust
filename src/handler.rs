@@ -21,49 +21,6 @@ pub async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
-pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse {
-    println!("Fetching Circles");
-    let circle_rows = match sqlx::query("SELECT * FROM circles")
-        .fetch_all(&state.pool)
-        .await
-    {
-        Ok(rows) => rows,
-        Err(e) => {
-            eprintln!("Failed to fetch circles: {:?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
-        }
-    };
-
-    for row in circle_rows {
-        let id = row.get::<i64, _>("id");
-        let name = row.get::<String, _>("name");
-        let capacity = row.get::<i64, _>("capacity");
-        let owner_id = row.get::<i64, _>("owner_id");
-        println!("id: {:?}", id);
-        println!("circle: {:?}", name);
-        println!("capacity: {:?}", capacity);
-        println!("owner_id: {:?}", owner_id);
-    }
-
-    let member_rows = match sqlx::query("SELECT * FROM members")
-        .fetch_all(&state.pool)
-        .await
-    {
-        Ok(rows) => rows,
-        Err(e) => {
-            eprintln!("Failed to fetch members: {:?}", e);
-            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
-        }
-    };
-
-    for row in member_rows {
-        let name = row.get::<String, _>("name");
-        println!("member: {:?}", name);
-    }
-
-    (StatusCode::OK).into_response()
-}
-
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleRequestBody {
     pub circle_name: String,
@@ -220,4 +177,61 @@ pub async fn handle_update_circle(
         .map(UpdateCircleResponseBody::from)
         .map(Json)
         .map_err(|e| e.to_string())
+}
+
+#[tracing::instrument(name = "handle_get_test", skip(state))]
+pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse {
+    tracing::info!("fetching test data");
+    let circle_rows = match sqlx::query("SELECT * FROM circles")
+        .fetch_all(&state.pool)
+        .await
+    {
+        Ok(rows) => rows,
+        Err(e) => {
+            tracing::error!("Failed to fetch circles: {:?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+
+    for row in circle_rows {
+        let id = row.get::<i64, _>("id");
+        let name = row.get::<String, _>("name");
+        let capacity = row.get::<i64, _>("capacity");
+        let owner_id = row.get::<i64, _>("owner_id");
+        tracing::info!(
+            "id: {:?} circle: {:?} capacity: {:?} owner_id: {:?}",
+            id,
+            name,
+            capacity,
+            owner_id
+        );
+    }
+
+    let member_rows = match sqlx::query("SELECT * FROM members")
+        .fetch_all(&state.pool)
+        .await
+    {
+        Ok(rows) => rows,
+        Err(e) => {
+            tracing::error!("Failed to fetch members: {:?}", e);
+            return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
+        }
+    };
+
+    for row in member_rows {
+        let name = row.get::<String, _>("name");
+        tracing::info!("member: {:?}", name);
+    }
+
+    (StatusCode::OK).into_response()
+}
+
+#[tracing::instrument(name = "handle_debug", skip())]
+pub async fn handle_debug() -> impl IntoResponse {
+    tracing::info!("info");
+    tracing::error!("error");
+    tracing::warn!("warn");
+    tracing::debug!("debug");
+    tracing::trace!("trace");
+    (StatusCode::OK).into_response()
 }

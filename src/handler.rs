@@ -179,15 +179,16 @@ pub async fn handle_update_circle(
         .map_err(|e| e.to_string())
 }
 
+#[tracing::instrument(name = "handle_get_test", skip(state))]
 pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse {
-    println!("Fetching Circles");
+    tracing::info!("fetching test data");
     let circle_rows = match sqlx::query("SELECT * FROM circles")
         .fetch_all(&state.pool)
         .await
     {
         Ok(rows) => rows,
         Err(e) => {
-            eprintln!("Failed to fetch circles: {:?}", e);
+            tracing::error!("Failed to fetch circles: {:?}", e);
             return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
         }
     };
@@ -197,10 +198,13 @@ pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse
         let name = row.get::<String, _>("name");
         let capacity = row.get::<i64, _>("capacity");
         let owner_id = row.get::<i64, _>("owner_id");
-        println!("id: {:?}", id);
-        println!("circle: {:?}", name);
-        println!("capacity: {:?}", capacity);
-        println!("owner_id: {:?}", owner_id);
+        tracing::info!(
+            "id: {:?} circle: {:?} capacity: {:?} owner_id: {:?}",
+            id,
+            name,
+            capacity,
+            owner_id
+        );
     }
 
     let member_rows = match sqlx::query("SELECT * FROM members")
@@ -209,23 +213,25 @@ pub async fn handle_get_test(State(state): State<AppState>) -> impl IntoResponse
     {
         Ok(rows) => rows,
         Err(e) => {
-            eprintln!("Failed to fetch members: {:?}", e);
+            tracing::error!("Failed to fetch members: {:?}", e);
             return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
         }
     };
 
     for row in member_rows {
         let name = row.get::<String, _>("name");
-        println!("member: {:?}", name);
+        tracing::info!("member: {:?}", name);
     }
 
     (StatusCode::OK).into_response()
 }
 
-#[tracing::instrument(name = "sample")]
+#[tracing::instrument(name = "handle_debug", skip())]
 pub async fn handle_debug() -> impl IntoResponse {
-    println!("try tracing");
-    tracing::info!("sample");
-    tracing::error!("sample");
+    tracing::info!("info");
+    tracing::error!("error");
+    tracing::warn!("warn");
+    tracing::debug!("debug");
+    tracing::trace!("trace");
     (StatusCode::OK).into_response()
 }

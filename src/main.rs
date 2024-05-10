@@ -3,16 +3,15 @@ use crate::{
     handler::{handle_create_circle, handle_fetch_circle, handle_update_circle},
 };
 
-mod config;
-mod handler;
-mod infrastructure;
-
 use axum::{
     routing::{get, post, put},
     Router,
 };
 use handler::{handle_debug, handle_get_test, handle_get_version};
 use infrastructure::circle_repository_with_my_sql::CircleRepositoryWithMySql;
+
+mod config;
+mod handler;
 
 #[derive(Clone)]
 struct AppState {

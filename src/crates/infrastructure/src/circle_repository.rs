@@ -1,5 +1,4 @@
 use anyhow::Error;
-
 use domain::{
     aggregate::{
         circle::Circle,

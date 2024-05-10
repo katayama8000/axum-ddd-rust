@@ -1,7 +1,7 @@
 use anyhow::{Error, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{
+use domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
 };

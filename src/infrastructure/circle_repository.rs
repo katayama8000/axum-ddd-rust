@@ -1,6 +1,6 @@
 use anyhow::Error;
 
-use crate::domain::{
+use domain::{
     aggregate::{
         circle::Circle,
         member::Member,
@@ -144,7 +144,7 @@ impl std::convert::TryFrom<MemberData> for Member {
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::{
+    use domain::{
         aggregate::{
             circle::Circle,
             member::Member,

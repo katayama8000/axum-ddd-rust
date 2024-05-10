@@ -4,7 +4,6 @@ use crate::{
 };
 
 mod config;
-mod domain;
 mod handler;
 mod infrastructure;
 mod usecase;
@@ -54,23 +53,20 @@ async fn main() -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
-    use axum::http::{header::CONTENT_TYPE, StatusCode};
-    use tower::ServiceExt;
-
     use crate::{
         config::connect::connect_test,
-        domain::{
-            aggregate::{
-                circle::Circle,
-                member::Member,
-                value_object::{
-                    circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId,
-                },
-            },
-            interface::circle_repository_interface::CircleRepositoryInterface,
-        },
         handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
     };
+    use axum::http::{header::CONTENT_TYPE, StatusCode};
+    use domain::{
+        aggregate::{
+            circle::Circle,
+            member::Member,
+            value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
+        },
+        interface::circle_repository_interface::CircleRepositoryInterface,
+    };
+    use tower::ServiceExt;
 
     use super::*;
 

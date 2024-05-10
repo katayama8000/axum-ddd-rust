@@ -1,7 +1,7 @@
-use crate::domain::aggregate::member::Member;
-use crate::domain::aggregate::value_object::circle_id::CircleId;
-
-use super::value_object::grade::Grade;
+use super::{
+    member::Member,
+    value_object::{circle_id::CircleId, grade::Grade},
+};
 use anyhow::Error;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

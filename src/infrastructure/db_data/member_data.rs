@@ -1,4 +1,4 @@
-use crate::domain::aggregate::{
+use domain::aggregate::{
     member::Member,
     value_object::{grade::Grade, major::Major, member_id::MemberId},
 };

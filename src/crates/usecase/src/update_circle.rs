@@ -1,10 +1,9 @@
 use anyhow::Error;
-use serde::Deserialize;
-
 use domain::{
     aggregate::value_object::circle_id::CircleId,
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInput {

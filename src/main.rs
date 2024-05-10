@@ -6,7 +6,6 @@ use crate::{
 mod config;
 mod handler;
 mod infrastructure;
-mod usecase;
 
 use axum::{
     routing::{get, post, put},

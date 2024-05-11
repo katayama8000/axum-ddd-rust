@@ -13,20 +13,20 @@ use domain::{
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleInput {
     pub circle_name: String,
-    pub capacity: u16,
+    pub capacity: i16,
     pub owner_name: String,
-    pub owner_age: u16,
-    pub owner_grade: u16,
+    pub owner_age: i16,
+    pub owner_grade: i16,
     pub owner_major: String,
 }
 
 impl CreateCircleInput {
     pub fn new(
         circle_name: String,
-        capacity: u16,
+        capacity: i16,
         owner_name: String,
-        owner_age: u16,
-        owner_grade: u16,
+        owner_age: i16,
+        owner_grade: i16,
         owner_major: String,
     ) -> Self {
         CreateCircleInput {
@@ -42,8 +42,8 @@ impl CreateCircleInput {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleOutput {
-    pub circle_id: u16,
-    pub owner_id: u16,
+    pub circle_id: i16,
+    pub owner_id: i16,
 }
 
 pub struct CreateCircleUsecase<T>
@@ -85,8 +85,8 @@ where
             .create(&circle)
             .await
             .map(|_| CreateCircleOutput {
-                circle_id: u16::from(circle.id),
-                owner_id: u16::from(owner_id),
+                circle_id: i16::from(circle.id),
+                owner_id: i16::from(owner_id),
             })
     }
 }

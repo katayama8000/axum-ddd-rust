@@ -8,11 +8,11 @@ use super::member_data::MemberData;
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct CircleData {
-    pub id: u16,
+    pub id: i16,
     pub name: String,
-    pub owner_id: u16,
+    pub owner_id: i16,
     pub owner: MemberData,
-    pub capacity: u16,
+    pub capacity: i16,
     pub members: Vec<MemberData>,
 }
 
@@ -51,7 +51,7 @@ impl std::convert::From<Circle> for CircleData {
             name: circle.name,
             owner_id: circle.owner.id.into(),
             owner: MemberData::from(circle.owner),
-            capacity: circle.capacity as u16,
+            capacity: circle.capacity as i16,
             members: circle.members.into_iter().map(MemberData::from).collect(),
         }
     }

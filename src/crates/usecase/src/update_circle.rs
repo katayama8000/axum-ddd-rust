@@ -7,13 +7,13 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInput {
-    pub id: u16,
+    pub id: i16,
     pub circle_name: Option<String>,
-    pub capacity: Option<u16>,
+    pub capacity: Option<i16>,
 }
 
 impl UpdateCircleInput {
-    pub fn new(id: u16, circle_name: Option<String>, capacity: Option<u16>) -> Self {
+    pub fn new(id: i16, circle_name: Option<String>, capacity: Option<i16>) -> Self {
         UpdateCircleInput {
             id,
             circle_name,
@@ -23,11 +23,11 @@ impl UpdateCircleInput {
 }
 
 pub struct UpdateCircleOutPut {
-    pub id: u16,
+    pub id: i16,
 }
 
 impl UpdateCircleOutPut {
-    pub fn new(id: u16) -> Self {
+    pub fn new(id: i16) -> Self {
         UpdateCircleOutPut { id }
     }
 }
@@ -62,7 +62,7 @@ where
             .update(&circle)
             .await
             .map(|_cirlce| UpdateCircleOutPut {
-                id: u16::from(circle.id),
+                id: i16::from(circle.id),
             })
     }
 }

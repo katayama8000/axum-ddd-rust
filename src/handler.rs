@@ -20,10 +20,10 @@ pub async fn handle_get_version() -> String {
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleRequestBody {
     pub circle_name: String,
-    pub capacity: u16,
+    pub capacity: i16,
     pub owner_name: String,
-    pub owner_age: u16,
-    pub owner_grade: u16,
+    pub owner_age: i16,
+    pub owner_grade: i16,
     pub owner_major: String,
 }
 
@@ -51,8 +51,8 @@ impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleResponseBody {
-    pub circle_id: u16,
-    pub owner_id: u16,
+    pub circle_id: i16,
+    pub owner_id: i16,
 }
 
 impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {
@@ -85,14 +85,14 @@ pub async fn handle_create_circle(
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInputParam {
-    id: u16,
+    id: i16,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct FetcheCircleResponseBody {
-    pub circle_id: u16,
+    pub circle_id: i16,
     pub circle_name: String,
-    pub capacity: u16,
+    pub capacity: i16,
     pub owner: MemberOutput,
     pub members: Vec<MemberOutput>,
 }
@@ -133,24 +133,24 @@ pub async fn handle_fetch_circle(
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInputParam {
-    id: u16,
+    id: i16,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct UpdateCircleRequestBody {
     pub circle_name: Option<String>,
-    pub capacity: Option<u16>,
+    pub capacity: Option<i16>,
 }
 
 impl UpdateCircleRequestBody {
-    pub fn convert_to_input(self, id: u16) -> UpdateCircleInput {
+    pub fn convert_to_input(self, id: i16) -> UpdateCircleInput {
         UpdateCircleInput::new(id, self.circle_name, self.capacity)
     }
 }
 
 #[derive(Debug, serde::Serialize)]
 pub struct UpdateCircleResponseBody {
-    pub id: u16,
+    pub id: i16,
 }
 
 impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {

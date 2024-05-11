@@ -18,6 +18,57 @@ impl CircleRepositoryWithMySql {
 }
 
 impl CircleRepositoryInterface for CircleRepositoryWithMySql {
+    async fn find_all(&self) -> Result<Vec<Circle>, anyhow::Error> {
+        tracing::info!("find_all_circles");
+        let circle_query = sqlx::query("SELECT * FROM circles");
+
+        let circle_rows = circle_query.fetch_all(&self.db).await.map_err(|e| {
+            eprintln!("Failed to fetch circles: {:?}", e);
+            anyhow::Error::msg("Failed to fetch circles")
+        })?;
+
+        let mut circles = Vec::new();
+        for circle_row in circle_rows {
+            let member_query = sqlx::query("SELECT * FROM members WHERE circle_id = ?")
+                .bind(circle_row.get::<i16, _>("id"));
+
+            let members_row = member_query.fetch_all(&self.db).await.map_err(|e| {
+                eprintln!("Failed to fetch members by circle id: {:?}", e);
+                anyhow::Error::msg("Failed to fetch members by circle id")
+            })?;
+
+            let members: Vec<MemberData> = members_row
+                .into_iter()
+                .map(|member| MemberData {
+                    id: member.get::<i16, _>("id"),
+                    name: member.get::<String, _>("name"),
+                    age: member.get::<i16, _>("age"),
+                    grade: member.get::<i16, _>("grade"),
+                    major: member.get::<String, _>("major"),
+                })
+                .collect();
+
+            let owner: MemberData = members
+                .iter()
+                .find(|member| member.id == circle_row.get::<i16, _>("owner_id"))
+                .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
+                .clone();
+
+            let circle_data = CircleData {
+                id: circle_row.get::<i16, _>("id"),
+                name: circle_row.get::<String, _>("name"),
+                owner_id: circle_row.get::<i16, _>("owner_id"),
+                owner,
+                capacity: circle_row.get::<i16, _>("capacity"),
+                members,
+            };
+
+            circles.push(Circle::try_from(circle_data)?);
+        }
+
+        Ok(circles)
+    }
+
     async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
         tracing::info!("find_circle_by_id : {:?}", circle_id);
         let circle_query =
@@ -66,6 +117,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 
     async fn create(&self, circle: &Circle) -> Result<(), anyhow::Error> {
+        tracing::info!("create_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
         let circle_query =
             sqlx::query("INSERT INTO circles (name, owner_id, capacity) VALUES (?, ?, ?)")
@@ -116,6 +168,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 
     async fn update(&self, circle: &Circle) -> Result<Circle, anyhow::Error> {
+        tracing::info!("update_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
         let circle_query =
             sqlx::query("UPDATE circles SET name = ?, owner_id = ?, capacity = ? WHERE id = ?")

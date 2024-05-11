@@ -22,6 +22,10 @@ impl CircleRepository {
 }
 
 impl CircleRepositoryInterface for CircleRepository {
+    async fn find_all(&self) -> Result<Vec<Circle>, Error> {
+        todo!("Implement this method")
+    }
+
     async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle_id.to_string())? {
             Some(data) => Ok(Circle::try_from(data)?),

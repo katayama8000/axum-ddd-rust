@@ -9,6 +9,7 @@ use sqlx::Row;
 use std::env;
 use usecase::{
     create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase},
+    fetch_all_circle::FetchAllCircleUsecase,
     fetch_circle::{FetchCircleInput, FetchCircleOutput, FetchCircleUsecase, MemberOutput},
     update_circle::{UpdateCircleInput, UpdateCircleOutPut, UpdateCircleUsecase},
 };
@@ -129,6 +130,13 @@ pub async fn handle_fetch_circle(
         .map(FetcheCircleResponseBody::from)
         .map(Json)
         .map_err(|e| e.to_string())
+}
+
+pub async fn handle_fetch_all(State(state): State<AppState>) -> impl IntoResponse {
+    let usecase = FetchAllCircleUsecase::new(state.circle_repository);
+    let circles = usecase.execute().await;
+    tracing::info!("circles: {:?}", circles);
+    (StatusCode::OK).into_response()
 }
 
 #[derive(Debug, Deserialize)]

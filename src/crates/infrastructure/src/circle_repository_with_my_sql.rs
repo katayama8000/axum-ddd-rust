@@ -18,7 +18,7 @@ impl CircleRepositoryWithMySql {
 }
 
 impl CircleRepositoryInterface for CircleRepositoryWithMySql {
-    async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
+    async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
         tracing::info!("find_circle_by_id : {:?}", circle_id);
         let circle_query =
             sqlx::query("SELECT * FROM circles WHERE id = ?").bind(circle_id.to_string());

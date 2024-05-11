@@ -130,7 +130,7 @@ mod tests {
 
         let created = state
             .circle_repository
-            .find_circle_by_id(&CircleId::from(response_body.circle_id))
+            .find_by_id(&CircleId::from(response_body.circle_id))
             .await?;
         let circle = Circle::reconstruct(
             CircleId::from(response_body.circle_id),
@@ -230,7 +230,7 @@ mod tests {
 
         let updated_circle = state
             .circle_repository
-            .find_circle_by_id(&CircleId::from(circle_id))
+            .find_by_id(&CircleId::from(circle_id))
             .await?;
         assert_eq!(updated_circle.name, "Football club");
         assert_eq!(updated_circle.capacity, 20);

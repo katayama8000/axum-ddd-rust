@@ -55,7 +55,7 @@ where
     ) -> Result<FetchCircleOutput, Error> {
         let circle_id = CircleId::from(fetch_circle_input.id);
         self.circle_repository
-            .find_circle_by_id(&circle_id)
+            .find_by_id(&circle_id)
             .await
             .map(|circle: Circle| FetchCircleOutput {
                 circle_id: i16::from(circle.id),

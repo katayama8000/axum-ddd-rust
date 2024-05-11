@@ -22,7 +22,7 @@ impl CircleRepository {
 }
 
 impl CircleRepositoryInterface for CircleRepository {
-    async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
+    async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error> {
         match self.db.get::<CircleData, _>(&circle_id.to_string())? {
             Some(data) => Ok(Circle::try_from(data)?),
             None => Err(Error::msg("Circle not found")),
@@ -158,14 +158,14 @@ mod tests {
     async fn test() -> anyhow::Result<()> {
         let mut circle1 = build_circle()?;
         let repository = CircleRepository::new();
-        assert!(repository.find_circle_by_id(&circle1.id).await.is_err());
+        assert!(repository.find_by_id(&circle1.id).await.is_err());
         repository.create(&circle1).await?;
-        assert_eq!(repository.find_circle_by_id(&circle1.id).await?, circle1);
+        assert_eq!(repository.find_by_id(&circle1.id).await?, circle1);
         circle1.name = "circle_name2".to_string();
         repository.update(&circle1).await?;
-        assert_eq!(repository.find_circle_by_id(&circle1.id).await?, circle1);
+        assert_eq!(repository.find_by_id(&circle1.id).await?, circle1);
         repository.delete(&circle1).await?;
-        assert!(repository.find_circle_by_id(&circle1.id).await.is_err());
+        assert!(repository.find_by_id(&circle1.id).await.is_err());
         Ok(())
     }
 

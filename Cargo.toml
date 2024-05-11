@@ -1,3 +1,8 @@
+workspace = { members = [
+    "src/crates/infrastructure",
+    "src/crates/domain",
+    "src/crates/usecase",
+] }
 [package]
 name = "app"
 version = "0.1.0-rc.1"
@@ -11,7 +16,6 @@ tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 anyhow = "1.0.83"
-rand = "0.8.4"
 sqlx = { version = "0.7.3", features = ["mysql", "runtime-tokio-native-tls"] }
 dotenv = "0.15.0"
 tracing = "0.1.40"
@@ -20,6 +24,8 @@ tracing-subscriber = { version = "0.3.18", features = [
     "env-filter",
     "fmt",
 ] }
-
+domain = { path = "./src/crates/domain" }
+usecase = { path = "./src/crates/usecase" }
+infrastructure = { path = "./src/crates/infrastructure" }
 [dev-dependencies]
 tower = { version = "0.4.13", features = ["util"] }

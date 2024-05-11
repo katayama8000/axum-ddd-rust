@@ -1,14 +1,14 @@
-use crate::domain::aggregate::{
+use domain::aggregate::{
     member::Member,
     value_object::{grade::Grade, major::Major, member_id::MemberId},
 };
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct MemberData {
-    pub id: u16,
+    pub id: i16,
     pub name: String,
-    pub age: u16,
-    pub grade: u16,
+    pub age: i16,
+    pub grade: i16,
     pub major: String,
 }
 

@@ -1,6 +1,5 @@
 use anyhow::Error;
-
-use crate::domain::{
+use domain::{
     aggregate::{
         circle::Circle,
         member::Member,
@@ -65,10 +64,10 @@ impl CircleRepositoryInterface for CircleRepository {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {
-    id: u16,
+    id: i16,
     name: String,
     owner: MemberData,
-    capacity: u16,
+    capacity: i16,
     members: Vec<MemberData>,
 }
 
@@ -109,10 +108,10 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct MemberData {
-    id: u16,
+    id: i16,
     name: String,
-    age: u16,
-    grade: u16,
+    age: i16,
+    grade: i16,
     major: String,
 }
 
@@ -144,7 +143,7 @@ impl std::convert::TryFrom<MemberData> for Member {
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::{
+    use domain::{
         aggregate::{
             circle::Circle,
             member::Member,

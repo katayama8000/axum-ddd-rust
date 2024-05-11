@@ -3,18 +3,15 @@ use crate::{
     handler::{handle_create_circle, handle_fetch_circle, handle_update_circle},
 };
 
-mod config;
-mod domain;
-mod handler;
-mod infrastructure;
-mod usecase;
-
 use axum::{
     routing::{get, post, put},
     Router,
 };
 use handler::{handle_debug, handle_get_test, handle_get_version};
 use infrastructure::circle_repository_with_my_sql::CircleRepositoryWithMySql;
+
+mod config;
+mod handler;
 
 #[derive(Clone)]
 struct AppState {
@@ -54,23 +51,20 @@ async fn main() -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
-    use axum::http::{header::CONTENT_TYPE, StatusCode};
-    use tower::ServiceExt;
-
     use crate::{
         config::connect::connect_test,
-        domain::{
-            aggregate::{
-                circle::Circle,
-                member::Member,
-                value_object::{
-                    circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId,
-                },
-            },
-            interface::circle_repository_interface::CircleRepositoryInterface,
-        },
         handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
     };
+    use axum::http::{header::CONTENT_TYPE, StatusCode};
+    use domain::{
+        aggregate::{
+            circle::Circle,
+            member::Member,
+            value_object::{circle_id::CircleId, grade::Grade, major::Major, member_id::MemberId},
+        },
+        interface::circle_repository_interface::CircleRepositoryInterface,
+    };
+    use tower::ServiceExt;
 
     use super::*;
 
@@ -244,7 +238,7 @@ mod tests {
         Ok(())
     }
 
-    async fn build_circle(app: &Router) -> anyhow::Result<(u16, u16)> {
+    async fn build_circle(app: &Router) -> anyhow::Result<(i16, i16)> {
         let create_response = app
             .clone()
             .oneshot(

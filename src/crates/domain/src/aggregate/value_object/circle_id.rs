@@ -2,11 +2,11 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CircleId(u16);
+pub struct CircleId(i16);
 
 impl CircleId {
     pub fn gen() -> Self {
-        Self(rand::random::<u16>())
+        Self(rand::random::<i16>())
     }
 }
 
@@ -22,15 +22,15 @@ impl fmt::Display for CircleId {
     }
 }
 
-impl std::convert::From<u16> for CircleId {
-    fn from(id: u16) -> Self {
+impl std::convert::From<i16> for CircleId {
+    fn from(id: i16) -> Self {
         Self(id)
     }
 }
 
-impl std::convert::From<CircleId> for u16 {
+impl std::convert::From<CircleId> for i16 {
     fn from(circle_id: CircleId) -> Self {
-        circle_id.0 as u16
+        circle_id.0 as i16
     }
 }
 
@@ -42,6 +42,6 @@ mod tests {
     fn test() {
         let circle_id = CircleId::from(1);
         assert_eq!(circle_id.to_string(), "1");
-        assert_eq!(u16::from(circle_id), 1);
+        assert_eq!(i16::from(circle_id), 1);
     }
 }

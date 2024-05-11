@@ -1,37 +1,37 @@
 use anyhow::{Error, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{
+use domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInput {
-    pub id: u16,
+    pub id: i16,
 }
 
 impl FetchCircleInput {
-    pub fn new(id: u16) -> Self {
+    pub fn new(id: i16) -> Self {
         FetchCircleInput { id }
     }
 }
 
 #[derive(Debug)]
 pub struct FetchCircleOutput {
-    pub circle_id: u16,
+    pub circle_id: i16,
     pub circle_name: String,
-    pub capacity: u16,
+    pub capacity: i16,
     pub owner: MemberOutput,
     pub members: Vec<MemberOutput>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MemberOutput {
-    pub id: u16,
+    pub id: i16,
     pub name: String,
-    pub age: u16,
-    pub grade: u16,
+    pub age: i16,
+    pub grade: i16,
     pub major: String,
 }
 pub struct FetchCircleUsecase<T>
@@ -58,24 +58,24 @@ where
             .find_circle_by_id(&circle_id)
             .await
             .map(|circle: Circle| FetchCircleOutput {
-                circle_id: u16::from(circle.id),
+                circle_id: i16::from(circle.id),
                 circle_name: circle.name,
-                capacity: circle.capacity as u16,
+                capacity: circle.capacity as i16,
                 owner: MemberOutput {
-                    id: u16::from(circle.owner.id),
+                    id: i16::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
-                    grade: u16::from(circle.owner.grade),
+                    grade: i16::from(circle.owner.grade),
                     major: String::from(circle.owner.major),
                 },
                 members: circle
                     .members
                     .iter()
                     .map(|member| MemberOutput {
-                        id: u16::from(member.id),
+                        id: i16::from(member.id),
                         name: member.name.clone(),
                         age: member.age,
-                        grade: u16::from(member.grade),
+                        grade: i16::from(member.grade),
                         major: String::from(member.major),
                     })
                     .collect(),

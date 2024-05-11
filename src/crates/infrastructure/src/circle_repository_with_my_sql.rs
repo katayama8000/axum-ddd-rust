@@ -1,4 +1,4 @@
-use crate::domain::{
+use domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
@@ -19,6 +19,7 @@ impl CircleRepositoryWithMySql {
 
 impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     async fn find_circle_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
+        tracing::info!("find_circle_by_id : {:?}", circle_id);
         let circle_query =
             sqlx::query("SELECT * FROM circles WHERE id = ?").bind(circle_id.to_string());
 
@@ -38,26 +39,26 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         let members: Vec<MemberData> = members_row
             .into_iter()
             .map(|member| MemberData {
-                id: member.get::<u16, _>("id"),
+                id: member.get::<i16, _>("id"),
                 name: member.get::<String, _>("name"),
-                age: member.get::<u16, _>("age"),
-                grade: member.get::<u16, _>("grade"),
+                age: member.get::<i16, _>("age"),
+                grade: member.get::<i16, _>("grade"),
                 major: member.get::<String, _>("major"),
             })
             .collect();
 
         let owner: MemberData = members
             .iter()
-            .find(|member| member.id == circle_row.get::<u16, _>("owner_id"))
+            .find(|member| member.id == circle_row.get::<i16, _>("owner_id"))
             .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
             .clone();
 
         let circle_data = CircleData {
-            id: circle_row.get::<u16, _>("id"),
+            id: circle_row.get::<i16, _>("id"),
             name: circle_row.get::<String, _>("name"),
-            owner_id: circle_row.get::<u16, _>("owner_id"),
+            owner_id: circle_row.get::<i16, _>("owner_id"),
             owner,
-            capacity: circle_row.get::<u16, _>("capacity"),
+            capacity: circle_row.get::<i16, _>("capacity"),
             members,
         };
 

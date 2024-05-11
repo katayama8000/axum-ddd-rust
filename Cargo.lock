@@ -57,8 +57,9 @@ version = "0.1.0-rc.1"
 dependencies = [
  "anyhow",
  "axum",
+ "domain",
  "dotenv",
- "rand",
+ "infrastructure",
  "serde",
  "serde_json",
  "sqlx",
@@ -66,6 +67,7 @@ dependencies = [
  "tower",
  "tracing",
  "tracing-subscriber",
+ "usecase",
 ]
 
 [[package]]
@@ -332,6 +334,14 @@ dependencies = [
  "const-oid",
  "crypto-common",
  "subtle",
+]
+
+[[package]]
+name = "domain"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "rand",
 ]
 
 [[package]]
@@ -705,6 +715,19 @@ checksum = "d530e1a18b1cb4c484e6e34556a0d948706958449fca0cab753d649f2bce3d1f"
 dependencies = [
  "equivalent",
  "hashbrown",
+]
+
+[[package]]
+name = "infrastructure"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "domain",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -1950,6 +1973,16 @@ name = "urlencoding"
 version = "2.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
+
+[[package]]
+name = "usecase"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "domain",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "valuable"

@@ -1,21 +1,21 @@
-use crate::domain::aggregate::member::Member;
-use crate::domain::aggregate::value_object::circle_id::CircleId;
-
-use super::value_object::grade::Grade;
+use super::{
+    member::Member,
+    value_object::{circle_id::CircleId, grade::Grade},
+};
 use anyhow::Error;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Circle {
     pub id: CircleId, // サークルのID (Value Object)
     pub name: String,
-    pub capacity: u16,
+    pub capacity: i16,
     pub owner: Member,
     pub members: Vec<Member>,
 }
 
 impl Circle {
     // サークルの新規作成メソッド
-    pub fn new(name: String, owner: Member, capacity: u16) -> Result<Self, Error> {
+    pub fn new(name: String, owner: Member, capacity: i16) -> Result<Self, Error> {
         // オーナーは3年生のみなれる
         if owner.grade != Grade::Third {
             return Err(Error::msg("Owner must be 3rd grade"));
@@ -40,7 +40,7 @@ impl Circle {
         id: CircleId,
         name: String,
         owner: Member,
-        capacity: u16,
+        capacity: i16,
         members: Vec<Member>,
     ) -> Self {
         Circle {
@@ -53,7 +53,7 @@ impl Circle {
     }
 
     // サークルの更新メソッド
-    pub fn update(&mut self, name: Option<String>, capacity: Option<u16>) {
+    pub fn update(&mut self, name: Option<String>, capacity: Option<i16>) {
         if let Some(name) = name {
             self.name = name;
         }

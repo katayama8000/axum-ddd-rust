@@ -6,7 +6,7 @@ pub enum Grade {
     Fourth,
 }
 
-impl std::convert::From<Grade> for u16 {
+impl std::convert::From<Grade> for i16 {
     fn from(value: Grade) -> Self {
         match value {
             Grade::First => 1,
@@ -17,10 +17,10 @@ impl std::convert::From<Grade> for u16 {
     }
 }
 
-impl std::convert::TryFrom<u16> for Grade {
+impl std::convert::TryFrom<i16> for Grade {
     type Error = anyhow::Error;
 
-    fn try_from(value: u16) -> Result<Self, Self::Error> {
+    fn try_from(value: i16) -> Result<Self, Self::Error> {
         Ok(match value {
             1 => Grade::First,
             2 => Grade::Second,
@@ -43,7 +43,7 @@ mod tests {
             (Grade::Third, 3),
             (Grade::Fourth, 4),
         ] {
-            assert_eq!(u16::from(v), n);
+            assert_eq!(i16::from(v), n);
             assert_eq!(Grade::try_from(n)?, v);
         }
         Ok(())

@@ -1,19 +1,17 @@
-use crate::domain::aggregate::value_object::member_id::MemberId;
-
-use super::value_object::{grade::Grade, major::Major};
+use super::value_object::{grade::Grade, major::Major, member_id::MemberId};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Member {
     pub id: MemberId, // メンバーのID (Value Object)
     pub name: String,
-    pub age: u16,
+    pub age: i16,
     pub grade: Grade,
     pub major: Major,
 }
 
 impl Member {
     // メンバーの新規作成メソッド
-    pub fn new(name: String, age: u16, grade: Grade, major: Major) -> Self {
+    pub fn new(name: String, age: i16, grade: Grade, major: Major) -> Self {
         Member {
             id: MemberId::gen(),
             name,
@@ -24,7 +22,7 @@ impl Member {
     }
 
     // メンバーの再構成メソッド
-    pub fn reconstruct(id: MemberId, name: String, age: u16, grade: Grade, major: Major) -> Self {
+    pub fn reconstruct(id: MemberId, name: String, age: i16, grade: Grade, major: Major) -> Self {
         Member {
             id,
             name,

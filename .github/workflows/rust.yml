@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - Display the last commit message
+    - name: Display the last commit message
       run: echo "Last commit message = ${{git log -1 --pretty=format:%s}}"
 
     - name: Check for version bump

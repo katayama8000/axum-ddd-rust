@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Display the last commit message
-      run: ${{ github.event.head_commit.message }}
+      run: echo "Last commit message = ${{ github.event.head_commit.message }}"
 
     - name: Check for version bump
       id: check_version_bump

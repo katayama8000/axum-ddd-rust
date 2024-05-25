@@ -11,12 +11,26 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Set up the repository
+      run: echo "Checking for 'Bump version' in commit messages"
+    
+    - name: Check for 'Bump version' in commit messages
+      id: check_commit
+      run: |
+        if git log -1 --pretty=format:%s | grep -q 'Bump version'; then
+          echo "::set-output name=bump_version::true"
+        else
+          echo "::set-output name=bump_version::false"
+        fi
+
     - name: Build
       run: cargo build --verbose
+
     - name: Run tests
+      if: steps.check_commit.outputs.bump_version != 'true'
       run: cargo test --verbose

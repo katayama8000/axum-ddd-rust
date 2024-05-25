@@ -1,10 +1,10 @@
-name: Rust
+name: Rust CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,12 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set up the repository
-      run: echo "Checking for 'Bump version' in commit messages"
-    
-    - name: Check for 'Bump version' in commit messages
-      id: check_commit
+
+    - name: Check for version bump
+      id: check_version_bump
       run: |
         if git log -1 --pretty=format:%s | grep -q 'Bump version'; then
           echo "::set-output name=bump_version::true"
@@ -29,8 +26,9 @@ jobs:
         fi
 
     - name: Build
+      if: steps.check_version_bump.outputs.bump_version == 'true'
       run: cargo build --verbose
 
     - name: Run tests
-      if: steps.check_commit.outputs.bump_version != 'true'
+      if: steps.check_version_bump.outputs.bump_version != 'true'
       run: cargo test --verbose

@@ -20,13 +20,13 @@ jobs:
       id: check_version_bump
       run: |
         if git log -1 --pretty=format:%s | grep -q 'Bump version'; then
-          echo "::set-output name=bump_version::true"
+          echo "bump_version=true" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=bump_version::false"
+          echo "bump_version=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Build
-      if: steps.check_version_bump.outputs.bump_version == 'true'
+      if: steps.check_version_bump.outputs.bump_version != 'true'
       run: cargo build --verbose
 
     - name: Run tests

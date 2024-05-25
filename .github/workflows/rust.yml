@@ -17,24 +17,24 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Display the last commit message
-      run: git log -1 --pretty=format:%s
+      run: ${{ github.event.head_commit.message }}
 
     - name: Check for version bump
       id: check_version_bump
       run: |
         if git log -1 --pretty=format:%s | grep -q 'Bump version'; then
-          echo "bump_version=true" >> $GITHUB_ENV
+          echo "bump_version=true" >> $GITHUB_OUTPUT
         else
-          echo "bump_version=false" >> $GITHUB_ENV
+          echo "bump_version=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Display bump_version result
-      run: echo "bump_version = ${{ env.bump_version }}"
+      run: echo " bump_version = ${{ steps.check_version_bump.outputs.bump_version }}"
 
     - name: Build
-      if: env.bump_version != 'true'
+      if: steps.check_version_bump.outputs.bump_version != 'true'
       run: cargo build --verbose
 
     - name: Run tests
-      if: env.bump_version != 'true'
+      if: steps.check_version_bump.outputs.bump_version != 'true'
       run: cargo test --verbose

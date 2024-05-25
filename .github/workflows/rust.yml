@@ -26,7 +26,7 @@ jobs:
         fi
 
     - name: Display bump_version result
-      run: echo "bump_version"
+      run: echo "bump_version = ${{ steps.check_version_bump.outputs.bump_version }}"
 
     - name: Build
       if: steps.check_version_bump.outputs.bump_version != 'true'

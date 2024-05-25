@@ -20,9 +20,9 @@ jobs:
       id: check_version_bump
       run: |
         if git log -1 --pretty=format:%s | grep -q 'Bump version'; then
-          echo "bump_version=xxx" >> $GITHUB_OUTPUT
-        else
           echo "bump_version=true" >> $GITHUB_OUTPUT
+        else
+          echo "bump_version=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Display bump_version result

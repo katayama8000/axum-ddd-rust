@@ -28,7 +28,7 @@ pub struct FetchCircleOutput {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MemberOutput {
-    pub id: i16,
+    pub id: String,
     pub name: String,
     pub age: i16,
     pub grade: i16,
@@ -62,7 +62,7 @@ where
                 circle_name: circle.name,
                 capacity: circle.capacity as i16,
                 owner: MemberOutput {
-                    id: i16::from(circle.owner.id),
+                    id: String::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
                     grade: i16::from(circle.owner.grade),
@@ -72,7 +72,7 @@ where
                     .members
                     .iter()
                     .map(|member| MemberOutput {
-                        id: i16::from(member.id),
+                        id: member.id.clone().into(),
                         name: member.name.clone(),
                         age: member.age,
                         grade: i16::from(member.grade),

@@ -12,7 +12,7 @@ use super::member_data::MemberData;
 pub struct CircleData {
     pub id: String,
     pub name: String,
-    pub owner_id: i16,
+    pub owner_id: String,
     pub owner: MemberData,
     pub capacity: i16,
     pub members: Vec<MemberData>,
@@ -23,7 +23,7 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
         let circle_id = CircleId::from_str(data.id.as_str())?;
-        let owner_id = MemberId::from(data.owner_id);
+        let owner_id = MemberId::from_str(data.owner_id.as_str())?;
         let members = data
             .members
             .into_iter()
@@ -51,7 +51,7 @@ impl std::convert::From<Circle> for CircleData {
         Self {
             id: circle.id.into(),
             name: circle.name,
-            owner_id: circle.owner.id.into(),
+            owner_id: circle.owner.clone().id.into(),
             owner: MemberData::from(circle.owner),
             capacity: circle.capacity as i16,
             members: circle.members.into_iter().map(MemberData::from).collect(),

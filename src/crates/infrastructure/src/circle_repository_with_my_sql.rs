@@ -40,7 +40,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             let members: Vec<MemberData> = members_row
                 .into_iter()
                 .map(|member| MemberData {
-                    id: member.get::<i16, _>("id"),
+                    id: member.get::<String, _>("id"),
                     name: member.get::<String, _>("name"),
                     age: member.get::<i16, _>("age"),
                     grade: member.get::<i16, _>("grade"),
@@ -50,14 +50,14 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
 
             let owner: MemberData = members
                 .iter()
-                .find(|member| member.id == circle_row.get::<i16, _>("owner_id"))
+                .find(|member| member.id == circle_row.get::<String, _>("owner_id"))
                 .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
                 .clone();
 
             let circle_data = CircleData {
                 id: circle_row.get::<String, _>("id"),
                 name: circle_row.get::<String, _>("name"),
-                owner_id: circle_row.get::<i16, _>("owner_id"),
+                owner_id: circle_row.get::<String, _>("owner_id"),
                 owner,
                 capacity: circle_row.get::<i16, _>("capacity"),
                 members,
@@ -90,7 +90,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         let members: Vec<MemberData> = members_row
             .into_iter()
             .map(|member| MemberData {
-                id: member.get::<i16, _>("id"),
+                id: member.get::<String, _>("id"),
                 name: member.get::<String, _>("name"),
                 age: member.get::<i16, _>("age"),
                 grade: member.get::<i16, _>("grade"),
@@ -100,14 +100,14 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
 
         let owner: MemberData = members
             .iter()
-            .find(|member| member.id == circle_row.get::<i16, _>("owner_id"))
+            .find(|member| member.id == circle_row.get::<String, _>("owner_id"))
             .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
             .clone();
 
         let circle_data = CircleData {
             id: circle_row.get::<String, _>("id"),
             name: circle_row.get::<String, _>("name"),
-            owner_id: circle_row.get::<i16, _>("owner_id"),
+            owner_id: circle_row.get::<String, _>("owner_id"),
             owner,
             capacity: circle_row.get::<i16, _>("capacity"),
             members,

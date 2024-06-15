@@ -139,7 +139,7 @@ mod tests {
             CircleId::from_str(&response_body.circle_id)?,
             "circle_name1".to_string(),
             Member::reconstruct(
-                MemberId::from(response_body.owner_id),
+                MemberId::from_str(&response_body.owner_id)?,
                 "owner1".to_string(),
                 21,
                 Grade::try_from(3)?,
@@ -241,7 +241,7 @@ mod tests {
         Ok(())
     }
 
-    async fn build_circle(app: &Router) -> anyhow::Result<(String, i16)> {
+    async fn build_circle(app: &Router) -> anyhow::Result<(String, String)> {
         let create_response = app
             .clone()
             .oneshot(

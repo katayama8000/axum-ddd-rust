@@ -53,7 +53,7 @@ impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleResponseBody {
     pub circle_id: String,
-    pub owner_id: i16,
+    pub owner_id: String,
 }
 
 impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {

@@ -19,7 +19,7 @@ impl FetchCircleInput {
 
 #[derive(Debug)]
 pub struct FetchCircleOutput {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub circle_name: String,
     pub capacity: i16,
     pub owner: MemberOutput,
@@ -58,7 +58,7 @@ where
             .find_by_id(&circle_id)
             .await
             .map(|circle: Circle| FetchCircleOutput {
-                circle_id: i16::from(circle.id),
+                circle_id: circle.id.into(),
                 circle_name: circle.name,
                 capacity: circle.capacity as i16,
                 owner: MemberOutput {

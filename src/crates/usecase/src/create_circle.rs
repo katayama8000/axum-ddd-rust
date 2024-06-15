@@ -42,7 +42,7 @@ impl CreateCircleInput {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleOutput {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub owner_id: i16,
 }
 
@@ -85,7 +85,7 @@ where
             .create(&circle)
             .await
             .map(|_| CreateCircleOutput {
-                circle_id: i16::from(circle.id),
+                circle_id: String::from(circle.id),
                 owner_id: i16::from(owner_id),
             })
     }

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use domain::aggregate::{
     circle::Circle,
     member::Member,
@@ -8,7 +10,7 @@ use super::member_data::MemberData;
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct CircleData {
-    pub id: i16,
+    pub id: String,
     pub name: String,
     pub owner_id: i16,
     pub owner: MemberData,
@@ -20,7 +22,7 @@ impl std::convert::TryFrom<CircleData> for Circle {
     type Error = anyhow::Error;
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
-        let circle_id = CircleId::from(data.id);
+        let circle_id = CircleId::from_str(data.id.as_str())?;
         let owner_id = MemberId::from(data.owner_id);
         let members = data
             .members

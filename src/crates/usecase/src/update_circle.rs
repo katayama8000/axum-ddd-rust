@@ -23,11 +23,11 @@ impl UpdateCircleInput {
 }
 
 pub struct UpdateCircleOutPut {
-    pub id: i16,
+    pub id: String,
 }
 
 impl UpdateCircleOutPut {
-    pub fn new(id: i16) -> Self {
+    pub fn new(id: String) -> Self {
         UpdateCircleOutPut { id }
     }
 }
@@ -62,7 +62,7 @@ where
             .update(&circle)
             .await
             .map(|_cirlce| UpdateCircleOutPut {
-                id: i16::from(circle.id),
+                id: String::from(circle.id),
             })
     }
 }

@@ -55,7 +55,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
                 .clone();
 
             let circle_data = CircleData {
-                id: circle_row.get::<i16, _>("id"),
+                id: circle_row.get::<String, _>("id"),
                 name: circle_row.get::<String, _>("name"),
                 owner_id: circle_row.get::<i16, _>("owner_id"),
                 owner,
@@ -105,7 +105,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             .clone();
 
         let circle_data = CircleData {
-            id: circle_row.get::<i16, _>("id"),
+            id: circle_row.get::<String, _>("id"),
             name: circle_row.get::<String, _>("name"),
             owner_id: circle_row.get::<i16, _>("owner_id"),
             owner,
@@ -156,7 +156,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
                 .bind(member.age)
                 .bind(member.grade)
                 .bind(member.major)
-                .bind(circle_data.id)
+                .bind(circle_data.id.as_str())
                 .execute(&self.db)
                 .await
                 .map_err(|e| {

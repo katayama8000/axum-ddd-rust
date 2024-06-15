@@ -52,7 +52,7 @@ impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleResponseBody {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub owner_id: i16,
 }
 
@@ -91,7 +91,7 @@ pub struct FetchCircleInputParam {
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct FetcheCircleResponseBody {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub circle_name: String,
     pub capacity: i16,
     pub owner: MemberOutput,
@@ -158,7 +158,7 @@ impl UpdateCircleRequestBody {
 
 #[derive(Debug, serde::Serialize)]
 pub struct UpdateCircleResponseBody {
-    pub id: i16,
+    pub id: String,
 }
 
 impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {

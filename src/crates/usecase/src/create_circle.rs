@@ -42,8 +42,8 @@ impl CreateCircleInput {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateCircleOutput {
-    pub circle_id: i16,
-    pub owner_id: i16,
+    pub circle_id: String,
+    pub owner_id: String,
 }
 
 pub struct CreateCircleUsecase<T>
@@ -75,7 +75,7 @@ where
             grade,
             major,
         );
-        let owner_id = owner.id;
+        let owner_id = owner.clone().id;
         let circle = Circle::new(
             circle_circle_input.circle_name,
             owner,
@@ -85,8 +85,8 @@ where
             .create(&circle)
             .await
             .map(|_| CreateCircleOutput {
-                circle_id: i16::from(circle.id),
-                owner_id: i16::from(owner_id),
+                circle_id: String::from(circle.id),
+                owner_id: String::from(owner_id),
             })
     }
 }

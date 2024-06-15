@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use anyhow::Error;
 use domain::{
     aggregate::{
@@ -68,7 +70,7 @@ impl CircleRepositoryInterface for CircleRepository {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {
-    id: i16,
+    id: String,
     name: String,
     owner: MemberData,
     capacity: i16,
@@ -92,10 +94,10 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
     fn try_from(data: CircleData) -> Result<Self, Self::Error> {
         Ok(Circle::reconstruct(
-            CircleId::from(data.id),
+            CircleId::from_str(&data.id)?,
             data.name,
             Member::reconstruct(
-                MemberId::from(data.owner.id),
+                MemberId::from_str(&data.owner.id)?,
                 data.owner.name,
                 data.owner.age,
                 Grade::try_from(data.owner.grade)?,
@@ -112,7 +114,7 @@ impl std::convert::TryFrom<CircleData> for Circle {
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct MemberData {
-    id: i16,
+    id: String,
     name: String,
     age: i16,
     grade: i16,
@@ -136,7 +138,7 @@ impl std::convert::TryFrom<MemberData> for Member {
 
     fn try_from(value: MemberData) -> Result<Self, Self::Error> {
         Ok(Member::reconstruct(
-            MemberId::from(value.id),
+            MemberId::from_str(value.id.as_str())?,
             value.name,
             value.age,
             Grade::try_from(value.grade)?,

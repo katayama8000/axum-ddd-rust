@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use anyhow::Error;
 use domain::{
     aggregate::value_object::circle_id::CircleId,
@@ -7,13 +9,13 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInput {
-    pub id: i16,
+    pub id: String,
     pub circle_name: Option<String>,
     pub capacity: Option<i16>,
 }
 
 impl UpdateCircleInput {
-    pub fn new(id: i16, circle_name: Option<String>, capacity: Option<i16>) -> Self {
+    pub fn new(id: String, circle_name: Option<String>, capacity: Option<i16>) -> Self {
         UpdateCircleInput {
             id,
             circle_name,
@@ -23,12 +25,12 @@ impl UpdateCircleInput {
 }
 
 pub struct UpdateCircleOutPut {
-    pub id: i16,
+    pub circle_id: String,
 }
 
 impl UpdateCircleOutPut {
-    pub fn new(id: i16) -> Self {
-        UpdateCircleOutPut { id }
+    pub fn new(circle_id: String) -> Self {
+        UpdateCircleOutPut { circle_id }
     }
 }
 
@@ -51,7 +53,7 @@ where
         &mut self,
         update_circle_input: UpdateCircleInput,
     ) -> Result<UpdateCircleOutPut, Error> {
-        let circle_id = CircleId::from(update_circle_input.id);
+        let circle_id = CircleId::from_str(update_circle_input.id.as_str())?;
         let mut circle = self.circle_repository.find_by_id(&circle_id).await?;
 
         circle.update(
@@ -62,7 +64,7 @@ where
             .update(&circle)
             .await
             .map(|_cirlce| UpdateCircleOutPut {
-                id: i16::from(circle.id),
+                circle_id: String::from(circle.id),
             })
     }
 }

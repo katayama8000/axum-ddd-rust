@@ -1,12 +1,15 @@
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-#[derive(Copy, Debug, Clone, PartialEq, Eq)]
-pub struct MemberId(i16);
+use rand::distributions::{Alphanumeric, DistString};
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MemberId(String);
 
 impl MemberId {
     pub fn gen() -> Self {
-        Self(rand::random::<i16>())
+        let mut rng = rand::thread_rng();
+        Self(Alphanumeric.sample_string(&mut rng, 36))
     }
 }
 
@@ -22,13 +25,21 @@ impl fmt::Display for MemberId {
     }
 }
 
-impl std::convert::From<i16> for MemberId {
-    fn from(id: i16) -> Self {
-        Self(id)
+impl std::str::FromStr for MemberId {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self(s.to_string()))
     }
 }
 
-impl std::convert::From<MemberId> for i16 {
+impl std::convert::From<i16> for MemberId {
+    fn from(id: i16) -> Self {
+        Self(id.to_string())
+    }
+}
+
+impl std::convert::From<MemberId> for String {
     fn from(member_id: MemberId) -> Self {
         member_id.0
     }
@@ -36,12 +47,18 @@ impl std::convert::From<MemberId> for i16 {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use super::*;
 
     #[test]
-    fn test() {
-        let member_id = MemberId::from(1);
-        assert_eq!(member_id.to_string(), "1");
-        assert_eq!(i16::from(member_id), 1);
+    fn test() -> anyhow::Result<()> {
+        let member_id = MemberId::gen();
+        assert_eq!(member_id.to_string().len(), 36);
+
+        let str = "0123456789abcdef0123456789abcdef";
+        let member_id = MemberId::from_str(str)?;
+        assert_eq!(member_id.to_string(), str);
+        Ok(())
     }
 }

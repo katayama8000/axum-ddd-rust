@@ -52,6 +52,8 @@ async fn main() -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use crate::{
         config::connect::connect_test,
         handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
@@ -131,13 +133,13 @@ mod tests {
 
         let created = state
             .circle_repository
-            .find_by_id(&CircleId::from(response_body.circle_id))
+            .find_by_id(&CircleId::from_str(&response_body.circle_id)?)
             .await?;
         let circle = Circle::reconstruct(
-            CircleId::from(response_body.circle_id),
+            CircleId::from_str(&response_body.circle_id)?,
             "circle_name1".to_string(),
             Member::reconstruct(
-                MemberId::from(response_body.owner_id),
+                MemberId::from_str(&response_body.owner_id)?,
                 "owner1".to_string(),
                 21,
                 Grade::try_from(3)?,
@@ -231,7 +233,7 @@ mod tests {
 
         let updated_circle = state
             .circle_repository
-            .find_by_id(&CircleId::from(circle_id))
+            .find_by_id(&CircleId::from_str(&circle_id)?)
             .await?;
         assert_eq!(updated_circle.name, "Football club");
         assert_eq!(updated_circle.capacity, 20);
@@ -239,7 +241,7 @@ mod tests {
         Ok(())
     }
 
-    async fn build_circle(app: &Router) -> anyhow::Result<(i16, i16)> {
+    async fn build_circle(app: &Router) -> anyhow::Result<(String, String)> {
         let create_response = app
             .clone()
             .oneshot(

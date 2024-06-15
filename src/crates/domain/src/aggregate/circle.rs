@@ -68,12 +68,12 @@ impl Circle {
     }
 
     // サークルが運営可能かどうかを判定するメソッド
-    fn is_runnable(&self) -> bool {
+    fn _is_runnable(&self) -> bool {
         self.members.len() + 1 >= 3
     }
 
     // 飲み会に参加できるかどうかを判定するメソッド
-    fn is_drinkable_alcohol(member: &Member) -> bool {
+    fn _is_drinkable_alcohol(member: &Member) -> bool {
         member.is_adult()
     }
 

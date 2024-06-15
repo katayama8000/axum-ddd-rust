@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use anyhow::{Error, Result};
 use serde::{Deserialize, Serialize};
 
@@ -8,18 +10,18 @@ use domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInput {
-    pub id: i16,
+    pub id: String,
 }
 
 impl FetchCircleInput {
-    pub fn new(id: i16) -> Self {
+    pub fn new(id: String) -> Self {
         FetchCircleInput { id }
     }
 }
 
 #[derive(Debug)]
 pub struct FetchCircleOutput {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub circle_name: String,
     pub capacity: i16,
     pub owner: MemberOutput,
@@ -28,7 +30,7 @@ pub struct FetchCircleOutput {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MemberOutput {
-    pub id: i16,
+    pub id: String,
     pub name: String,
     pub age: i16,
     pub grade: i16,
@@ -53,16 +55,16 @@ where
         &self,
         fetch_circle_input: FetchCircleInput,
     ) -> Result<FetchCircleOutput, Error> {
-        let circle_id = CircleId::from(fetch_circle_input.id);
+        let circle_id = CircleId::from_str(fetch_circle_input.id.as_str())?;
         self.circle_repository
             .find_by_id(&circle_id)
             .await
             .map(|circle: Circle| FetchCircleOutput {
-                circle_id: i16::from(circle.id),
+                circle_id: circle.id.into(),
                 circle_name: circle.name,
                 capacity: circle.capacity as i16,
                 owner: MemberOutput {
-                    id: i16::from(circle.owner.id),
+                    id: String::from(circle.owner.id),
                     name: circle.owner.name,
                     age: circle.owner.age,
                     grade: i16::from(circle.owner.grade),
@@ -72,7 +74,7 @@ where
                     .members
                     .iter()
                     .map(|member| MemberOutput {
-                        id: i16::from(member.id),
+                        id: member.id.clone().into(),
                         name: member.name.clone(),
                         age: member.age,
                         grade: i16::from(member.grade),

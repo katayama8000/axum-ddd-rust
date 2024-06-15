@@ -52,8 +52,8 @@ impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct CreateCircleResponseBody {
-    pub circle_id: i16,
-    pub owner_id: i16,
+    pub circle_id: String,
+    pub owner_id: String,
 }
 
 impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {
@@ -86,12 +86,12 @@ pub async fn handle_create_circle(
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInputParam {
-    id: i16,
+    id: String,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct FetcheCircleResponseBody {
-    pub circle_id: i16,
+    pub circle_id: String,
     pub circle_name: String,
     pub capacity: i16,
     pub owner: MemberOutput,
@@ -141,7 +141,7 @@ pub async fn handle_fetch_all(State(state): State<AppState>) -> impl IntoRespons
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCircleInputParam {
-    id: i16,
+    id: String,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -151,19 +151,19 @@ pub struct UpdateCircleRequestBody {
 }
 
 impl UpdateCircleRequestBody {
-    pub fn convert_to_input(self, id: i16) -> UpdateCircleInput {
+    pub fn convert_to_input(self, id: String) -> UpdateCircleInput {
         UpdateCircleInput::new(id, self.circle_name, self.capacity)
     }
 }
 
 #[derive(Debug, serde::Serialize)]
 pub struct UpdateCircleResponseBody {
-    pub id: i16,
+    pub circle_id: String,
 }
 
 impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {
-    fn from(UpdateCircleOutPut { id }: UpdateCircleOutPut) -> Self {
-        UpdateCircleResponseBody { id }
+    fn from(UpdateCircleOutPut { circle_id }: UpdateCircleOutPut) -> Self {
+        UpdateCircleResponseBody { circle_id }
     }
 }
 
@@ -172,7 +172,7 @@ pub async fn handle_update_circle(
     Path(path): Path<UpdateCircleInputParam>,
     Json(body): Json<UpdateCircleRequestBody>,
 ) -> Result<Json<UpdateCircleResponseBody>, String> {
-    let update_circle_input = body.convert_to_input(path.id);
+    let update_circle_input = body.convert_to_input(path.id.to_string());
     let mut usecase = UpdateCircleUsecase::new(state.circle_repository);
 
     usecase

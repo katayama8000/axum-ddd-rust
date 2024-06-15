@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use anyhow::{Error, Result};
 use serde::{Deserialize, Serialize};
 
@@ -8,11 +10,11 @@ use domain::{
 
 #[derive(Debug, Deserialize)]
 pub struct FetchCircleInput {
-    pub id: i16,
+    pub id: String,
 }
 
 impl FetchCircleInput {
-    pub fn new(id: i16) -> Self {
+    pub fn new(id: String) -> Self {
         FetchCircleInput { id }
     }
 }
@@ -53,7 +55,7 @@ where
         &self,
         fetch_circle_input: FetchCircleInput,
     ) -> Result<FetchCircleOutput, Error> {
-        let circle_id = CircleId::from(fetch_circle_input.id);
+        let circle_id = CircleId::from_str(fetch_circle_input.id.as_str())?;
         self.circle_repository
             .find_by_id(&circle_id)
             .await

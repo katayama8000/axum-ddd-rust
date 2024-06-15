@@ -120,26 +120,28 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
         tracing::info!("create_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
         let circle_query =
-            sqlx::query("INSERT INTO circles (name, owner_id, capacity) VALUES (?, ?, ?)")
+            sqlx::query("INSERT INTO circles (id, name, owner_id, capacity) VALUES (?, ?, ?, ?)")
+                .bind(circle_data.id.as_str())
                 .bind(circle_data.name)
                 .bind(circle_data.owner_id)
                 .bind(circle_data.capacity);
 
-        let circle_query_result = circle_query.execute(&self.db).await.map_err(|e| {
+        circle_query.execute(&self.db).await.map_err(|e| {
             eprintln!("Failed to insert circle: {:?}", e);
             anyhow::Error::msg("Failed to insert circle")
         })?;
 
         let owner_query = sqlx::query(
-            "INSERT INTO members (name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO members (id, name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?, ?)",
         );
 
         owner_query
+            .bind(circle_data.owner.id)
             .bind(circle_data.owner.name)
             .bind(circle_data.owner.age)
             .bind(circle_data.owner.grade)
             .bind(circle_data.owner.major)
-            .bind(circle_query_result.last_insert_id())
+            .bind(circle_data.id.as_str())
             .execute(&self.db)
             .await
             .map_err(|e| {
@@ -147,22 +149,8 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
                 anyhow::Error::msg("Failed to insert owner")
             })?;
 
-        for member in circle_data.members {
-            let member_query = sqlx::query(
-                "INSERT INTO members (name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?, ?)",
-            );
-            member_query
-                .bind(member.name)
-                .bind(member.age)
-                .bind(member.grade)
-                .bind(member.major)
-                .bind(circle_data.id.as_str())
-                .execute(&self.db)
-                .await
-                .map_err(|e| {
-                    eprintln!("Failed to insert member: {:?}", e);
-                    anyhow::Error::msg("Failed to insert member")
-                })?;
+        if circle_data.members.is_empty() {
+            return Ok(());
         }
         Ok(())
     }

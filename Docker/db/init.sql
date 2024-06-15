@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS circles (
     id CHAR(36) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
-    owner_id INT NOT NULL
+    owner_id CHAR(36) NOT NULL
 );
 
 -- Membersテーブルの作成
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS members (
 INSERT INTO
     circles (id, name, capacity, owner_id)
 VALUES
-    (UUID(), 'Circle A', 5, 1),
-    (UUID(), 'Circle B', 8, 2),
-    (UUID(), 'Circle C', 10, 3);
+    (UUID(), 'Circle A', 5, UUID()),
+    (UUID(), 'Circle B', 8, UUID()),
+    (UUID(), 'Circle C', 10, UUID());
 
 -- Membersテーブルへの初期データ挿入
 INSERT INTO

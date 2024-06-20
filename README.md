@@ -13,7 +13,7 @@
 
 ## How to run
 
-1. First, start the database container. Refer to the docs for more details.
+1. First, start the database container. Refer to the [docs](DB.md) for more details.
 2. Next, run the devcontainer.
 3. Finally, start the server with the following command:
 

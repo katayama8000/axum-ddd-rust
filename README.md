@@ -13,16 +13,15 @@
 
 ## How to run
 
-You need to run the devcontainer first.
-
-Then you can run the following command to start the server.
-
+1. First, start the database container. Refer to the docs for more details.
+2. Next, run the devcontainer.
+3. Finally, start the server with the following command:
 
 ```bash
 cargo run
 ```
 
-or you can run the following command to start the server with watch mode.
+Alternatively, you can start the server in watch mode with:
 
 ```bash
 ./watch.sh

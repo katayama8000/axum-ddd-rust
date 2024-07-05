@@ -63,23 +63,23 @@ where
 
     pub async fn execute(
         &mut self,
-        circle_circle_input: CreateCircleInput,
+        create_circle_input: CreateCircleInput,
     ) -> Result<CreateCircleOutput> {
-        let grade = Grade::try_from(circle_circle_input.owner_grade)?;
+        let grade = Grade::try_from(create_circle_input.owner_grade)?;
 
-        let major = Major::from(circle_circle_input.owner_major.as_str());
+        let major = Major::from(create_circle_input.owner_major.as_str());
 
         let owner = Member::new(
-            circle_circle_input.owner_name,
-            circle_circle_input.owner_age,
+            create_circle_input.owner_name,
+            create_circle_input.owner_age,
             grade,
             major,
         );
         let owner_id = owner.clone().id;
         let circle = Circle::new(
-            circle_circle_input.circle_name,
+            create_circle_input.circle_name,
             owner,
-            circle_circle_input.capacity,
+            create_circle_input.capacity,
         )?;
         self.circle_repository
             .create(&circle)

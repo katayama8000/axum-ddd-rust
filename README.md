@@ -1,6 +1,6 @@
-# This is a Management  Circle App for University
+Management Circle App for University
 
-## Stack
+## Tech Stack
 
 - Rust
 - axum

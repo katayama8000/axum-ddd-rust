@@ -1,4 +1,4 @@
-Management Circle App for University
+# Management Circle App for University
 
 ## Tech Stack
 

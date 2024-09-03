@@ -9,7 +9,7 @@ edition = "2021"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 anyhow = "1.0.86"
-sqlx = { version = "0.8.0", features = ["mysql", "runtime-tokio-native-tls"] }
+sqlx = { version = "0.8.1", features = ["mysql", "runtime-tokio-native-tls"] }
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1.40"
 domain = { path = "../domain" }

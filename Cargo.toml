@@ -28,4 +28,4 @@ domain = { path = "./src/crates/domain" }
 usecase = { path = "./src/crates/usecase" }
 infrastructure = { path = "./src/crates/infrastructure" }
 [dev-dependencies]
-tower = { version = "0.4.13", features = ["util"] }
+tower = { version = "0.5.1", features = ["util"] }

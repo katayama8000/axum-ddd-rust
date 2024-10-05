@@ -354,6 +354,7 @@ name = "domain"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "mockall",
  "rand",
 ]
@@ -2068,8 +2069,10 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "domain",
+ "mockall",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]

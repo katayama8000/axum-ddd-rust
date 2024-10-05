@@ -101,6 +101,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_fetch_circle_usecase() -> anyhow::Result<()> {
+        let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
         let circle_id = CircleId::from_str("123")?;
         let owner = Member::new(
             "john".to_string(),
@@ -123,12 +124,12 @@ mod tests {
             members.clone(),
         );
 
-        let mut mock = MockCircleRepositoryInterface::new();
-        mock.expect_find_by_id()
+        mocked_circle_repository
+            .expect_find_by_id()
             .times(1)
             .returning(move |_| Ok(circle.clone()));
 
-        let usecase = FetchCircleUsecase::new(mock);
+        let usecase = FetchCircleUsecase::new(mocked_circle_repository);
         let input = FetchCircleInput::new(circle_id.clone().into());
         let output = usecase.execute(input).await.unwrap();
 

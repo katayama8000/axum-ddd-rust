@@ -91,23 +91,12 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::create_circle::{CreateCircleInput, CreateCircleOutput, CreateCircleUsecase};
-    use domain::{
-        aggregate::{
-            circle::Circle,
-            member::Member,
-            value_object::{grade::Grade, major::Major},
-        },
-        interface::circle_repository_interface::MockCircleRepositoryInterface,
-    };
+    use crate::create_circle::{CreateCircleInput, CreateCircleUsecase};
+    use domain::interface::circle_repository_interface::MockCircleRepositoryInterface;
 
     #[tokio::test]
     async fn test_create_circle_usecase() -> anyhow::Result<()> {
         let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
-        let grade = Grade::Third;
-        let major = Major::ComputerScience;
-        let owner = Member::new("mike".to_string(), 21, grade, major);
-        let circle = Circle::new("music".to_string(), owner.clone(), 10)?;
         let input = CreateCircleInput::new(
             "music".to_string(),
             10,
@@ -116,22 +105,15 @@ mod tests {
             3,
             "ComputerScience".to_string(),
         );
-        let output = CreateCircleOutput {
-            circle_id: circle.id.to_string(),
-            owner_id: owner.id.to_string(),
-        };
-        println!("{:?}", owner);
-        println!("{:?}", circle);
 
         mocked_circle_repository
             .expect_create()
-            // .with(eq(circle))
             .times(1)
             .return_once(|_| Ok(()));
 
         let mut usecase = CreateCircleUsecase::new(mocked_circle_repository);
-        let result = usecase.execute(input).await?;
-        // assert_eq!(result, output);
+        let _result = usecase.execute(input).await?;
+        // can not compare the output directly because the id is generated randomly
         anyhow::Ok(())
     }
 }

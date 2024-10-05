@@ -25,4 +25,4 @@ jobs:
       - name: Build
         run: cargo build --verbose
       - name: Test
-        run: cargo nextest run
+        run: cargo nextest run --workspace

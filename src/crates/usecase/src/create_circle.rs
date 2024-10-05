@@ -40,7 +40,7 @@ impl CreateCircleInput {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct CreateCircleOutput {
     pub circle_id: String,
     pub owner_id: String,
@@ -66,9 +66,7 @@ where
         create_circle_input: CreateCircleInput,
     ) -> Result<CreateCircleOutput> {
         let grade = Grade::try_from(create_circle_input.owner_grade)?;
-
         let major = Major::from(create_circle_input.owner_major.as_str());
-
         let owner = Member::new(
             create_circle_input.owner_name,
             create_circle_input.owner_age,
@@ -88,5 +86,34 @@ where
                 circle_id: String::from(circle.id),
                 owner_id: String::from(owner_id),
             })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::create_circle::{CreateCircleInput, CreateCircleUsecase};
+    use domain::interface::circle_repository_interface::MockCircleRepositoryInterface;
+
+    #[tokio::test]
+    async fn test_create_circle_usecase() -> anyhow::Result<()> {
+        let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
+        let input = CreateCircleInput::new(
+            "music".to_string(),
+            10,
+            "mike".to_string(),
+            21,
+            3,
+            "ComputerScience".to_string(),
+        );
+
+        mocked_circle_repository
+            .expect_create()
+            .times(1)
+            .return_once(|_| Ok(()));
+
+        let mut usecase = CreateCircleUsecase::new(mocked_circle_repository);
+        let _result = usecase.execute(input).await?;
+        // can not compare the output directly because the id is generated randomly
+        anyhow::Ok(())
     }
 }

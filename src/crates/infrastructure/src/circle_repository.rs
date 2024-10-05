@@ -23,6 +23,7 @@ impl CircleRepository {
     }
 }
 
+#[async_trait::async_trait]
 impl CircleRepositoryInterface for CircleRepository {
     async fn find_all(&self) -> Result<Vec<Circle>, Error> {
         todo!("Implement this method")

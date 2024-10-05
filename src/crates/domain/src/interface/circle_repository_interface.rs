@@ -1,22 +1,12 @@
+use crate::aggregate::{circle::Circle, value_object::circle_id::CircleId};
 use anyhow::Error;
 
-use crate::aggregate::{circle::Circle, value_object::circle_id::CircleId};
+#[mockall::automock]
+#[async_trait::async_trait]
 pub trait CircleRepositoryInterface {
-    fn find_all(&self) -> impl std::future::Future<Output = Result<Vec<Circle>, Error>> + Send;
-    fn find_by_id(
-        &self,
-        circle_id: &CircleId,
-    ) -> impl std::future::Future<Output = Result<Circle, Error>> + Send;
-    fn create(
-        &self,
-        circle: &Circle,
-    ) -> impl std::future::Future<Output = Result<(), Error>> + Send;
-    fn update(
-        &self,
-        circle: &Circle,
-    ) -> impl std::future::Future<Output = Result<Circle, Error>> + Send;
-    fn delete(
-        &self,
-        circle: &Circle,
-    ) -> impl std::future::Future<Output = Result<(), Error>> + Send;
+    async fn find_all(&self) -> Result<Vec<Circle>, Error>;
+    async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, Error>;
+    async fn create(&self, circle: &Circle) -> Result<(), Error>;
+    async fn update(&self, circle: &Circle) -> Result<Circle, Error>;
+    async fn delete(&self, circle: &Circle) -> Result<(), Error>;
 }

@@ -116,10 +116,10 @@ mod tests {
             3,
             "ComputerScience".to_string(),
         );
-        // let output = CreateCircleOutput {
-        //     circle_id: circle.id.to_string(),
-        //     owner_id: owner.id.to_string(),
-        // };
+        let output = CreateCircleOutput {
+            circle_id: circle.id.to_string(),
+            owner_id: owner.id.to_string(),
+        };
         println!("{:?}", owner);
         println!("{:?}", circle);
 
@@ -132,7 +132,7 @@ mod tests {
         let mut usecase = CreateCircleUsecase::new(mocked_circle_repository);
         let result = usecase.execute(input).await?;
         println!("{:?}", result);
-        // assert_eq!(result, output);
+        assert_eq!(result, output);
         assert_eq!(true, true);
         anyhow::Ok(())
     }

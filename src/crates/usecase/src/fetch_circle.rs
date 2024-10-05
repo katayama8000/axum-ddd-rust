@@ -84,3 +84,68 @@ where
             })
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use domain::{
+        aggregate::{
+            circle::Circle,
+            member::Member,
+            value_object::{grade::Grade, major::Major},
+        },
+        interface::circle_repository_interface::MockCircleRepositoryInterface,
+    };
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_fetch_circle_usecase() -> anyhow::Result<()> {
+        let circle_id = CircleId::from_str("123")?;
+        let owner = Member::new(
+            "john".to_string(),
+            20,
+            Grade::try_from(3)?,
+            Major::from("ComputerScience"),
+        );
+        let members = vec![Member::new(
+            "mike".to_string(),
+            20,
+            Grade::try_from(1).unwrap(),
+            Major::from("Economics"),
+        )];
+        let circle = Circle::new("music".to_string(), owner.clone(), 10)?;
+        let circle = Circle::reconstruct(
+            circle_id.clone(),
+            circle.name,
+            circle.owner,
+            circle.capacity,
+            members.clone(),
+        );
+
+        let mut mock = MockCircleRepositoryInterface::new();
+        mock.expect_find_by_id()
+            .times(1)
+            .returning(move |_| Ok(circle.clone()));
+
+        let usecase = FetchCircleUsecase::new(mock);
+        let input = FetchCircleInput::new(circle_id.clone().into());
+        let output = usecase.execute(input).await.unwrap();
+
+        // assert_eq!(output.circle_id, circle_id.to_string());
+        assert_eq!(output.circle_name, "music");
+        assert_eq!(output.capacity, 10);
+        assert_eq!(output.owner.id, owner.id.to_string());
+        assert_eq!(output.owner.name, "john");
+        assert_eq!(output.owner.age, 20);
+        assert_eq!(output.owner.grade, 3);
+        assert_eq!(output.owner.major, "ComputerScience");
+        assert_eq!(output.members.len(), 1);
+        assert_eq!(output.members[0].id, members[0].id.clone().to_string());
+        assert_eq!(output.members[0].name, "mike");
+        assert_eq!(output.members[0].age, 20);
+        assert_eq!(output.members[0].grade, 1);
+        assert_eq!(output.members[0].major, "Economics");
+        anyhow::Result::Ok(())
+    }
+}

@@ -1,6 +1,8 @@
-use anyhow::Error;
-
 use crate::aggregate::{circle::Circle, value_object::circle_id::CircleId};
+use anyhow::Error;
+use mockall::automock;
+
+#[automock]
 pub trait CircleRepositoryInterface {
     fn find_all(&self) -> impl std::future::Future<Output = Result<Vec<Circle>, Error>> + Send;
     fn find_by_id(

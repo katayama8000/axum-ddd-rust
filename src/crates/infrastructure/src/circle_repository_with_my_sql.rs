@@ -17,6 +17,7 @@ impl CircleRepositoryWithMySql {
     }
 }
 
+#[async_trait::async_trait]
 impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     async fn find_all(&self) -> Result<Vec<Circle>, anyhow::Error> {
         tracing::info!("find_all_circles");

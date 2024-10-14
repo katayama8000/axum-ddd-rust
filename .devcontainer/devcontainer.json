@@ -12,7 +12,8 @@
         "rust-lang.rust-analyzer",
         "tamasfe.even-better-toml",
         "serayuzgur.crates",
-        "adpyke.vscode-sql-formatter"
+        "adpyke.vscode-sql-formatter",
+        "fill-labs.dependi"
       ],
       "settings": {
         "files.watcherExclude": {

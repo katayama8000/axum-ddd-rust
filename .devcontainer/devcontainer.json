@@ -11,7 +11,6 @@
         "ms-azuretools.vscode-docker",
         "rust-lang.rust-analyzer",
         "tamasfe.even-better-toml",
-        "serayuzgur.crates",
         "adpyke.vscode-sql-formatter",
         "fill-labs.dependi"
       ],

@@ -7,7 +7,10 @@ use domain::{
         member::Member,
         value_object::{grade::Grade, major::Major},
     },
-    interface::circle_repository_interface::CircleRepositoryInterface,
+    interface::{
+        circle_duplicate_checker_interface::CircleDuplicateCheckerInterface,
+        circle_repository_interface::CircleRepositoryInterface,
+    },
 };
 
 #[derive(Debug, Deserialize)]
@@ -46,19 +49,25 @@ pub struct CreateCircleOutput {
     pub owner_id: String,
 }
 
-pub struct CreateCircleUsecase<T>
+pub struct CreateCircleUsecase<T, U>
 where
     T: CircleRepositoryInterface,
+    U: CircleDuplicateCheckerInterface,
 {
     circle_repository: T,
+    circle_duplicate_checker: U,
 }
 
-impl<T> CreateCircleUsecase<T>
+impl<T, U> CreateCircleUsecase<T, U>
 where
     T: CircleRepositoryInterface,
+    U: CircleDuplicateCheckerInterface,
 {
-    pub fn new(circle_repository: T) -> Self {
-        CreateCircleUsecase { circle_repository }
+    pub fn new(circle_repository: T, circle_duplicate_checker: U) -> Self {
+        CreateCircleUsecase {
+            circle_repository,
+            circle_duplicate_checker,
+        }
     }
 
     pub async fn execute(
@@ -73,12 +82,15 @@ where
             grade,
             major,
         );
-        let owner_id = owner.clone().id;
+        let owner_id = owner.id.clone();
         let circle = Circle::new(
             create_circle_input.circle_name,
             owner,
             create_circle_input.capacity,
         )?;
+        self.circle_duplicate_checker
+            .check_circle_duplicate(&circle)
+            .await?;
         self.circle_repository
             .create(&circle)
             .await
@@ -91,12 +103,18 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::create_circle::{CreateCircleInput, CreateCircleUsecase};
-    use domain::interface::circle_repository_interface::MockCircleRepositoryInterface;
+    use super::*;
+    use anyhow::anyhow;
+    use domain::interface::{
+        circle_duplicate_checker_interface::MockCircleDuplicateCheckerInterface,
+        circle_repository_interface::MockCircleRepositoryInterface,
+    };
 
     #[tokio::test]
-    async fn test_create_circle_usecase() -> anyhow::Result<()> {
+    async fn test_create_circle_usecase_successful() -> anyhow::Result<()> {
         let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
+        let mut mocked_circle_duplicate_checker = MockCircleDuplicateCheckerInterface::new();
+
         let input = CreateCircleInput::new(
             "music".to_string(),
             10,
@@ -110,10 +128,49 @@ mod tests {
             .expect_create()
             .times(1)
             .return_once(|_| Ok(()));
+        mocked_circle_duplicate_checker
+            .expect_check_circle_duplicate()
+            .times(1)
+            .return_once(|_| Ok(()));
 
-        let mut usecase = CreateCircleUsecase::new(mocked_circle_repository);
+        let mut usecase =
+            CreateCircleUsecase::new(mocked_circle_repository, mocked_circle_duplicate_checker);
         let _result = usecase.execute(input).await?;
-        // can not compare the output directly because the id is generated randomly
+
+        anyhow::Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_create_circle_usecase_duplicate_error() -> anyhow::Result<()> {
+        let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
+        let mut mocked_circle_duplicate_checker = MockCircleDuplicateCheckerInterface::new();
+
+        let input = CreateCircleInput::new(
+            "music".to_string(),
+            10,
+            "mike".to_string(),
+            21,
+            3,
+            "ComputerScience".to_string(),
+        );
+
+        mocked_circle_duplicate_checker
+            .expect_check_circle_duplicate()
+            .times(1)
+            .return_once(|_| Err(anyhow!("Circle name already exists")));
+
+        mocked_circle_repository.expect_create().times(0);
+
+        let mut usecase =
+            CreateCircleUsecase::new(mocked_circle_repository, mocked_circle_duplicate_checker);
+        let result = usecase.execute(input).await;
+
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Circle name already exists"
+        );
+
         anyhow::Ok(())
     }
 }

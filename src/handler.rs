@@ -75,7 +75,8 @@ pub async fn handle_create_circle(
     Json(body): Json<CreateCircleRequestBody>,
 ) -> Result<Json<CreateCircleResponseBody>, String> {
     let circle_circle_input = CreateCircleInput::from(body);
-    let mut usecase = CreateCircleUsecase::new(state.circle_repository);
+    let mut usecase =
+        CreateCircleUsecase::new(state.circle_repository, state.circle_duplicate_checker);
     usecase
         .execute(circle_circle_input)
         .await

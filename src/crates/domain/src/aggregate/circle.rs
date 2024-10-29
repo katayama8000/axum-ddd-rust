@@ -107,4 +107,9 @@ impl Circle {
     pub fn graduate(&mut self) {
         self.members.retain(|m| m.grade != Grade::Fourth);
     }
+
+    // getter
+    pub fn name(&self) -> &str {
+        &self.name
+    }
 }

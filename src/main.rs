@@ -24,7 +24,7 @@ struct AppState {
 
 fn router() -> Router<AppState> {
     Router::new()
-        .route("/", get(handle_get_version))
+        .route("/version", get(handle_get_version))
         .route("/circle/:id", get(handle_fetch_circle))
         .route("/circle", get(handle_fetch_all))
         .route("/circle", post(handle_create_circle))
@@ -87,7 +87,7 @@ mod tests {
             .oneshot(
                 axum::http::Request::builder()
                     .method("GET")
-                    .uri("/")
+                    .uri("/version")
                     .body(axum::body::Body::empty())?,
             )
             .await?;
@@ -97,7 +97,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "0.1.0");
+        assert_eq!(response_body, "0.1.0-rc.1");
         Ok(())
     }
 

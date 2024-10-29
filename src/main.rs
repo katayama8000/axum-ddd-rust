@@ -7,7 +7,7 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use handler::{handle_debug, handle_get_test, handle_get_version};
+use handler::{handle_debug, handle_get_version};
 use infrastructure::{
     circle_duplicate_checker::CircleDuplicateCheckerWithMySql,
     circle_repository_with_my_sql::CircleRepositoryWithMySql,
@@ -20,7 +20,6 @@ mod handler;
 struct AppState {
     circle_repository: CircleRepositoryWithMySql,
     circle_duplicate_checker: CircleDuplicateCheckerWithMySql,
-    pool: sqlx::MySqlPool,
 }
 
 fn router() -> Router<AppState> {
@@ -30,7 +29,6 @@ fn router() -> Router<AppState> {
         .route("/circle", get(handle_fetch_all))
         .route("/circle", post(handle_create_circle))
         .route("/circle/:id", put(handle_update_circle))
-        .route("/test", get(handle_get_test))
         .route("/debug", get(handle_debug))
 }
 
@@ -42,7 +40,6 @@ async fn main() -> Result<(), ()> {
     let state = AppState {
         circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
         circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
-        pool,
     };
 
     let app = router().with_state(state);
@@ -84,7 +81,6 @@ mod tests {
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
-            pool,
         };
         let app = router().with_state(state);
         let response = app
@@ -112,7 +108,6 @@ mod tests {
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
-            pool,
         };
         let app = router().with_state(state.clone());
         let response = app
@@ -166,7 +161,6 @@ mod tests {
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
-            pool,
         };
         let app = router().with_state(state);
         let unexist_circle_id = 0;
@@ -220,7 +214,6 @@ mod tests {
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
-            pool,
         };
         let app = router().with_state(state.clone());
         let (circle_id, _) = build_circle(&app).await?;

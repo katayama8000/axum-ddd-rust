@@ -7,8 +7,11 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use handler::{handle_debug, handle_get_test, handle_get_version};
-use infrastructure::circle_repository_with_my_sql::CircleRepositoryWithMySql;
+use handler::{handle_debug, handle_get_version};
+use infrastructure::{
+    circle_duplicate_checker::CircleDuplicateCheckerWithMySql,
+    circle_repository_with_my_sql::CircleRepositoryWithMySql,
+};
 
 mod config;
 mod handler;
@@ -16,17 +19,16 @@ mod handler;
 #[derive(Clone)]
 struct AppState {
     circle_repository: CircleRepositoryWithMySql,
-    pool: sqlx::MySqlPool,
+    circle_duplicate_checker: CircleDuplicateCheckerWithMySql,
 }
 
 fn router() -> Router<AppState> {
     Router::new()
-        .route("/", get(handle_get_version))
+        .route("/version", get(handle_get_version))
         .route("/circle/:id", get(handle_fetch_circle))
         .route("/circle", get(handle_fetch_all))
         .route("/circle", post(handle_create_circle))
         .route("/circle/:id", put(handle_update_circle))
-        .route("/test", get(handle_get_test))
         .route("/debug", get(handle_debug))
 }
 
@@ -37,7 +39,7 @@ async fn main() -> Result<(), ()> {
     let pool = connect().await.expect("database should connect");
     let state = AppState {
         circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-        pool,
+        circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
     };
 
     let app = router().with_state(state);
@@ -78,14 +80,14 @@ mod tests {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            pool,
+            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
         };
         let app = router().with_state(state);
         let response = app
             .oneshot(
                 axum::http::Request::builder()
                     .method("GET")
-                    .uri("/")
+                    .uri("/version")
                     .body(axum::body::Body::empty())?,
             )
             .await?;
@@ -95,7 +97,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "0.1.0");
+        assert_eq!(response_body, "0.1.0-rc.1");
         Ok(())
     }
 
@@ -105,7 +107,7 @@ mod tests {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            pool,
+            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
         };
         let app = router().with_state(state.clone());
         let response = app
@@ -158,7 +160,7 @@ mod tests {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            pool,
+            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
         };
         let app = router().with_state(state);
         let unexist_circle_id = 0;
@@ -211,7 +213,7 @@ mod tests {
         let pool = connect_test().await.expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            pool,
+            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
         };
         let app = router().with_state(state.clone());
         let (circle_id, _) = build_circle(&app).await?;

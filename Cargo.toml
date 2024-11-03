@@ -30,7 +30,7 @@ usecase = { path = "./src/crates/usecase" }
 infrastructure = { path = "./src/crates/infrastructure" }
 
 [workspace.dependencies]
-anyhow = "1.0.91"
+anyhow = "1.0.92"
 async-trait = "0.1.83"
 mockall = "0.13.0"
 tokio = { version = "1", features = ["full"] }

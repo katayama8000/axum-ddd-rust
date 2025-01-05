@@ -31,7 +31,7 @@ infrastructure = { path = "./src/crates/infrastructure" }
 
 [workspace.dependencies]
 anyhow = "1.0.95"
-async-trait = "0.1.83"
+async-trait = "0.1.84"
 mockall = "0.13.1"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }

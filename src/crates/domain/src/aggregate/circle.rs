@@ -94,6 +94,11 @@ impl Circle {
         self.members.retain(|m| m.grade != Grade::Fourth);
     }
 
+    // getter
+    pub fn id(&self) -> &CircleId {
+        &self.id
+    }
+
     pub fn name(&self) -> &str {
         &self.name
     }

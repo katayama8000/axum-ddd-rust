@@ -4,32 +4,27 @@ use domain::{
     aggregate::circle::Circle,
     interface::circle_duplicate_checker_interface::CircleDuplicateCheckerInterface,
 };
-use sqlx::MySqlPool;
+
+use crate::{db::Db, db_data::circle_data::CircleData};
 
 #[derive(Clone, Debug)]
-pub struct CircleDuplicateCheckerWithMySql {
-    db: MySqlPool,
+pub struct CircleDuplicateChecker {
+    db: Db,
 }
 
-impl CircleDuplicateCheckerWithMySql {
-    pub fn new(db: MySqlPool) -> Self {
-        Self { db }
+impl CircleDuplicateChecker {
+    pub fn new() -> Self {
+        Self { db: Db::new() }
     }
 }
 
 #[async_trait]
-impl CircleDuplicateCheckerInterface for CircleDuplicateCheckerWithMySql {
+impl CircleDuplicateCheckerInterface for CircleDuplicateChecker {
     async fn check_circle_duplicate(&self, circle: &Circle) -> Result<(), Error> {
-        let query = "SELECT * FROM circles WHERE name = ?";
-        let record = sqlx::query(query)
-            .bind(circle.name())
-            .fetch_optional(&self.db)
-            .await?;
-
-        if record.is_some() {
-            return Err(anyhow::anyhow!("Circle name already exists"));
+        let id = circle.id();
+        match self.db.get::<CircleData, _>(&id.to_string())? {
+            Some(_) => Err(Error::msg("Circle already exists")),
+            None => Ok(()),
         }
-
-        Ok(())
     }
 }

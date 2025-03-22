@@ -1,15 +1,19 @@
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-use rand::distributions::{Alphanumeric, DistString};
+use rand::distr::Alphanumeric;
+use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MemberId(String);
 
 impl MemberId {
     pub fn gen() -> Self {
-        let mut rng = rand::thread_rng();
-        Self(Alphanumeric.sample_string(&mut rng, 36))
+        let mut rng = rand::rng();
+        let chars: String = (0..36)
+            .map(|_| rng.sample(Alphanumeric) as char)
+            .collect::<String>();
+        Self(chars)
     }
 }
 

@@ -2,15 +2,19 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 
-use rand::distributions::{Alphanumeric, DistString};
+use rand::distr::Alphanumeric;
+use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CircleId(String);
 
 impl CircleId {
     pub fn gen() -> Self {
-        let mut rng = rand::thread_rng();
-        Self(Alphanumeric.sample_string(&mut rng, 36))
+        let mut rng = rand::rng();
+        let chars: String = (0..36)
+            .map(|_| rng.sample(Alphanumeric) as char)
+            .collect::<String>();
+        Self(chars)
     }
 }
 

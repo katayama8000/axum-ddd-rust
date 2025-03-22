@@ -12,10 +12,13 @@
 - Domain Driven Design
 
 ## How to run
-
-1. First, start the database container. Refer to the [docs](DB.md) for more details.
-2. Next, run the devcontainer.
-3. Finally, start the server with the following command:
+1. Copy the `.env.dist` file to `.env`.
+  ```bash
+  cp .env.dist .env
+  ```
+2. First, start the database container. Refer to the [docs](DB.md) for more details.
+3. Next, run the devcontainer.
+4. Finally, start the server with the following command:
 
 ```bash
 cargo run

@@ -21,15 +21,19 @@
 4. Finally, start the server with the following command:
 
 ```bash
-cargo run
+cargo run --bin main
 ```
 
-Alternatively, you can start the server in watch mode with:
+<!-- Alternatively, you can start the server in watch mode with:
 
 ```bash
 ./watch.sh
-```
+``` -->
 
+### check version to see if the server is running
+```bash
+curl -X GET http://127.0.0.1:3000/version
+``` 
 
 ### create 
 ```bash

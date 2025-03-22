@@ -22,14 +22,14 @@ make server-up
 ### run
 
 ```bash
-cargo run
+cargo run --bin main
 ```
 
-### watch
+<!-- ### watch
 
 ```bash
 ./watch.sh
-```
+``` -->
 
 ### down
 

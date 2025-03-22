@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 use infrastructure::{
-    circle_duplicate_checker::CircleDuplicateCheckerWithMySql,
+    circle_duplicate_checker_with_my_sql::CircleDuplicateCheckerWithMySql,
     circle_repository_with_my_sql::CircleRepositoryWithMySql,
 };
 
@@ -24,10 +24,10 @@ pub(crate) struct AppState {
 fn router() -> Router<AppState> {
     Router::new()
         .route("/version", get(handle_get_version))
-        .route("/circle/:id", get(handle_fetch_circle))
+        .route("/circle/{id}", get(handle_fetch_circle))
         .route("/circle", get(handle_fetch_all))
         .route("/circle", post(handle_create_circle))
-        .route("/circle/:id", put(handle_update_circle))
+        .route("/circle/{id}", put(handle_update_circle))
         .route("/debug", get(handle_debug))
 }
 

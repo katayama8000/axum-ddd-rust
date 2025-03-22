@@ -1,4 +1,3 @@
-use crate::AppState;
 use axum::{
     extract::{Json, Path, State},
     http::StatusCode,
@@ -13,7 +12,9 @@ use usecase::{
     update_circle::{UpdateCircleInput, UpdateCircleOutPut, UpdateCircleUsecase},
 };
 
-pub async fn handle_get_version() -> String {
+use crate::app::AppState;
+
+pub(crate) async fn handle_get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
@@ -69,7 +70,7 @@ impl std::convert::From<CreateCircleOutput> for CreateCircleResponseBody {
     }
 }
 
-pub async fn handle_create_circle(
+pub(crate) async fn handle_create_circle(
     State(state): State<AppState>,
     Json(body): Json<CreateCircleRequestBody>,
 ) -> Result<Json<CreateCircleResponseBody>, String> {
@@ -118,7 +119,7 @@ impl std::convert::From<FetchCircleOutput> for FetcheCircleResponseBody {
     }
 }
 
-pub async fn handle_fetch_circle(
+pub(crate) async fn handle_fetch_circle(
     State(state): State<AppState>,
     Path(param): Path<FetchCircleInputParam>,
 ) -> Result<Json<FetcheCircleResponseBody>, String> {
@@ -132,7 +133,7 @@ pub async fn handle_fetch_circle(
         .map_err(|e| e.to_string())
 }
 
-pub async fn handle_fetch_all(State(state): State<AppState>) -> impl IntoResponse {
+pub(crate) async fn handle_fetch_all(State(state): State<AppState>) -> impl IntoResponse {
     let usecase = FetchAllCircleUsecase::new(state.circle_repository);
     let circles = usecase.execute().await;
     tracing::info!("circles: {:?}", circles);
@@ -167,7 +168,7 @@ impl std::convert::From<UpdateCircleOutPut> for UpdateCircleResponseBody {
     }
 }
 
-pub async fn handle_update_circle(
+pub(crate) async fn handle_update_circle(
     State(state): State<AppState>,
     Path(path): Path<UpdateCircleInputParam>,
     Json(body): Json<UpdateCircleRequestBody>,
@@ -184,7 +185,7 @@ pub async fn handle_update_circle(
 }
 
 #[tracing::instrument(name = "handle_debug", skip())]
-pub async fn handle_debug() -> impl IntoResponse {
+pub(crate) async fn handle_debug() -> impl IntoResponse {
     tracing::info!("info");
     tracing::error!("error");
     tracing::warn!("warn");

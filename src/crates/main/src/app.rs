@@ -1,25 +1,24 @@
-use crate::{
-    config::connect::connect,
-    handler::{handle_create_circle, handle_fetch_all, handle_fetch_circle, handle_update_circle},
-};
-
 use axum::{
     routing::{get, post, put},
     Router,
 };
-use handler::{handle_debug, handle_get_version};
 use infrastructure::{
     circle_duplicate_checker::CircleDuplicateCheckerWithMySql,
     circle_repository_with_my_sql::CircleRepositoryWithMySql,
 };
 
-mod config;
-mod handler;
+use crate::{
+    config::connect,
+    handler::{
+        handle_create_circle, handle_debug, handle_fetch_all, handle_fetch_circle,
+        handle_get_version, handle_update_circle,
+    },
+};
 
 #[derive(Clone)]
-struct AppState {
-    circle_repository: CircleRepositoryWithMySql,
-    circle_duplicate_checker: CircleDuplicateCheckerWithMySql,
+pub(crate) struct AppState {
+    pub(crate) circle_repository: CircleRepositoryWithMySql,
+    pub(crate) circle_duplicate_checker: CircleDuplicateCheckerWithMySql,
 }
 
 fn router() -> Router<AppState> {
@@ -32,11 +31,10 @@ fn router() -> Router<AppState> {
         .route("/debug", get(handle_debug))
 }
 
-#[tokio::main]
-async fn main() -> Result<(), ()> {
+pub async fn run() -> Result<(), ()> {
     tracing_subscriber::fmt().init();
 
-    let pool = connect().await.expect("database should connect");
+    let pool = connect::connect().await.expect("database should connect");
     let state = AppState {
         circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
         circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
@@ -54,12 +52,6 @@ async fn main() -> Result<(), ()> {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
-
-    use crate::{
-        config::connect::connect_test,
-        handler::{CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody},
-    };
     use axum::http::{header::CONTENT_TYPE, StatusCode};
     use domain::{
         aggregate::{
@@ -69,7 +61,12 @@ mod tests {
         },
         interface::circle_repository_interface::CircleRepositoryInterface,
     };
+    use std::str::FromStr;
     use tower::ServiceExt;
+
+    use crate::handler::{
+        CreateCircleRequestBody, CreateCircleResponseBody, UpdateCircleRequestBody,
+    };
 
     use super::*;
 
@@ -77,7 +74,9 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn test_version() -> anyhow::Result<()> {
-        let pool = connect_test().await.expect("database should connect");
+        let pool = connect::connect_test()
+            .await
+            .expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
@@ -104,7 +103,9 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn test_create_circle() -> anyhow::Result<()> {
-        let pool = connect_test().await.expect("database should connect");
+        let pool = connect::connect_test()
+            .await
+            .expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
@@ -157,7 +158,9 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn test_fetch_circle() -> anyhow::Result<()> {
-        let pool = connect_test().await.expect("database should connect");
+        let pool = connect::connect_test()
+            .await
+            .expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
@@ -210,7 +213,9 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn test_update_circle() -> anyhow::Result<()> {
-        let pool = connect_test().await.expect("database should connect");
+        let pool = connect::connect_test()
+            .await
+            .expect("database should connect");
         let state = AppState {
             circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
             circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),

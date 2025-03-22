@@ -3,6 +3,7 @@ members = [
     "src/crates/infrastructure",
     "src/crates/domain",
     "src/crates/usecase",
+    "src/crates/main",
 ]
 [package]
 name = "app"
@@ -11,25 +12,28 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# [[bin]]
+# name = "main"
+# path = "src/main.rs"
+
 [dependencies]
 anyhow.workspace = true
-axum = { version = "0.8.2", features = ["macros"] }
-dotenv = "0.15.0"
+axum.workspace = true
+dotenv.workspace = true
 serde.workspace = true
 serde_json = "1"
 sqlx.workspace = true
 tokio.workspace = true
 tracing.workspace = true
-tracing-subscriber = { version = "0.3.19", features = [
-    "std",
-    "env-filter",
-    "fmt",
-] }
+tracing-subscriber.workspace = true
+
 domain = { path = "./src/crates/domain" }
 usecase = { path = "./src/crates/usecase" }
 infrastructure = { path = "./src/crates/infrastructure" }
+main = { path = "./src/crates/main" }
 
 [workspace.dependencies]
+axum = { version = "0.8.1", features = ["macros"] }
 anyhow = "1.0.97"
 async-trait = "0.1.88"
 mockall = "0.13.1"
@@ -38,6 +42,13 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlx = { version = "0.8.3", features = ["mysql", "runtime-tokio-native-tls"] }
 tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = [
+    "std",
+    "env-filter",
+    "fmt",
+] }
+tower = { version = "0.5.2", features = ["util"] }
+dotenv = "0.15.0"
 
 [dev-dependencies]
-tower = { version = "0.5.2", features = ["util"] }
+tower.workspace = true

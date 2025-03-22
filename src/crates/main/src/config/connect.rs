@@ -3,7 +3,7 @@ use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
 #[derive(Debug, Clone)]
-struct DbConfig {
+pub(crate) struct DbConfig {
     db_user: String,
     db_password: String,
     db_host: String,

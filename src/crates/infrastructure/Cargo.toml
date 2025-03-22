@@ -2,6 +2,7 @@
 name = "infrastructure"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -12,5 +13,5 @@ serde.workspace = true
 serde_json.workspace = true
 sqlx.workspace = true
 tokio.workspace = true
-tracing = "0.1.41"
+tracing.workspace = true
 domain = { path = "../domain" }

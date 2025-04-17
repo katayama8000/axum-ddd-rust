@@ -34,7 +34,7 @@ main = { path = "./src/crates/main" }
 
 [workspace.dependencies]
 axum = { version = "0.8.3", features = ["macros"] }
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 async-trait = "0.1.88"
 mockall = "0.13.1"
 tokio = { version = "1", features = ["full"] }

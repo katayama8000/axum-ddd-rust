@@ -33,7 +33,7 @@ infrastructure = { path = "./src/crates/infrastructure" }
 main = { path = "./src/crates/main" }
 
 [workspace.dependencies]
-axum = { version = "0.8.3", features = ["macros"] }
+axum = { version = "0.8.4", features = ["macros"] }
 anyhow = "1.0.98"
 async-trait = "0.1.88"
 mockall = "0.13.1"

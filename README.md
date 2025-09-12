@@ -12,8 +12,8 @@
 - Domain Driven Design
 
 ## How to run
-2. run the devcontainer in VSCode.
-3. Finally, start the server with the following command:
+1. Run the devcontainer in VSCode.
+2. Then, start the server with the following command:
 
 ```bash
 cargo run --bin main

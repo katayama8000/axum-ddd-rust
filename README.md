@@ -12,19 +12,12 @@
 - Domain Driven Design
 
 ## How to run
-1. First, start the database container. Refer to the [docs](DB.md) for more details.
-2. Next, run the devcontainer.
+2. run the devcontainer in VSCode.
 3. Finally, start the server with the following command:
 
 ```bash
 cargo run --bin main
 ```
-
-<!-- Alternatively, you can start the server in watch mode with:
-
-```bash
-./watch.sh
-``` -->
 
 ### check version to see if the server is running
 ```bash

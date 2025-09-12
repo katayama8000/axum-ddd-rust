@@ -8,6 +8,8 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
+    depends_on:
+      - db
   db:
     build:
       context: ./Docker/db
@@ -16,6 +18,7 @@ services:
     env_file:
       - ./.env
     ports:
-      - "3306:3306"
+      
+      - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts
     volumes:
       - ./Docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql

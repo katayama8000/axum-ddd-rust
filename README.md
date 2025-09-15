@@ -21,7 +21,7 @@ cargo run --bin main
 or you can use the watch script to auto-restart the server on code changes:
 
 ```bash
-./watch
+./watch.sh
 ```
 
 ### check version to see if the server is running

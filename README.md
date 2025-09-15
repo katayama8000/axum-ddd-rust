@@ -12,8 +12,16 @@
 - Domain Driven Design
 
 ## How to run
-1. Run the devcontainer in VSCode.
-2. Then, start the server with the following command:
+1. Clone this repository.
+  `git clone https://github.com/katayama8000/axum-ddd-rust.git`
+2. Open the repository in VSCode.
+3. Install the "Dev Containers" extension in VSCode if you haven't already.
+4. Copy .env.dist to .env
+5. Open the command palette (Ctrl+Shift+P) and select "Remote-Containers: Open Folder in Container..."
+6. Select the cloned repository folder.
+7. Wait for the container to build and start. This may take a few minutes.
+8. Once the container is running, open a terminal in VSCode.
+9. Run the following command to start the server:
 
 ```bash
 cargo run --bin main

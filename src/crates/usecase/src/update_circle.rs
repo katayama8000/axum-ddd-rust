@@ -54,9 +54,9 @@ where
         update_circle_input: UpdateCircleInput,
     ) -> Result<UpdateCircleOutPut, Error> {
         let circle_id = CircleId::from_str(update_circle_input.id.as_str())?;
-        let mut circle = self.circle_repository.find_by_id(&circle_id).await?;
+        let circle = self.circle_repository.find_by_id(&circle_id).await?;
 
-        circle.update(
+        let circle = circle.update(
             update_circle_input.circle_name,
             update_circle_input.capacity,
         );

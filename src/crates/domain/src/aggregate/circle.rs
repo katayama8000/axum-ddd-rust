@@ -48,13 +48,17 @@ impl Circle {
         }
     }
 
-    pub fn update(&mut self, name: Option<String>, capacity: Option<i16>) {
-        if let Some(name) = name {
-            self.name = name;
+    pub fn update(self, name: Option<String>, capacity: Option<i16>) -> Self {
+        let updated_name = name.unwrap_or(self.name);
+        let updated_capacity = capacity.unwrap_or(self.capacity);
+        
+        Circle {
+            id: self.id,
+            name: updated_name,
+            owner: self.owner,
+            capacity: updated_capacity,
+            members: self.members,
         }
-        if let Some(capacity) = capacity {
-            self.capacity = capacity;
-        };
     }
 
     fn is_full(&self) -> bool {
@@ -85,6 +89,9 @@ impl Circle {
     pub fn remove_member(&mut self, member: &Member) -> Result<(), Error> {
         if self.owner.id == member.id {
             return Err(Error::msg("Owner can't be removed"));
+        }
+        if !self.members.iter().any(|m| m.id == member.id) {
+            return Err(Error::msg("Member not found in circle"));
         }
         self.members.retain(|m| m.id != member.id);
         Ok(())

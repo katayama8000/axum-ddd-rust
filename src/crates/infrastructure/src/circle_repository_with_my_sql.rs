@@ -71,46 +71,57 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     }
 
     async fn find_by_id(&self, circle_id: &CircleId) -> Result<Circle, anyhow::Error> {
-        tracing::info!("find_circle_by_id : {:?}", circle_id);
-        let circle_query =
-            sqlx::query("SELECT * FROM circles WHERE id = ?").bind(circle_id.to_string());
+        tracing::info!("find_circle_by_id: {:?}", circle_id);
 
-        let circle_row = circle_query.fetch_one(&self.db).await.map_err(|e| {
-            eprintln!("Failed to fetch circle by id: {:?}", e);
-            anyhow::Error::msg("Failed to fetch circle by id")
-        })?;
+        let query = "
+            SELECT 
+                c.id AS circle_id, c.name AS circle_name, c.owner_id, c.capacity,
+                m.id AS member_id, m.name AS member_name, m.age AS member_age, m.grade AS member_grade, m.major AS member_major
+            FROM circles c
+            LEFT JOIN members m ON c.id = m.circle_id
+            WHERE c.id = ?
+        ";
 
-        let member_query =
-            sqlx::query("SELECT * FROM members WHERE circle_id = ?").bind(circle_id.to_string());
+        let rows = sqlx::query(query)
+            .bind(circle_id.to_string())
+            .fetch_all(&self.db)
+            .await
+            .map_err(|e| {
+                tracing::error!("Failed to fetch circle and members: {:?}", e);
+                anyhow::Error::msg("Failed to fetch circle and members")
+            })?;
 
-        let members_row = member_query.fetch_all(&self.db).await.map_err(|e| {
-            eprintln!("Failed to fetch members by circle id: {:?}", e);
-            anyhow::Error::msg("Failed to fetch members by circle id")
-        })?;
+        if rows.is_empty() {
+            return Err(anyhow::Error::msg("Circle not found"));
+        }
 
-        let members: Vec<MemberData> = members_row
-            .into_iter()
-            .map(|member| MemberData {
-                id: member.get::<String, _>("id"),
-                name: member.get::<String, _>("name"),
-                age: member.get::<i16, _>("age"),
-                grade: member.get::<i16, _>("grade"),
-                major: member.get::<String, _>("major"),
-            })
-            .collect();
+        let first_row = &rows[0];
+        let mut members: Vec<MemberData> = Vec::new();
+        let mut owner_data: Option<MemberData> = None;
 
-        let owner: MemberData = members
-            .iter()
-            .find(|member| member.id == circle_row.get::<String, _>("owner_id"))
-            .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
-            .clone();
+        for row in &rows {
+            let member = MemberData {
+                id: row.get::<String, _>("member_id"),
+                name: row.get::<String, _>("member_name"),
+                age: row.get::<i16, _>("member_age"),
+                grade: row.get::<i16, _>("member_grade"),
+                major: row.get::<String, _>("member_major"),
+            };
+
+            if member.id == first_row.get::<String, _>("owner_id") {
+                owner_data = Some(member.clone());
+            }
+            members.push(member);
+        }
+        
+        let owner = owner_data.ok_or_else(|| anyhow::Error::msg("Owner not found"))?;
 
         let circle_data = CircleData {
-            id: circle_row.get::<String, _>("id"),
-            name: circle_row.get::<String, _>("name"),
-            owner_id: circle_row.get::<String, _>("owner_id"),
+            id: first_row.get::<String, _>("circle_id"),
+            name: first_row.get::<String, _>("circle_name"),
+            owner_id: first_row.get::<String, _>("owner_id"),
             owner,
-            capacity: circle_row.get::<i16, _>("capacity"),
+            capacity: first_row.get::<i16, _>("capacity"),
             members,
         };
 
@@ -120,6 +131,12 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
     async fn create(&self, circle: &Circle) -> Result<(), anyhow::Error> {
         tracing::info!("create_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
+
+        let mut tx = self.db.begin().await.map_err(|e| {
+            eprintln!("Failed to start transaction: {:?}", e);
+            anyhow::Error::msg("Failed to start transaction")
+        })?;
+
         let circle_query =
             sqlx::query("INSERT INTO circles (id, name, owner_id, capacity) VALUES (?, ?, ?, ?)")
                 .bind(circle_data.id.as_str())
@@ -127,7 +144,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
                 .bind(circle_data.owner_id)
                 .bind(circle_data.capacity);
 
-        circle_query.execute(&self.db).await.map_err(|e| {
+        circle_query.execute(&mut *tx).await.map_err(|e| {
             eprintln!("Failed to insert circle: {:?}", e);
             anyhow::Error::msg("Failed to insert circle")
         })?;
@@ -143,22 +160,32 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             .bind(circle_data.owner.grade)
             .bind(circle_data.owner.major)
             .bind(circle_data.id.as_str())
-            .execute(&self.db)
+            .execute(&mut *tx)
             .await
             .map_err(|e| {
                 eprintln!("Failed to insert owner: {:?}", e);
                 anyhow::Error::msg("Failed to insert owner")
             })?;
 
-        if circle_data.members.is_empty() {
-            return Ok(());
-        }
+        // Commit transaction
+        tx.commit().await.map_err(|e| {
+            eprintln!("Failed to commit transaction: {:?}", e);
+            anyhow::Error::msg("Failed to commit transaction")
+        })?;
         Ok(())
     }
 
     async fn update(&self, circle: &Circle) -> Result<Circle, anyhow::Error> {
         tracing::info!("update_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
+
+        // Start transaction
+        let mut tx = self.db.begin().await.map_err(|e| {
+            eprintln!("Failed to start transaction: {:?}", e);
+            anyhow::Error::msg("Failed to start transaction")
+        })?;
+
+        // Update circle
         let circle_query =
             sqlx::query("UPDATE circles SET name = ?, owner_id = ?, capacity = ? WHERE id = ?")
                 .bind(circle_data.name)
@@ -166,35 +193,18 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
                 .bind(circle_data.capacity)
                 .bind(circle_data.id);
 
-        circle_query.execute(&self.db).await.map_err(|e| {
+        circle_query.execute(&mut *tx).await.map_err(|e| {
             eprintln!("Failed to update circle: {:?}", e);
             anyhow::Error::msg("Failed to update circle")
         })?;
 
-        // let member_query =
-        //     sqlx::query("DELETE FROM members WHERE circle_id = ?").bind(circle_data.id);
-        // member_query.execute(&self.db).await.map_err(|e| {
-        //     eprintln!("Failed to delete members: {:?}", e);
-        //     anyhow::Error::msg("Failed to delete members")
-        // })?;
+        // TODO: Update members
 
-        // for member in circle_data.members {
-        //     let member_query = sqlx::query(
-        //         "INSERT INTO members (name, age, grade, major, circle_id) VALUES (?, ?, ?, ?, ?, ?)",
-        //     );
-        //     member_query
-        //         .bind(member.name)
-        //         .bind(member.age)
-        //         .bind(member.grade)
-        //         .bind(member.major)
-        //         .bind(circle_data.id)
-        //         .execute(&self.db)
-        //         .await
-        //         .map_err(|e| {
-        //             eprintln!("Failed to insert member: {:?}", e);
-        //             anyhow::Error::msg("Failed to insert member")
-        //         })?;
-        // }
+        // Commit transaction
+        tx.commit().await.map_err(|e| {
+            eprintln!("Failed to commit transaction: {:?}", e);
+            anyhow::Error::msg("Failed to commit transaction")
+        })?;
 
         Ok(circle.clone())
     }

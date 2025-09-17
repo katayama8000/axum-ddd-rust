@@ -39,14 +39,14 @@ impl std::convert::From<CreateCircleRequestBody> for CreateCircleInput {
             owner_major,
         }: CreateCircleRequestBody,
     ) -> Self {
-        CreateCircleInput::new(
+        CreateCircleInput {
             circle_name,
             capacity,
             owner_name,
             owner_age,
             owner_grade,
             owner_major,
-        )
+        }
     }
 }
 

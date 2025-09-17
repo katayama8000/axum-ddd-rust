@@ -23,26 +23,6 @@ pub struct CreateCircleInput {
     pub owner_major: String,
 }
 
-impl CreateCircleInput {
-    pub fn new(
-        circle_name: String,
-        capacity: i16,
-        owner_name: String,
-        owner_age: i16,
-        owner_grade: i16,
-        owner_major: String,
-    ) -> Self {
-        CreateCircleInput {
-            circle_name,
-            capacity,
-            owner_name,
-            owner_age,
-            owner_grade,
-            owner_major,
-        }
-    }
-}
-
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct CreateCircleOutput {
     pub circle_id: String,
@@ -82,10 +62,9 @@ where
             grade,
             major,
         );
-        let owner_id = owner.id.clone();
         let circle = Circle::new(
             create_circle_input.circle_name,
-            owner,
+            owner.clone(),
             create_circle_input.capacity,
         )?;
         self.circle_duplicate_checker
@@ -96,7 +75,7 @@ where
             .await
             .map(|_| CreateCircleOutput {
                 circle_id: String::from(circle.id),
-                owner_id: String::from(owner_id),
+                owner_id: String::from(owner.id),
             })
     }
 }
@@ -115,14 +94,14 @@ mod tests {
         let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
         let mut mocked_circle_duplicate_checker = MockCircleDuplicateCheckerInterface::new();
 
-        let input = CreateCircleInput::new(
-            "music".to_string(),
-            10,
-            "mike".to_string(),
-            21,
-            3,
-            "ComputerScience".to_string(),
-        );
+        let input = CreateCircleInput {
+            circle_name: "music".to_string(),
+            capacity: 10,
+            owner_name: "mike".to_string(),
+            owner_age: 21,
+            owner_grade: 3,
+            owner_major: "ComputerScience".to_string(),
+        };
 
         mocked_circle_repository
             .expect_create()
@@ -145,14 +124,14 @@ mod tests {
         let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
         let mut mocked_circle_duplicate_checker = MockCircleDuplicateCheckerInterface::new();
 
-        let input = CreateCircleInput::new(
-            "music".to_string(),
-            10,
-            "mike".to_string(),
-            21,
-            3,
-            "ComputerScience".to_string(),
-        );
+        let input = CreateCircleInput {
+            circle_name: "music".to_string(),
+            capacity: 10,
+            owner_name: "mike".to_string(),
+            owner_age: 21,
+            owner_grade: 3,
+            owner_major: "ComputerScience".to_string(),
+        };
 
         mocked_circle_duplicate_checker
             .expect_check_circle_duplicate()

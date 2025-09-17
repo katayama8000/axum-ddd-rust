@@ -4,21 +4,21 @@ use domain::{
 };
 use sqlx::Row;
 
-use super::db_data::{circle_data::CircleData, member_data::MemberData};
+use crate::db_data::{circle_data::CircleData, member_data::MemberData};
 
 #[derive(Clone, Debug)]
-pub struct CircleRepositoryWithMySql {
+pub struct CircleRepository {
     db: sqlx::MySqlPool,
 }
 
-impl CircleRepositoryWithMySql {
+impl CircleRepository {
     pub fn new(db: sqlx::MySqlPool) -> Self {
         Self { db }
     }
 }
 
 #[async_trait::async_trait]
-impl CircleRepositoryInterface for CircleRepositoryWithMySql {
+impl CircleRepositoryInterface for CircleRepository {
     async fn find_all(&self) -> Result<Vec<Circle>, anyhow::Error> {
         tracing::info!("find_all_circles");
         let circle_query = sqlx::query("SELECT * FROM circles");
@@ -113,7 +113,7 @@ impl CircleRepositoryInterface for CircleRepositoryWithMySql {
             }
             members.push(member);
         }
-        
+
         let owner = owner_data.ok_or_else(|| anyhow::Error::msg("Owner not found"))?;
 
         let circle_data = CircleData {

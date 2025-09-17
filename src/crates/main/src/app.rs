@@ -2,9 +2,9 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use infrastructure::{
-    circle_duplicate_checker_with_my_sql::CircleDuplicateCheckerWithMySql,
-    circle_repository_with_my_sql::CircleRepositoryWithMySql,
+
+use infrastructure::mysql::{
+    circle_duplicate_checker::CircleDuplicateChecker, circle_repository::CircleRepository,
 };
 
 use crate::{
@@ -17,8 +17,8 @@ use crate::{
 
 #[derive(Clone)]
 pub(crate) struct AppState {
-    pub(crate) circle_repository: CircleRepositoryWithMySql,
-    pub(crate) circle_duplicate_checker: CircleDuplicateCheckerWithMySql,
+    pub(crate) circle_repository: CircleRepository,
+    pub(crate) circle_duplicate_checker: CircleDuplicateChecker,
 }
 
 fn router() -> Router<AppState> {
@@ -36,8 +36,8 @@ pub async fn run() -> Result<(), ()> {
 
     let pool = connect::connect().await.expect("database should connect");
     let state = AppState {
-        circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-        circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
+        circle_repository: CircleRepository::new(pool.clone()),
+        circle_duplicate_checker: CircleDuplicateChecker::new(pool.clone()),
     };
 
     let app = router().with_state(state);
@@ -78,8 +78,8 @@ mod tests {
             .await
             .expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
+            circle_repository: CircleRepository::new(pool.clone()),
+            circle_duplicate_checker: CircleDuplicateChecker::new(pool.clone()),
         };
         let app = router().with_state(state);
         let response = app
@@ -107,8 +107,8 @@ mod tests {
             .await
             .expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
+            circle_repository: CircleRepository::new(pool.clone()),
+            circle_duplicate_checker: CircleDuplicateChecker::new(pool.clone()),
         };
         let app = router().with_state(state.clone());
         let response = app
@@ -162,8 +162,8 @@ mod tests {
             .await
             .expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
+            circle_repository: CircleRepository::new(pool.clone()),
+            circle_duplicate_checker: CircleDuplicateChecker::new(pool.clone()),
         };
         let app = router().with_state(state);
         let unexist_circle_id = 0;
@@ -217,8 +217,8 @@ mod tests {
             .await
             .expect("database should connect");
         let state = AppState {
-            circle_repository: CircleRepositoryWithMySql::new(pool.clone()),
-            circle_duplicate_checker: CircleDuplicateCheckerWithMySql::new(pool.clone()),
+            circle_repository: CircleRepository::new(pool.clone()),
+            circle_duplicate_checker: CircleDuplicateChecker::new(pool.clone()),
         };
         let app = router().with_state(state.clone());
         let (circle_id, _) = build_circle(&app).await?;

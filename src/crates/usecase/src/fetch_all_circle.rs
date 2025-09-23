@@ -61,7 +61,7 @@ mod tests {
             Grade::try_from(3)?,
             Major::from("ComputerScience"),
         );
-        let circle = Circle::new("music".to_string(), owner.clone(), 10)?;
+        let circle = Circle::create("music".to_string(), owner.clone(), 10)?;
 
         mocked_circle_repository
             .expect_find_all()

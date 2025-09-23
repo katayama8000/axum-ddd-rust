@@ -115,7 +115,7 @@ mod tests {
             Grade::try_from(1).unwrap(),
             Major::from("Economics"),
         )];
-        let circle = Circle::new("music".to_string(), owner.clone(), 10)?;
+        let circle = Circle::create("music".to_string(), owner.clone(), 10)?;
         let circle = Circle::reconstruct(
             circle_id.clone(),
             circle.name,

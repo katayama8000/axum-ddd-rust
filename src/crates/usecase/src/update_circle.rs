@@ -86,7 +86,7 @@ mod tests {
     async fn test_update_circle_usecase() -> anyhow::Result<()> {
         let mut mocked_circle_repository = MockCircleRepositoryInterface::new();
         let owner = Member::new("john".to_string(), 21, Grade::Third, Major::ComputerScience);
-        let circle = Circle::new("music".to_string(), owner.clone(), 10)?;
+        let circle = Circle::create("music".to_string(), owner.clone(), 10)?;
         let circle_clone = circle.clone();
         mocked_circle_repository
             .expect_find_by_id()
@@ -95,7 +95,7 @@ mod tests {
         mocked_circle_repository
             .expect_update()
             .times(1)
-            .returning(move |_| Ok(Circle::new("footBall".to_string(), owner.clone(), 20)?));
+            .returning(move |_| Ok(Circle::create("footBall".to_string(), owner.clone(), 20)?));
         let mut usecase = UpdateCircleUsecase::new(mocked_circle_repository);
         let input = UpdateCircleInput::new(
             circle.id.to_string(),

@@ -62,7 +62,7 @@ where
             grade,
             major,
         );
-        let circle = Circle::new(
+        let circle = Circle::create(
             create_circle_input.circle_name,
             owner.clone(),
             create_circle_input.capacity,

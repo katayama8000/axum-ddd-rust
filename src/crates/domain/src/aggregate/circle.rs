@@ -59,11 +59,9 @@ impl Circle {
         let updated_capacity = capacity.unwrap_or(self.capacity);
 
         Circle {
-            id: self.id,
             name: updated_name,
-            owner: self.owner,
             capacity: updated_capacity,
-            members: self.members,
+            ..self
         }
     }
 
@@ -83,11 +81,8 @@ impl Circle {
             .collect();
 
         Ok(Circle {
-            id: self.id,
-            name: self.name,
-            owner: self.owner,
-            capacity: self.capacity,
             members: new_members,
+            ..self
         })
     }
 

@@ -10,7 +10,7 @@ use domain::{
     interface::circle_repository_interface::CircleRepositoryInterface,
 };
 
-use crate::on_memory_db::db::Db;
+use crate::in_memory_db::db::Db;
 
 #[derive(Clone, Debug)]
 pub struct CircleRepository {

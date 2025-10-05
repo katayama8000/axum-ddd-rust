@@ -5,7 +5,7 @@ use domain::{
     interface::circle_duplicate_checker_interface::CircleDuplicateCheckerInterface,
 };
 
-use crate::{db_schema::circle_data::CircleData, on_memory_db::db::Db};
+use crate::{db_schema::circle_data::CircleData, in_memory_db::db::Db};
 
 #[derive(Clone, Debug)]
 pub struct CircleDuplicateChecker {

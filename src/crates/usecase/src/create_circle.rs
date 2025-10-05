@@ -103,12 +103,12 @@ mod tests {
             owner_major: "ComputerScience".to_string(),
         };
 
-        mocked_circle_repository
-            .expect_create()
-            .times(1)
-            .return_once(|_| Ok(()));
         mocked_circle_duplicate_checker
             .expect_check_circle_duplicate()
+            .times(1)
+            .return_once(|_| Ok(()));
+        mocked_circle_repository
+            .expect_create()
             .times(1)
             .return_once(|_| Ok(()));
 
@@ -137,7 +137,6 @@ mod tests {
             .expect_check_circle_duplicate()
             .times(1)
             .return_once(|_| Err(anyhow!("Circle name already exists")));
-
         mocked_circle_repository.expect_create().times(0);
 
         let mut usecase =

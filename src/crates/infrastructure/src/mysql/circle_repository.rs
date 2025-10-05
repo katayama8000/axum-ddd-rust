@@ -4,7 +4,7 @@ use domain::{
 };
 use sqlx::Row;
 
-use crate::db_data::{circle_data::CircleData, member_data::MemberData};
+use crate::db_schema::{circle_data::CircleData, member_data::MemberData};
 
 #[derive(Clone, Debug)]
 pub struct CircleRepository {

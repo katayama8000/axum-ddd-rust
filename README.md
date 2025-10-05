@@ -17,7 +17,7 @@
 2. Open the repository in VSCode.
 3. Install the "Dev Containers" extension in VSCode if you haven't already.
 4. Copy .env.dist to .env
-5. Open the command palette (Ctrl+Shift+P) and select "Remote-Containers: Open Folder in Container..."
+5. Open the command palette (Command+Shift+P) and select "Remote-Containers: Open Folder in Container..."
 6. Select the cloned repository folder.
 7. Wait for the container to build and start. This may take a few minutes.
 8. Once the container is running, open a terminal in VSCode.

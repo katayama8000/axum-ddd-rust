@@ -1,3 +1,4 @@
+use anyhow::Context;
 use domain::{
     aggregate::{circle::Circle, value_object::circle_id::CircleId},
     interface::circle_repository_interface::CircleRepositoryInterface,
@@ -132,10 +133,7 @@ impl CircleRepositoryInterface for CircleRepository {
         tracing::info!("create_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
 
-        let mut tx = self.db.begin().await.map_err(|e| {
-            eprintln!("Failed to start transaction: {:?}", e);
-            anyhow::Error::msg("Failed to start transaction")
-        })?;
+        let mut tx = self.db.begin().await.context("Failed to start transaction")?;
 
         let circle_query =
             sqlx::query("INSERT INTO circles (id, name, owner_id, capacity) VALUES (?, ?, ?, ?)")
@@ -168,10 +166,7 @@ impl CircleRepositoryInterface for CircleRepository {
             })?;
 
         // Commit transaction
-        tx.commit().await.map_err(|e| {
-            eprintln!("Failed to commit transaction: {:?}", e);
-            anyhow::Error::msg("Failed to commit transaction")
-        })?;
+        tx.commit().await.context("Failed to commit transaction")?;
         Ok(())
     }
 
@@ -180,10 +175,7 @@ impl CircleRepositoryInterface for CircleRepository {
         let circle_data = CircleData::try_from(circle.clone())?;
 
         // Start transaction
-        let mut tx = self.db.begin().await.map_err(|e| {
-            eprintln!("Failed to start transaction: {:?}", e);
-            anyhow::Error::msg("Failed to start transaction")
-        })?;
+        let mut tx = self.db.begin().await.context("Failed to start transaction")?;
 
         // Update circle
         let circle_query =
@@ -201,10 +193,7 @@ impl CircleRepositoryInterface for CircleRepository {
         // TODO: Update members
 
         // Commit transaction
-        tx.commit().await.map_err(|e| {
-            eprintln!("Failed to commit transaction: {:?}", e);
-            anyhow::Error::msg("Failed to commit transaction")
-        })?;
+        tx.commit().await.context("Failed to commit transaction")?;
 
         Ok(circle.clone())
     }

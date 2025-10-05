@@ -29,20 +29,13 @@ impl std::convert::TryFrom<CircleData> for Circle {
             .into_iter()
             .map(|member_data| MemberData::try_into(member_data))
             .collect::<Result<Vec<Member>, _>>()?;
-
         let owner = members
             .iter()
             .find(|member| member.id == owner_id)
             .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
             .clone();
 
-        Ok(Circle {
-            id: circle_id,
-            name: data.name,
-            capacity: data.capacity,
-            owner,
-            members,
-        })
+        Ok(Circle::reconstruct(circle_id, data.name, owner, data.capacity, members))
     }
 }
 

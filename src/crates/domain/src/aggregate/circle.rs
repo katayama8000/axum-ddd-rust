@@ -14,8 +14,8 @@ pub struct Circle {
 }
 
 impl Circle {
-    const MIN_CAPACITY: i16 = 3;
-    const MIN_RUNNABLE_MEMBERS: usize = 3;
+    const MIN_CAPACITY: i16 = 1;
+    // const MIN_RUNNABLE_MEMBERS: usize = 3;
 
     pub fn create(name: String, owner: Member, capacity: i16) -> Result<Self, Error> {
         if owner.grade != Grade::Third {
@@ -137,9 +137,9 @@ impl Circle {
         self.circle_members().len() >= self.capacity as usize
     }
 
-    fn _is_runnable(&self) -> bool {
-        self.circle_members().len() >= Self::MIN_RUNNABLE_MEMBERS
-    }
+    // fn _is_runnable(&self) -> bool {
+    //     self.circle_members().len() >= Self::MIN_RUNNABLE_MEMBERS
+    // }
 
     fn _is_drinkable_alcohol(member: &Member) -> bool {
         member.is_adult()

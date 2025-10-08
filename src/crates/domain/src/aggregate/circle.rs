@@ -154,3 +154,116 @@ impl Circle {
         &self.name
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::aggregate::value_object::{major::Major, member_id::MemberId};
+
+    fn create_owner() -> Member {
+        Member::reconstruct(
+            MemberId::gen(),
+            "owner".to_string(),
+            21,
+            Grade::Third,
+            Major::ComputerScience,
+        )
+    }
+
+    fn create_member(grade: Grade) -> Member {
+        Member::new("member".to_string(), 20, grade, Major::ComputerScience)
+    }
+
+    #[test]
+    fn test_create_circle() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 10).unwrap();
+        assert_eq!(circle.name, "test circle");
+        assert_eq!(circle.capacity, 10);
+        assert_eq!(circle.members.len(), 0);
+    }
+
+    #[test]
+    fn test_create_circle_with_invalid_owner() {
+        let owner = create_member(Grade::First);
+        let error = Circle::create("test circle".to_string(), owner, 10).unwrap_err();
+        assert_eq!(error.to_string(), "Owner must be 3rd grade");
+    }
+
+    #[test]
+    fn test_create_circle_with_invalid_capacity() {
+        let owner = create_owner();
+        let error = Circle::create("test circle".to_string(), owner, 0).unwrap_err();
+        assert_eq!(error.to_string(), "Capacity must be at least 1");
+    }
+
+    #[test]
+    fn test_add_member() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 10).unwrap();
+        let member = create_member(Grade::First);
+        let circle = circle.add_member(member).unwrap();
+        assert_eq!(circle.members.len(), 1);
+    }
+
+    #[test]
+    fn test_add_member_to_full_circle() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 1).unwrap();
+        let member = create_member(Grade::First);
+        let error = circle.add_member(member).unwrap_err();
+        assert_eq!(error.to_string(), "Circle member is full");
+    }
+
+    #[test]
+    fn test_add_4th_grade_member() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 10).unwrap();
+        let member = create_member(Grade::Fourth);
+        let error = circle.add_member(member).unwrap_err();
+        assert_eq!(error.to_string(), "4th grade can't join circle");
+    }
+
+    #[test]
+    fn test_remove_member() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 10).unwrap();
+        let member = create_member(Grade::First);
+        let circle = circle.add_member(member.clone()).unwrap();
+        let circle = circle.remove_member(&member).unwrap();
+        assert_eq!(circle.members.len(), 0);
+    }
+
+    #[test]
+    fn test_remove_owner() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner.clone(), 10).unwrap();
+        let error = circle.remove_member(&owner).unwrap_err();
+        assert_eq!(error.to_string(), "Owner can't be removed");
+    }
+
+    #[test]
+    fn test_remove_non_existent_member() {
+        let owner = create_owner();
+        let circle = Circle::create("test circle".to_string(), owner, 10).unwrap();
+        let member = create_member(Grade::First);
+        let error = circle.remove_member(&member).unwrap_err();
+        assert_eq!(error.to_string(), "Member not found in circle");
+    }
+
+    #[test]
+    fn test_graduate() {
+        let owner = create_owner();
+        let member1 = create_member(Grade::First);
+        let member2 = create_member(Grade::Fourth);
+        let circle = Circle::reconstruct(
+            CircleId::gen(),
+            "test circle".to_string(),
+            owner,
+            10,
+            vec![member1, member2],
+        );
+        let graduated_circle = circle.graduate();
+        assert_eq!(graduated_circle.members.len(), 1);
+    }
+}

@@ -34,3 +34,37 @@ impl Member {
         self.age >= 20
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::aggregate::value_object::{grade::Grade, major::Major};
+
+    #[test]
+    fn test_member_new() {
+        let member = Member::new("test".to_string(), 20, Grade::First, Major::ComputerScience);
+        assert_eq!(member.name, "test");
+        assert_eq!(member.age, 20);
+        assert_eq!(member.grade, Grade::First);
+        assert_eq!(member.major, Major::ComputerScience);
+    }
+
+    #[test]
+    fn test_member_reconstruct() {
+        let member_id = MemberId::gen();
+        let member = Member::reconstruct(member_id.clone(), "test".to_string(), 20, Grade::First, Major::ComputerScience);
+        assert_eq!(member.id, member_id);
+        assert_eq!(member.name, "test");
+        assert_eq!(member.age, 20);
+        assert_eq!(member.grade, Grade::First);
+        assert_eq!(member.major, Major::ComputerScience);
+    }
+
+    #[test]
+    fn test_is_adult() {
+        let member1 = Member::new("test".to_string(), 20, Grade::First, Major::ComputerScience);
+        assert!(member1.is_adult());
+        let member2 = Member::new("test".to_string(), 19, Grade::First, Major::ComputerScience);
+        assert!(!member2.is_adult());
+    }
+}

@@ -23,7 +23,7 @@ jobs:
         with:
           tool: nextest
       - name: Start database
-        run: docker-compose up -d db
+        run: docker compose up -d db
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: myuser

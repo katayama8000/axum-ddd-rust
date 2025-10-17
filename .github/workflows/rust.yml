@@ -22,7 +22,23 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
+      - name: Start database
+        run: docker-compose up -d db
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_NAME: mydatabase
       - name: Build
         run: cargo build --verbose
       - name: Test
-        run: cargo nextest run --workspace
+        run: |
+          sleep 10 # Wait for mysql to start
+          cargo nextest run --workspace
+        env:
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3309
+          MYSQL_NAME: mydatabase
+          RUST_BACKTRACE: 1

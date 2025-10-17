@@ -33,7 +33,23 @@ jobs:
         run: cargo build --verbose
       - name: Test
         run: |
-          sleep 10 # Wait for mysql to start
+          # Wait for the database to be ready
+          echo "Waiting for database..."
+          for i in {1..30}; do
+            # Use docker compose exec to run mysqladmin ping inside the container
+            # The -p option for mysqladmin requires the password to be attached to it
+            if docker compose exec db mysqladmin ping -u root -p"${MYSQL_ROOT_PASSWORD}"; then
+              echo "Database is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Database failed to start after 60 seconds."
+              exit 1
+            fi
+            echo "Waiting for database... attempt $i"
+            sleep 2
+          done
+
           cargo nextest run --workspace
         env:
           MYSQL_USER: myuser
@@ -42,3 +58,4 @@ jobs:
           MYSQL_PORT: 3309
           MYSQL_NAME: mydatabase
           RUST_BACKTRACE: 1
+          MYSQL_ROOT_PASSWORD: password

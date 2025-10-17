@@ -871,6 +871,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "domain",
+ "dotenv",
  "serde",
  "serde_json",
  "sqlx",

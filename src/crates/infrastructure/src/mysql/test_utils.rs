@@ -7,10 +7,11 @@ use domain::aggregate::value_object::circle_id::CircleId;
 pub async fn setup() -> MySqlPool {
     dotenv().ok();
     let database_url = format!(
-        "mysql://{}:{}@{}/{}",
+        "mysql://{}:{}@{}:{}/{}",
         env::var("MYSQL_USER").unwrap(),
         env::var("MYSQL_PASSWORD").unwrap(),
         env::var("MYSQL_HOST").unwrap(),
+        env::var("MYSQL_PORT").unwrap(),
         env::var("MYSQL_NAME").unwrap()
     );
     MySqlPoolOptions::new()

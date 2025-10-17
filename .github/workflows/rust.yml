@@ -12,7 +12,7 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
       - name: Install Rust toolchain
@@ -22,7 +22,40 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
+      - name: Start database
+        run: docker compose up -d db
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_NAME: mydatabase
       - name: Build
         run: cargo build --verbose
       - name: Test
-        run: cargo nextest run --workspace
+        run: |
+          # Wait for the database to be ready
+          echo "Waiting for database..."
+          for i in {1..30}; do
+            # Use docker compose exec to run mysqladmin ping inside the container
+            # The -p option for mysqladmin requires the password to be attached to it
+            if docker compose exec db mysqladmin ping -u root -p"${MYSQL_ROOT_PASSWORD}"; then
+              echo "Database is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Database failed to start after 60 seconds."
+              exit 1
+            fi
+            echo "Waiting for database... attempt $i"
+            sleep 2
+          done
+
+          cargo nextest run --workspace
+        env:
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3309
+          MYSQL_NAME: mydatabase
+          RUST_BACKTRACE: 1
+          MYSQL_ROOT_PASSWORD: password

@@ -15,8 +15,11 @@ services:
       context: ./Docker/db
       dockerfile: Dockerfile
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
     ports:
       
       - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts

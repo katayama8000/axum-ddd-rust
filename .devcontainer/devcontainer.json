@@ -4,6 +4,9 @@
   ],
   "service": "server",
   "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "DB_TYPE": "tidb"
+  },
   "forwardPorts": [8000, 4000],
   "portsAttributes": {
     "8080": {

@@ -2,7 +2,6 @@
 use dotenv::from_filename;
 use sqlx::{mysql::MySqlPoolOptions, MySqlPool};
 use std::env;
-use domain::aggregate::value_object::circle_id::CircleId;
 
 pub async fn setup() -> MySqlPool {
     let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
@@ -54,11 +53,8 @@ pub async fn setup() -> MySqlPool {
     pool
 }
 
-pub async fn clean_up(pool: MySqlPool, circle_id: &CircleId) {
-    sqlx::query("DELETE FROM circles WHERE id = ?")
-        .bind(circle_id.to_string())
-        .execute(&pool)
-        .await
-        .unwrap();
+pub async fn clean_up(pool: MySqlPool) {
+    sqlx::query("DELETE FROM members").execute(&pool).await.unwrap();
+    sqlx::query("DELETE FROM circles").execute(&pool).await.unwrap();
     pool.close().await;
 }

@@ -12,7 +12,7 @@ pub(crate) struct DbConfig {
 
 impl DbConfig {
     fn from_env() -> Self {
-        let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
+        let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "tidb".to_string());
         let env_file = format!(".env.{}", db_type);
         from_filename(env_file).ok();
 

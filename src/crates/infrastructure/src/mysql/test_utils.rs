@@ -14,11 +14,41 @@ pub async fn setup() -> MySqlPool {
         env::var("MYSQL_PORT").unwrap(),
         env::var("MYSQL_NAME").unwrap()
     );
-    MySqlPoolOptions::new()
+    let pool = MySqlPoolOptions::new()
         .max_connections(1)
         .connect(&database_url)
         .await
-        .unwrap()
+        .unwrap();
+
+    // Create tables if they don't exist
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS circles (
+            id CHAR(36) NOT NULL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            capacity INT NOT NULL,
+            owner_id CHAR(36) NOT NULL
+        );"
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS members (
+            id CHAR(36) NOT NULL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            grade INT NOT NULL,
+            circle_id CHAR(36),
+            age INT NOT NULL DEFAULT 20,
+            major VARCHAR(255) NOT NULL DEFAULT 'other',
+            FOREIGN KEY (circle_id) REFERENCES circles(id) ON DELETE CASCADE
+        );"
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    pool
 }
 
 pub async fn clean_up(pool: MySqlPool, circle_id: &CircleId) {

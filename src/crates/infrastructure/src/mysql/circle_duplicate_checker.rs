@@ -80,7 +80,7 @@ mod tests {
 
         let result = checker.check_circle_duplicate(&circle).await;
         assert!(result.is_err());
-        clean_up(pool, circle.id()).await;
+        clean_up(pool).await;
     }
 
     #[tokio::test]
@@ -91,6 +91,6 @@ mod tests {
 
         let result = checker.check_circle_duplicate(&circle).await;
         assert!(result.is_ok());
-        clean_up(pool, circle.id()).await;
+        clean_up(pool).await;
     }
 }

@@ -1,0 +1,21 @@
+services:
+  server:
+    build:
+      context: ./Docker/server
+      dockerfile: Dockerfile
+    restart: always
+    tty: true
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    depends_on:
+      - tidb
+  tidb:
+    build:
+      context: ./Docker/tidb
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./Docker/tidb/init.sql:/init.sql

@@ -22,13 +22,10 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
+      - name: Install MySQL Client
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
       - name: Start database
-        run: docker compose up -d db
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypassword
-          MYSQL_NAME: mydatabase
+        run: docker compose -f compose.tidb.yml up -d tidb
       - name: Build
         run: cargo build --verbose
       - name: Test
@@ -36,9 +33,7 @@ jobs:
           # Wait for the database to be ready
           echo "Waiting for database..."
           for i in {1..30}; do
-            # Use docker compose exec to run mysqladmin ping inside the container
-            # The -p option for mysqladmin requires the password to be attached to it
-            if docker compose exec db mysqladmin ping -u root -p"${MYSQL_ROOT_PASSWORD}"; then
+            if mysql -h 127.0.0.1 -P 4000 -u root -e 'SELECT 1;' > /dev/null 2>&1; then
               echo "Database is ready!"
               break
             fi
@@ -52,10 +47,9 @@ jobs:
 
           cargo nextest run --workspace
         env:
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypassword
+          MYSQL_USER: root
+          MYSQL_PASSWORD: ''
           MYSQL_HOST: 127.0.0.1
-          MYSQL_PORT: 3309
-          MYSQL_NAME: mydatabase
+          MYSQL_PORT: 4000
+          MYSQL_NAME: test
           RUST_BACKTRACE: 1
-          MYSQL_ROOT_PASSWORD: password

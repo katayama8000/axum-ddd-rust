@@ -1,16 +1,16 @@
 {
   "dockerComposeFile": [
-    "../compose.yml"
+    "../compose.tidb.yml"
   ],
   "service": "server",
   "workspaceFolder": "/workspace",
-  "forwardPorts": [8000, 3309],
+  "forwardPorts": [8000, 4000],
   "portsAttributes": {
     "8080": {
       "label": "API Server"
     },
-    "3309": {
-      "label": "Database"
+    "4000": {
+      "label": "TiDB"
     }
   },
   "customizations": {

@@ -12,7 +12,7 @@ services:
       - db
   db:
     build:
-      context: ./Docker/db
+      context: ./Docker/mysql
       dockerfile: Dockerfile
     restart: always
     environment:
@@ -24,4 +24,5 @@ services:
       
       - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts
     volumes:
-      - ./Docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./Docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+

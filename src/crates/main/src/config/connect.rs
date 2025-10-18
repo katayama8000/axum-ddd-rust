@@ -1,4 +1,4 @@
-use dotenv::dotenv;
+use dotenv::from_filename;
 use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
@@ -12,7 +12,10 @@ pub(crate) struct DbConfig {
 
 impl DbConfig {
     fn from_env() -> Self {
-        dotenv().ok();
+        let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
+        let env_file = format!(".env.{}", db_type);
+        from_filename(env_file).ok();
+
         Self {
             db_user: env::var("MYSQL_USER").expect("MYSQL_USER must be set"),
             db_password: env::var("MYSQL_PASSWORD").expect("MYSQL_PASSWORD must be set"),

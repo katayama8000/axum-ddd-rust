@@ -1,11 +1,14 @@
 #![cfg(test)]
-use dotenv::dotenv;
+use dotenv::from_filename;
 use sqlx::{mysql::MySqlPoolOptions, MySqlPool};
 use std::env;
 use domain::aggregate::value_object::circle_id::CircleId;
 
 pub async fn setup() -> MySqlPool {
-    dotenv().ok();
+    let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
+    let env_file = format!(".env.{}", db_type);
+    from_filename(env_file).ok();
+
     let database_url = format!(
         "mysql://{}:{}@{}:{}/{}",
         env::var("MYSQL_USER").unwrap(),

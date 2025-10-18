@@ -9,47 +9,58 @@ on:
 
 jobs:
   check:
-    name: Check
+    name: Check (DB: ${{ matrix.db }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        db: [mysql, tidb]
+
     steps:
       - uses: actions/checkout@v5
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
       - name: Install Rust toolchain
-        run: |
-          rustup toolchain install stable
+        run: rustup toolchain install stable
       - name: Install cargo-related tools
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+
       - name: Start database
-        run: docker compose -f compose.tidb.yml up -d tidb
+        run: docker compose -f compose.${{ matrix.db }}.yml up -d
+        env:
+          # Env vars for compose.mysql.yml (ignored by compose.tidb.yml)
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_NAME: mydatabase
+
+      - name: Wait for MySQL
+        if: matrix.db == 'mysql'
+        run: |
+          echo "Waiting for MySQL..."
+          until mysql -h 127.0.0.1 -P 3309 -u myuser -p"mypassword" -e 'SELECT 1;' > /dev/null 2>&1; do
+            echo -n ".";
+            sleep 1;
+          done
+          echo "MySQL is ready."
+
+      - name: Wait for TiDB
+        if: matrix.db == 'tidb'
+        run: |
+          echo "Waiting for TiDB..."
+          until mysql -h 127.0.0.1 -P 4000 -u root -e 'SELECT 1;' > /dev/null 2>&1; do
+            echo -n ".";
+            sleep 1;
+          done
+          echo "TiDB is ready."
+
       - name: Build
         run: cargo build --verbose
-      - name: Test
-        run: |
-          # Wait for the database to be ready
-          echo "Waiting for database..."
-          for i in {1..30}; do
-            if mysql -h 127.0.0.1 -P 4000 -u root -e 'SELECT 1;' > /dev/null 2>&1; then
-              echo "Database is ready!"
-              break
-            fi
-            if [ $i -eq 30 ]; then
-              echo "Database failed to start after 60 seconds."
-              exit 1
-            fi
-            echo "Waiting for database... attempt $i"
-            sleep 2
-          done
 
-          cargo nextest run --workspace
+      - name: Test
+        run: DB_TYPE=${{ matrix.db }} cargo nextest run --workspace
         env:
-          MYSQL_USER: root
-          MYSQL_PASSWORD: ''
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_PORT: 4000
-          MYSQL_NAME: test
           RUST_BACKTRACE: 1

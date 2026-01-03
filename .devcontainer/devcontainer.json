@@ -1,11 +1,11 @@
 {
   "dockerComposeFile": [
-    "../compose.tidb.yml"
+    "../compose.mysql.yml"
   ],
   "service": "server",
   "workspaceFolder": "/workspace",
   "containerEnv": {
-    "DB_TYPE": "tidb"
+    "DB_TYPE": "mysql"
   },
   "forwardPorts": [8000, 4000],
   "portsAttributes": {

@@ -1,2 +1,2 @@
-FROM mariadb:10.4
+FROM mariadb:latest
 RUN apt-get update -y

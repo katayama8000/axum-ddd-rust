@@ -10,6 +10,8 @@ services:
     working_dir: /workspace
     depends_on:
       - db
+    networks:
+      - axum_ddd_rust_network
   db:
     build:
       context: ./Docker/mysql
@@ -25,4 +27,10 @@ services:
       - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts
     volumes:
       - ./Docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - axum_ddd_rust_network
+
+networks:
+  axum_ddd_rust_network:
+    driver: bridge
 

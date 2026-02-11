@@ -2,7 +2,7 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 
 use rand::distr::Alphanumeric;
-use rand::Rng;
+use rand::RngExt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MemberId(String);
@@ -12,7 +12,7 @@ impl MemberId {
         let mut rng = rand::rng();
         let chars: String = (0..36)
             .map(|_| rng.sample(Alphanumeric) as char)
-            .collect::<String>();
+            .collect();
         Self(chars)
     }
 }

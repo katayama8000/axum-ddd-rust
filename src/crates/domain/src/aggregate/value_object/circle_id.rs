@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 
 use rand::distr::Alphanumeric;
-use rand::Rng;
+use rand::RngExt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CircleId(String);
@@ -13,7 +13,7 @@ impl CircleId {
         let mut rng = rand::rng();
         let chars: String = (0..36)
             .map(|_| rng.sample(Alphanumeric) as char)
-            .collect::<String>();
+            .collect();
         Self(chars)
     }
 }

@@ -10,11 +10,11 @@ pub async fn setup() -> MySqlPool {
 
     let database_url = format!(
         "mysql://{}:{}@{}:{}/{}",
-        env::var("MYSQL_USER").unwrap(),
-        env::var("MYSQL_PASSWORD").unwrap(),
-        env::var("MYSQL_HOST").unwrap(),
-        env::var("MYSQL_PORT").unwrap(),
-        env::var("MYSQL_NAME").unwrap()
+        env::var("MYSQL_USER").unwrap_or("myuser".to_string()),
+        env::var("MYSQL_PASSWORD").unwrap_or("mypassword".to_string()),
+        env::var("MYSQL_HOST").unwrap_or("127.0.0.1".to_string()),
+        env::var("MYSQL_PORT").unwrap_or("3309".to_string()),
+        env::var("MYSQL_NAME").unwrap_or("mydatabase".to_string())
     );
     let pool = MySqlPoolOptions::new()
         .max_connections(1)
@@ -29,7 +29,7 @@ pub async fn setup() -> MySqlPool {
             name VARCHAR(255) NOT NULL,
             capacity INT NOT NULL,
             owner_id CHAR(36) NOT NULL
-        );"
+        );",
     )
     .execute(&pool)
     .await
@@ -44,7 +44,7 @@ pub async fn setup() -> MySqlPool {
             age INT NOT NULL DEFAULT 20,
             major VARCHAR(255) NOT NULL DEFAULT 'other',
             FOREIGN KEY (circle_id) REFERENCES circles(id) ON DELETE CASCADE
-        );"
+        );",
     )
     .execute(&pool)
     .await
@@ -54,7 +54,13 @@ pub async fn setup() -> MySqlPool {
 }
 
 pub async fn clean_up(pool: MySqlPool) {
-    sqlx::query("DELETE FROM members").execute(&pool).await.unwrap();
-    sqlx::query("DELETE FROM circles").execute(&pool).await.unwrap();
+    sqlx::query("DELETE FROM members")
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("DELETE FROM circles")
+        .execute(&pool)
+        .await
+        .unwrap();
     pool.close().await;
 }

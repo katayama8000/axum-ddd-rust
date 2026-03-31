@@ -52,7 +52,13 @@ mod tests {
     #[test]
     fn test_member_reconstruct() {
         let member_id = MemberId::gen();
-        let member = Member::reconstruct(member_id.clone(), "test".to_string(), 20, Grade::First, Major::ComputerScience);
+        let member = Member::reconstruct(
+            member_id.clone(),
+            "test".to_string(),
+            20,
+            Grade::First,
+            Major::ComputerScience,
+        );
         assert_eq!(member.id, member_id);
         assert_eq!(member.name, "test");
         assert_eq!(member.age, 20);

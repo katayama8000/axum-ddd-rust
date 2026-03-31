@@ -35,7 +35,13 @@ impl std::convert::TryFrom<CircleData> for Circle {
             .ok_or_else(|| anyhow::Error::msg("Owner not found"))?
             .clone();
 
-        Ok(Circle::reconstruct(circle_id, data.name, owner, data.capacity, members))
+        Ok(Circle::reconstruct(
+            circle_id,
+            data.name,
+            owner,
+            data.capacity,
+            members,
+        ))
     }
 }
 

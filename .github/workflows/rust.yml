@@ -62,3 +62,8 @@ jobs:
         run: DB_TYPE=${{ matrix.db }} cargo nextest run --workspace
         env:
           RUST_BACKTRACE: 1
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3309
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+          MYSQL_NAME: mydatabase

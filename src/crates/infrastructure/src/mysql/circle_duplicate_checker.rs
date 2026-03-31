@@ -48,18 +48,8 @@ mod tests {
     fn create_test_circle(name: &str) -> Circle {
         let owner_grade = Grade::Third;
         let owner_major = Major::try_from("Computer Science").unwrap();
-        let owner = Member::new(
-            "owner".to_string(),
-            21,
-            owner_grade,
-            owner_major,
-        );
-        Circle::create(
-            name.to_string(),
-            owner,
-            10,
-        )
-        .unwrap()
+        let owner = Member::new("owner".to_string(), 21, owner_grade, owner_major);
+        Circle::create(name.to_string(), owner, 10).unwrap()
     }
 
     #[tokio::test]

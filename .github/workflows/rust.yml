@@ -6,11 +6,11 @@ on:
   pull_request:
     branches: [main]
     paths-ignore:
-      - "README.md"
+      - 'README.md'
 
 jobs:
   check:
-    name: "Check (DB: ${{ matrix.db }})"
+    name: 'Check (DB: ${{ matrix.db }})'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,7 +35,6 @@ jobs:
 
       - name: Start database
         run: docker compose -f compose.${{ matrix.db }}.yml up -d
-        env:
 
       - name: Wait for MySQL
         run: |

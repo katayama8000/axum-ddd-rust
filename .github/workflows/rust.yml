@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        db: [mysql, tidb]
+          - mysql
+          - tidb
 
     steps:
       - uses: actions/checkout@v5

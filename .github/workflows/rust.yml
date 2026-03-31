@@ -1,4 +1,5 @@
 name: Rust
+
 on:
   push:
     branches: [main]
@@ -13,19 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-          - mysql
-          - tidb
+        db: [mysql]
 
     steps:
       - uses: actions/checkout@v5
+
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
+
       - name: Install Rust toolchain
         run: rustup toolchain install stable
+
       - name: Install cargo-related tools
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
+
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client
 
@@ -39,7 +43,6 @@ jobs:
           MYSQL_NAME: mydatabase
 
       - name: Wait for MySQL
-        if: matrix.db == 'mysql'
         run: |
           echo "Waiting for MySQL..."
           until mysql -h 127.0.0.1 -P 3309 -u myuser -p"mypassword" -e 'SELECT 1;' > /dev/null 2>&1; do

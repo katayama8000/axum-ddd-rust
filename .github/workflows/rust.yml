@@ -9,7 +9,7 @@ on:
 
 jobs:
   check:
-    name: Check (DB: ${{ matrix.db }})
+    name: "Check (DB: ${{ matrix.db }})"
     runs-on: ubuntu-latest
     strategy:
       matrix:

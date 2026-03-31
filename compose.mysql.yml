@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     tty: true
+    env_file:
+      - .env.mysql
     volumes:
       - ./:/workspace
     working_dir: /workspace
@@ -17,13 +19,9 @@ services:
       context: ./Docker/mysql
       dockerfile: Dockerfile
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_NAME}
+    env_file:
+      - .env.mysql
     ports:
-      
       - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts
     volumes:
       - ./Docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql

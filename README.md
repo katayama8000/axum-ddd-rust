@@ -16,7 +16,9 @@
   `git clone https://github.com/katayama8000/axum-ddd-rust.git`
 2. Open the repository in VSCode.
 3. Install the "Dev Containers" extension in VSCode if you haven't already.
-4. Copy .env.dist to .env
+4. Copy DB env templates:
+  - `cp .env.mysql.dist .env.mysql`
+  - `cp .env.tidb.dist .env.tidb` (if you use TiDB)
 5. Open the command palette (Command+Shift+P) and select "Dev Containers: Open Folder in Container..."
 6. Select the cloned repository folder.
 7. Wait for the container to build and start. This may take a few minutes.

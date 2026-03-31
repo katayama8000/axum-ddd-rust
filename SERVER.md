@@ -3,7 +3,7 @@
 ### setup
 
 ```bash
-cp .env.dist .env
+cp .env.mysql.dist .env.mysql
 ```
 
 ### up

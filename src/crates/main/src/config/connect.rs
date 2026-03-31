@@ -7,6 +7,7 @@ pub(crate) struct DbConfig {
     db_user: String,
     db_password: String,
     db_host: String,
+    db_port: String,
     db_name: String,
 }
 
@@ -20,18 +21,19 @@ impl DbConfig {
             db_user: env::var("MYSQL_USER").expect("MYSQL_USER must be set"),
             db_password: env::var("MYSQL_PASSWORD").expect("MYSQL_PASSWORD must be set"),
             db_host: env::var("MYSQL_HOST").expect("MYSQL_HOST must be set"),
+            db_port: env::var("MYSQL_PORT").unwrap_or_else(|_| "3306".to_string()),
             db_name: env::var("MYSQL_NAME").expect("MYSQL_NAME must be set"),
         }
     }
 
     fn connection(&self) -> String {
         println!(
-            "mysql://{}:{}@{}/{}",
-            self.db_user, self.db_password, self.db_host, self.db_name
+            "mysql://{}:{}@{}:{}/{}",
+            self.db_user, self.db_password, self.db_host, self.db_port, self.db_name
         );
         format!(
-            "mysql://{}:{}@{}/{}",
-            self.db_user, self.db_password, self.db_host, self.db_name
+            "mysql://{}:{}@{}:{}/{}",
+            self.db_user, self.db_password, self.db_host, self.db_port, self.db_name
         )
     }
 }

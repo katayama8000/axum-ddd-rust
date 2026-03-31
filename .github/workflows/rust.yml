@@ -36,11 +36,6 @@ jobs:
       - name: Start database
         run: docker compose -f compose.${{ matrix.db }}.yml up -d
         env:
-          # Env vars for compose.mysql.yml (ignored by compose.tidb.yml)
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypassword
-          MYSQL_NAME: mydatabase
 
       - name: Wait for MySQL
         run: |

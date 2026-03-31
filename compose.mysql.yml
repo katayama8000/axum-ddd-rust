@@ -5,8 +5,12 @@ services:
       dockerfile: Dockerfile
     restart: always
     tty: true
-    env_file:
-      - .env.mysql
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_NAME: mydatabase
+      MYSQL_PORT: 3306
     volumes:
       - ./:/workspace
     working_dir: /workspace
@@ -14,15 +18,19 @@ services:
       - db
     networks:
       - axum_ddd_rust_network
+
   db:
     build:
       context: ./Docker/mysql
       dockerfile: Dockerfile
     restart: always
-    env_file:
-      - .env.mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
     ports:
-      - "3309:3306" # map MySQL port 3306 to host port 3309 to avoid conflicts
+      - "3309:3306"
     volumes:
       - ./Docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
@@ -31,4 +39,3 @@ services:
 networks:
   axum_ddd_rust_network:
     driver: bridge
-

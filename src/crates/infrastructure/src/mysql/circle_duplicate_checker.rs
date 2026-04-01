@@ -42,7 +42,7 @@ mod tests {
     use domain::aggregate::{
         circle::Circle,
         member::Member,
-        value_object::{grade::Grade, major::Major},
+        value_object::{circle_id::CircleId, grade::Grade, major::Major},
     };
 
     fn create_test_circle(name: &str) -> Circle {
@@ -56,7 +56,10 @@ mod tests {
     async fn check_circle_duplicate_exists() {
         let pool = setup().await;
         let checker = CircleDuplicateChecker::new(pool.clone());
-        let circle = create_test_circle("Test Circle");
+
+        // Use a unique name for this test to avoid conflicts with parallel tests
+        let unique_name = format!("Test Circle {}", CircleId::gen());
+        let circle = create_test_circle(&unique_name);
 
         // Create a circle with the same name
         sqlx::query("INSERT INTO circles (id, name, owner_id, capacity) VALUES (?, ?, ?, ?)")
@@ -77,7 +80,10 @@ mod tests {
     async fn check_circle_duplicate_not_exists() {
         let pool = setup().await;
         let checker = CircleDuplicateChecker::new(pool.clone());
-        let circle = create_test_circle("New Circle");
+
+        // Use a unique name for this test to avoid conflicts with parallel tests
+        let unique_name = format!("New Circle {}", CircleId::gen());
+        let circle = create_test_circle(&unique_name);
 
         let result = checker.check_circle_duplicate(&circle).await;
         assert!(result.is_ok());

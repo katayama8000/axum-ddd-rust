@@ -50,6 +50,16 @@ pub async fn setup() -> MySqlPool {
     .await
     .unwrap();
 
+    // Clean up any existing data from previous tests
+    sqlx::query("DELETE FROM members")
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("DELETE FROM circles")
+        .execute(&pool)
+        .await
+        .unwrap();
+
     pool
 }
 

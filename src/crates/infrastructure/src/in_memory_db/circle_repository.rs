@@ -69,7 +69,6 @@ impl CircleRepositoryInterface for CircleRepository {
     }
 }
 
-
 // schema for OnMemoryDB
 #[derive(serde::Deserialize, serde::Serialize)]
 struct CircleData {

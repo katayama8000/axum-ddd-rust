@@ -133,7 +133,11 @@ impl CircleRepositoryInterface for CircleRepository {
         tracing::info!("create_circle : {:?}", circle);
         let circle_data = CircleData::try_from(circle.clone())?;
 
-        let mut tx = self.db.begin().await.context("Failed to start transaction")?;
+        let mut tx = self
+            .db
+            .begin()
+            .await
+            .context("Failed to start transaction")?;
 
         let circle_query =
             sqlx::query("INSERT INTO circles (id, name, owner_id, capacity) VALUES (?, ?, ?, ?)")
@@ -175,7 +179,11 @@ impl CircleRepositoryInterface for CircleRepository {
         let circle_data = CircleData::try_from(circle.clone())?;
 
         // Start transaction
-        let mut tx = self.db.begin().await.context("Failed to start transaction")?;
+        let mut tx = self
+            .db
+            .begin()
+            .await
+            .context("Failed to start transaction")?;
 
         // Update circle
         let circle_query =

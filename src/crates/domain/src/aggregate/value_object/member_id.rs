@@ -10,9 +10,7 @@ pub struct MemberId(String);
 impl MemberId {
     pub fn gen() -> Self {
         let mut rng = rand::rng();
-        let chars: String = (0..36)
-            .map(|_| rng.sample(Alphanumeric) as char)
-            .collect();
+        let chars: String = (0..36).map(|_| rng.sample(Alphanumeric) as char).collect();
         Self(chars)
     }
 }

@@ -96,7 +96,7 @@ mod tests {
                 .await?
                 .to_vec(),
         )?;
-        assert_eq!(response_body, "0.1.0-rc.2");
+        assert_eq!(response_body, "0.1.1");
         Ok(())
     }
 

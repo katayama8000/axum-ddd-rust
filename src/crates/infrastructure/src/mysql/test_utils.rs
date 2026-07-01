@@ -1,32 +1,24 @@
 #![cfg(test)]
-use dotenv::from_filename;
 use sqlx::{mysql::MySqlPoolOptions, MySqlPool};
-use std::env;
+use testcontainers::{runners::AsyncRunner, ContainerAsync};
+use testcontainers_modules::mysql::Mysql;
 
-/// Wipes the `circles`/`members` tables, so any test calling this must run with
-/// `#[serial_test::file_serial]` — otherwise it races with other tests sharing the same tables.
-/// Plain `#[serial]` is NOT enough: cargo-nextest runs each test in its own process, and
-/// `#[serial]`'s lock is in-process only, so it provides no protection there.
-pub async fn setup() -> MySqlPool {
-    let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
-    let env_file = format!(".env.{}", db_type);
-    from_filename(env_file).ok();
+/// Starts a fresh, isolated MySQL container per call, so tests using this no longer need to
+/// coordinate with each other (no shared tables, no `#[serial]`/`#[file_serial]` needed).
+/// The returned container must be kept alive for as long as the pool is used — dropping it
+/// stops the container and breaks the connection.
+pub async fn setup() -> (ContainerAsync<Mysql>, MySqlPool) {
+    let container = Mysql::default().start().await.unwrap();
+    let host = container.get_host().await.unwrap();
+    let port = container.get_host_port_ipv4(3306).await.unwrap();
+    let database_url = format!("mysql://root@{host}:{port}/test");
 
-    let database_url = format!(
-        "mysql://{}:{}@{}:{}/{}",
-        env::var("MYSQL_USER").unwrap_or("myuser".to_string()),
-        env::var("MYSQL_PASSWORD").unwrap_or("mypassword".to_string()),
-        env::var("MYSQL_HOST").unwrap_or("127.0.0.1".to_string()),
-        env::var("MYSQL_PORT").unwrap_or("3309".to_string()),
-        env::var("MYSQL_NAME").unwrap_or("mydatabase".to_string())
-    );
     let pool = MySqlPoolOptions::new()
         .max_connections(1)
         .connect(&database_url)
         .await
         .unwrap();
 
-    // Create tables if they don't exist
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS circles (
             id CHAR(36) NOT NULL PRIMARY KEY,
@@ -54,27 +46,5 @@ pub async fn setup() -> MySqlPool {
     .await
     .unwrap();
 
-    // Clean up any existing data from previous tests
-    sqlx::query("DELETE FROM members")
-        .execute(&pool)
-        .await
-        .unwrap();
-    sqlx::query("DELETE FROM circles")
-        .execute(&pool)
-        .await
-        .unwrap();
-
-    pool
-}
-
-pub async fn clean_up(pool: MySqlPool) {
-    sqlx::query("DELETE FROM members")
-        .execute(&pool)
-        .await
-        .unwrap();
-    sqlx::query("DELETE FROM circles")
-        .execute(&pool)
-        .await
-        .unwrap();
-    pool.close().await;
+    (container, pool)
 }

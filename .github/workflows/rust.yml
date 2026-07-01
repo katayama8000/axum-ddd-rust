@@ -10,11 +10,8 @@ on:
 
 jobs:
   check:
-    name: 'Check (DB: ${{ matrix.db }})'
+    name: Check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        db: [mysql]
 
     steps:
       - uses: actions/checkout@v5
@@ -30,40 +27,10 @@ jobs:
         with:
           tool: nextest
 
-      - name: Install MySQL Client
-        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
-
-      - name: Start database
-        run: docker compose -f compose.${{ matrix.db }}.yml up -d ${{ matrix.db == 'mysql' && 'db' || 'tidb' }}
-
-      - name: Wait for MySQL
-        run: |
-          echo "Waiting for MySQL..."
-          until mysql -h 127.0.0.1 -P 3309 -u myuser -p"mypassword" -e 'SELECT 1;' > /dev/null 2>&1; do
-            echo -n ".";
-            sleep 1;
-          done
-          echo "MySQL is ready."
-
-      - name: Wait for TiDB
-        if: matrix.db == 'tidb'
-        run: |
-          echo "Waiting for TiDB..."
-          until mysql -h 127.0.0.1 -P 4000 -u root -e 'SELECT 1;' > /dev/null 2>&1; do
-            echo -n ".";
-            sleep 1;
-          done
-          echo "TiDB is ready."
-
       - name: Build
         run: cargo build --verbose
 
       - name: Test
-        run: DB_TYPE=${{ matrix.db }} cargo nextest run --workspace
+        run: cargo nextest run --workspace
         env:
           RUST_BACKTRACE: 1
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_PORT: 3309
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypassword
-          MYSQL_NAME: mydatabase

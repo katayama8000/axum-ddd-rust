@@ -18,4 +18,5 @@ domain = { path = "../domain" }
 
 [dev-dependencies]
 dotenv.workspace = true
-serial_test = { version = "3", features = ["file_locks"] }
+testcontainers = "0.27"
+testcontainers-modules = { version = "0.15", features = ["mysql"] }

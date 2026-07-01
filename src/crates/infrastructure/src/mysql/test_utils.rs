@@ -4,7 +4,9 @@ use sqlx::{mysql::MySqlPoolOptions, MySqlPool};
 use std::env;
 
 /// Wipes the `circles`/`members` tables, so any test calling this must run with
-/// `#[serial_test::serial]` — otherwise it races with other tests sharing the same tables.
+/// `#[serial_test::file_serial]` — otherwise it races with other tests sharing the same tables.
+/// Plain `#[serial]` is NOT enough: cargo-nextest runs each test in its own process, and
+/// `#[serial]`'s lock is in-process only, so it provides no protection there.
 pub async fn setup() -> MySqlPool {
     let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
     let env_file = format!(".env.{}", db_type);

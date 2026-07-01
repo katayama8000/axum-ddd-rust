@@ -18,10 +18,11 @@ enum DbType {
 
 impl DbConfig {
     fn from_env() -> Self {
-        let db_type = match env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string()).as_str() {
+        let db_type_raw = env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string());
+        let db_type = match db_type_raw.as_str() {
             "mysql" => DbType::MySQL,
             "tidb" => DbType::TiDB,
-            _ => DbType::MySQL,
+            other => panic!("unknown DB_TYPE: {other} (expected \"mysql\" or \"tidb\")"),
         };
         let env_file = format!(".env.{}", match db_type {
             DbType::MySQL => "mysql",

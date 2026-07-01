@@ -11,10 +11,22 @@ pub(crate) struct DbConfig {
     db_name: String,
 }
 
+enum DbType {
+    MySQL,
+    TiDB,
+}
+
 impl DbConfig {
     fn from_env() -> Self {
-        let db_type = env::var("DB_TYPE").unwrap_or_else(|_| "MySQL".to_string());
-        let env_file = format!(".env.{}", db_type);
+        let db_type = match env::var("DB_TYPE").unwrap_or_else(|_| "mysql".to_string()).as_str() {
+            "mysql" => DbType::MySQL,
+            "tidb" => DbType::TiDB,
+            _ => DbType::MySQL,
+        };
+        let env_file = format!(".env.{}", match db_type {
+            DbType::MySQL => "mysql",
+            DbType::TiDB => "tidb",
+        });
         from_filename(env_file).ok();
 
         Self {

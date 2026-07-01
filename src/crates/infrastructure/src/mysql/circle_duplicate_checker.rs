@@ -36,8 +36,7 @@ impl CircleDuplicateCheckerInterface for CircleDuplicateChecker {
 
 #[cfg(test)]
 mod tests {
-    use crate::mysql::test_utils::{clean_up, setup};
-    use serial_test::file_serial;
+    use crate::mysql::test_utils::setup;
 
     use super::*;
     use domain::aggregate::{
@@ -54,12 +53,10 @@ mod tests {
     }
 
     #[tokio::test]
-    #[file_serial]
     async fn check_circle_duplicate_exists() {
-        let pool = setup().await;
+        let (_container, pool) = setup().await;
         let checker = CircleDuplicateChecker::new(pool.clone());
 
-        // Use a unique name for this test to avoid conflicts with parallel tests
         let unique_name = format!("Test Circle {}", CircleId::gen());
         let circle = create_test_circle(&unique_name);
 
@@ -75,21 +72,17 @@ mod tests {
 
         let result = checker.check_circle_duplicate(&circle).await;
         assert!(result.is_err());
-        clean_up(pool).await;
     }
 
     #[tokio::test]
-    #[file_serial]
     async fn check_circle_duplicate_not_exists() {
-        let pool = setup().await;
+        let (_container, pool) = setup().await;
         let checker = CircleDuplicateChecker::new(pool.clone());
 
-        // Use a unique name for this test to avoid conflicts with parallel tests
         let unique_name = format!("New Circle {}", CircleId::gen());
         let circle = create_test_circle(&unique_name);
 
         let result = checker.check_circle_duplicate(&circle).await;
         assert!(result.is_ok());
-        clean_up(pool).await;
     }
 }

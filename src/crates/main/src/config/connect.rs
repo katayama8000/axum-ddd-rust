@@ -24,10 +24,13 @@ impl DbConfig {
             "tidb" => DbType::TiDB,
             other => panic!("unknown DB_TYPE: {other} (expected \"mysql\" or \"tidb\")"),
         };
-        let env_file = format!(".env.{}", match db_type {
-            DbType::MySQL => "mysql",
-            DbType::TiDB => "tidb",
-        });
+        let env_file = format!(
+            ".env.{}",
+            match db_type {
+                DbType::MySQL => "mysql",
+                DbType::TiDB => "tidb",
+            }
+        );
         from_filename(env_file).ok();
 
         Self {

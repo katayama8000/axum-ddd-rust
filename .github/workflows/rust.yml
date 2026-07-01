@@ -34,7 +34,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y default-mysql-client
 
       - name: Start database
-        run: docker compose -f compose.${{ matrix.db }}.yml up -d
+        run: docker compose -f compose.${{ matrix.db }}.yml up -d ${{ matrix.db == 'mysql' && 'db' || 'tidb' }}
 
       - name: Wait for MySQL
         run: |

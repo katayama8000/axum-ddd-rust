@@ -18,3 +18,4 @@ domain = { path = "../domain" }
 
 [dev-dependencies]
 dotenv.workspace = true
+serial_test = { version = "3", features = ["file_locks"] }

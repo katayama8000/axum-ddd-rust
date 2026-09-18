@@ -8,7 +8,9 @@ publish = false
 
 [dependencies]
 anyhow.workspace = true
+argon2.workspace = true
 async-trait.workspace = true
+jsonwebtoken.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sqlx.workspace = true

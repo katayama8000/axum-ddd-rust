@@ -11,6 +11,13 @@ CREATE TABLE IF NOT EXISTS circles (
     owner_id CHAR(36) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id CHAR(36) NOT NULL PRIMARY KEY,
+    email VARCHAR(254) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    UNIQUE KEY uk_users_email (email)
+);
+
 CREATE TABLE IF NOT EXISTS members (
     id CHAR(36) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

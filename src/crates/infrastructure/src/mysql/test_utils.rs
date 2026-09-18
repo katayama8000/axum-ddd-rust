@@ -32,6 +32,18 @@ pub async fn setup() -> (ContainerAsync<Mysql>, MySqlPool) {
     .unwrap();
 
     sqlx::query(
+        "CREATE TABLE IF NOT EXISTS users (
+            id CHAR(36) NOT NULL PRIMARY KEY,
+            email VARCHAR(254) NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            UNIQUE KEY uk_users_email (email)
+        );",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    sqlx::query(
         "CREATE TABLE IF NOT EXISTS members (
             id CHAR(36) NOT NULL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,

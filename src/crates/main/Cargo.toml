@@ -4,6 +4,7 @@ version = "0.1.1"
 edition = "2021"
 
 [dependencies]
+domain = { path = "../domain" }
 usecase = { path = "../usecase" }
 infrastructure = { path = "../infrastructure" }
 serde.workspace = true
@@ -16,6 +17,7 @@ tower.workspace = true
 anyhow.workspace = true
 sqlx.workspace = true
 dotenv.workspace = true
+thiserror.workspace = true
 
 [dev-dependencies]
 domain = { path = "../domain" }

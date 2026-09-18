@@ -35,7 +35,11 @@ main = { path = "./src/crates/main" }
 [workspace.dependencies]
 axum = { version = "=0.8.9", features = ["macros"] }
 anyhow = "1.0.102"
+argon2 = "0.6.0"
 async-trait = "0.1.89"
+# `rust_crypto` picks the pure-Rust backend. One of the crypto providers has to be chosen
+# explicitly, otherwise signing panics at runtime rather than failing to build.
+jsonwebtoken = { version = "11.1.0", features = ["rust_crypto"] }
 mockall = "0.15.0"
 tokio = { version = "1.52.3", features = ["full"] }
 serde = { version = "1.0.228", features = ["derive"] }

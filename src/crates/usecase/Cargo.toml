@@ -10,5 +10,6 @@ serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
 mockall.workspace = true
+thiserror.workspace = true
 domain = { path = "../domain" }
 tokio.workspace = true

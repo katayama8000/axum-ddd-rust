@@ -41,6 +41,7 @@ async-trait = "0.1.89"
 # explicitly, otherwise signing panics at runtime rather than failing to build.
 jsonwebtoken = { version = "11.1.0", features = ["rust_crypto"] }
 mockall = "0.15.0"
+thiserror = "2.0.20"
 tokio = { version = "1.52.3", features = ["full"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1"

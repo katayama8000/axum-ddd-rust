@@ -43,9 +43,13 @@ impl DbConfig {
     }
 
     fn connection(&self) -> String {
-        println!(
-            "mysql://{}:{}@{}:{}/{}",
-            self.db_user, self.db_password, self.db_host, self.db_port, self.db_name
+        // The password must not be printed: this used to log the whole connection string.
+        tracing::info!(
+            "connecting to mysql://{}@{}:{}/{}",
+            self.db_user,
+            self.db_host,
+            self.db_port,
+            self.db_name
         );
         format!(
             "mysql://{}:{}@{}:{}/{}",
